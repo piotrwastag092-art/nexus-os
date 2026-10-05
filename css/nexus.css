@@ -1,6 +1,6 @@
 :root {
     --nexus-bg: #07090d;
-    --nexus-panel: rgba(18, 21, 28, 0.78);
+    --nexus-panel: rgba(18, 21, 28, 0.82);
     --nexus-panel-solid: #12151c;
     --nexus-border: rgba(255, 255, 255, 0.09);
 
@@ -13,7 +13,8 @@
     --nexus-success: #42e88a;
     --nexus-danger: #ff5577;
 
-    --nexus-shadow: 0 25px 80px rgba(0, 0, 0, 0.55);
+    --nexus-shadow:
+        0 25px 80px rgba(0, 0, 0, 0.55);
 }
 
 
@@ -59,7 +60,7 @@ button {
 
 
 /* =========================================
-   PULPIT NEXUS
+   PULPIT
 ========================================= */
 
 #desktop {
@@ -95,8 +96,6 @@ button {
         );
 }
 
-
-/* Siatka technologiczna */
 
 #desktop::before {
     content: "";
@@ -148,9 +147,11 @@ button {
 
     padding: 0 22px;
 
-    background: rgba(5, 7, 11, 0.55);
+    background:
+        rgba(5, 7, 11, 0.55);
 
-    backdrop-filter: blur(25px);
+    backdrop-filter:
+        blur(25px);
 
     border-bottom:
         1px solid rgba(255, 255, 255, 0.06);
@@ -195,7 +196,7 @@ button {
 
 
 /* =========================================
-   STATUS SYSTEMU
+   STATUS / ZEGAR
 ========================================= */
 
 .status {
@@ -224,7 +225,8 @@ button {
 
     border-radius: 50%;
 
-    background: var(--nexus-success);
+    background:
+        var(--nexus-success);
 
     box-shadow:
         0 0 10px var(--nexus-success);
@@ -232,7 +234,7 @@ button {
 
 
 /* =========================================
-   CENTRALNY PANEL NEXUS
+   CENTRALNY PANEL
 ========================================= */
 
 .center {
@@ -244,7 +246,8 @@ button {
     transform:
         translate(-50%, -50%);
 
-    width: min(760px, 90%);
+    width:
+        min(760px, 90%);
 
     text-align: center;
 }
@@ -279,6 +282,19 @@ button {
 
     animation:
         nexusOrb 5s ease-in-out infinite;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+.ai-orb:hover {
+    box-shadow:
+        0 0 55px rgba(124, 92, 255, 0.5),
+        0 0 140px rgba(0, 217, 255, 0.18);
 }
 
 
@@ -306,7 +322,8 @@ button {
 
 
 .subtitle {
-    color: var(--nexus-muted);
+    color:
+        var(--nexus-muted);
 
     font-size: 15px;
 
@@ -315,7 +332,7 @@ button {
 
 
 /* =========================================
-   PANEL AI
+   AI SEARCH
 ========================================= */
 
 .ai-search {
@@ -332,11 +349,26 @@ button {
     background:
         rgba(18, 21, 28, 0.7);
 
-    backdrop-filter: blur(25px);
+    backdrop-filter:
+        blur(25px);
 
     border-radius: 19px;
 
-    box-shadow: var(--nexus-shadow);
+    box-shadow:
+        var(--nexus-shadow);
+}
+
+
+.search-icon {
+    width: 48px;
+
+    display: grid;
+    place-items: center;
+
+    color:
+        var(--nexus-accent-2);
+
+    font-size: 18px;
 }
 
 
@@ -348,13 +380,19 @@ button {
     border: 0;
     outline: none;
 
-    padding: 17px;
+    padding: 17px 8px;
 
     color: white;
 
     font-size: 15px;
 
     user-select: text;
+}
+
+
+.ai-search input::placeholder {
+    color:
+        #737c8c;
 }
 
 
@@ -373,12 +411,18 @@ button {
 
     cursor: pointer;
 
-    transition: 0.2s;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 
 .ai-search button:hover {
-    transform: scale(1.05);
+    transform:
+        scale(1.05);
+
+    box-shadow:
+        0 0 25px rgba(124, 92, 255, 0.35);
 }
 
 
@@ -410,13 +454,15 @@ button {
     background:
         rgba(255, 255, 255, 0.035);
 
-    color: #b8bfca;
+    color:
+        #b8bfca;
 
     cursor: pointer;
 
     font-size: 12px;
 
-    transition: 0.2s;
+    transition:
+        0.2s ease;
 }
 
 
@@ -428,6 +474,9 @@ button {
         rgba(124, 92, 255, 0.35);
 
     color: white;
+
+    transform:
+        translateY(-1px);
 }
 
 
@@ -483,9 +532,13 @@ button {
 
     font-size: 20px;
 
-    transition: 0.2s;
+    transition:
+        0.2s ease;
 
     position: relative;
+
+    background:
+        transparent;
 }
 
 
@@ -499,31 +552,15 @@ button {
 }
 
 
-.dock-item.active {
-    background:
-        rgba(124, 92, 255, 0.2);
-}
-
-
-.dock-item.active::after {
-    content: "";
-
-    position: absolute;
-
-    bottom: -5px;
-
-    width: 5px;
-    height: 5px;
-
-    border-radius: 50%;
-
-    background:
-        var(--nexus-accent);
+.dock-item:active {
+    transform:
+        translateY(-2px)
+        scale(0.98);
 }
 
 
 /* =========================================
-   OKNA SYSTEMOWE
+   OKNA
 ========================================= */
 
 .window {
@@ -565,19 +602,20 @@ button {
 
     display: none;
 
+    flex-direction: column;
+
     z-index: 100;
 }
 
 
 .window.open {
     display: flex;
-
-    flex-direction: column;
 }
 
 
 .window-header {
     height: 54px;
+    min-height: 54px;
 
     display: flex;
 
@@ -592,6 +630,11 @@ button {
 
     background:
         rgba(255, 255, 255, 0.025);
+}
+
+
+.window-header:active {
+    cursor: grabbing;
 }
 
 
@@ -627,6 +670,9 @@ button {
         rgba(255, 255, 255, 0.05);
 
     cursor: pointer;
+
+    transition:
+        0.15s ease;
 }
 
 
@@ -645,12 +691,14 @@ button {
 .window-body {
     flex: 1;
 
-    overflow: auto;
+    min-height: 0;
+
+    overflow: hidden;
 }
 
 
 /* =========================================
-   MENEDŻER PLIKÓW
+   PLIKI
 ========================================= */
 
 .files-layout {
@@ -662,6 +710,7 @@ button {
 
 .sidebar {
     width: 190px;
+    min-width: 190px;
 
     border-right:
         1px solid var(--nexus-border);
@@ -683,6 +732,9 @@ button {
     margin-bottom: 4px;
 
     font-size: 13px;
+
+    transition:
+        0.15s ease;
 }
 
 
@@ -699,6 +751,8 @@ button {
     flex: 1;
 
     padding: 24px;
+
+    overflow: auto;
 }
 
 
@@ -729,6 +783,9 @@ button {
     cursor: pointer;
 
     text-align: center;
+
+    transition:
+        0.18s ease;
 }
 
 
@@ -738,6 +795,9 @@ button {
 
     background:
         rgba(124, 92, 255, 0.08);
+
+    transform:
+        translateY(-2px);
 }
 
 
@@ -768,6 +828,8 @@ button {
 
 .chat-messages {
     flex: 1;
+
+    min-height: 0;
 
     overflow: auto;
 
@@ -840,6 +902,12 @@ button {
 }
 
 
+.chat-input input::placeholder {
+    color:
+        #737c8c;
+}
+
+
 .chat-input button {
     width: 45px;
 
@@ -849,6 +917,15 @@ button {
         var(--nexus-accent);
 
     cursor: pointer;
+
+    transition:
+        0.2s ease;
+}
+
+
+.chat-input button:hover {
+    transform:
+        scale(1.04);
 }
 
 
@@ -858,6 +935,10 @@ button {
 
 .settings {
     padding: 24px;
+
+    height: 100%;
+
+    overflow: auto;
 }
 
 
@@ -904,46 +985,6 @@ button {
 }
 
 
-.switch {
-    width: 44px;
-    height: 24px;
-
-    border-radius: 20px;
-
-    background: #343945;
-
-    cursor: pointer;
-
-    padding: 3px;
-}
-
-
-.switch span {
-    display: block;
-
-    width: 18px;
-    height: 18px;
-
-    border-radius: 50%;
-
-    background: white;
-
-    transition: 0.2s;
-}
-
-
-.switch.on {
-    background:
-        var(--nexus-accent);
-}
-
-
-.switch.on span {
-    transform:
-        translateX(20px);
-}
-
-
 /* =========================================
    PRZEGLĄDARKA
 ========================================= */
@@ -969,6 +1010,27 @@ button {
 }
 
 
+.browser-bar button {
+    width: 38px;
+
+    border-radius: 10px;
+
+    background:
+        rgba(255, 255, 255, 0.05);
+
+    cursor: pointer;
+
+    transition:
+        0.15s ease;
+}
+
+
+.browser-bar button:hover {
+    background:
+        rgba(255, 255, 255, 0.1);
+}
+
+
 .browser-bar input {
     flex: 1;
 
@@ -987,6 +1049,12 @@ button {
     outline: none;
 
     user-select: text;
+}
+
+
+.browser-bar input::placeholder {
+    color:
+        #737c8c;
 }
 
 
@@ -1022,12 +1090,14 @@ button {
 .terminal {
     height: 100%;
 
-    background: #050607;
+    background:
+        #050607;
 
     padding: 18px;
 
     font-family:
         Consolas,
+        "Courier New",
         monospace;
 
     font-size: 13px;
@@ -1036,8 +1106,32 @@ button {
 }
 
 
-.terminal-line {
-    margin-bottom: 7px;
+.terminal-output {
+    line-height: 1.6;
+}
+
+
+.terminal-output div {
+    margin-bottom: 5px;
+}
+
+
+.terminal-input-line {
+    display: flex;
+
+    align-items: center;
+
+    margin-top: 8px;
+}
+
+
+.terminal-prompt {
+    color:
+        #8df5ad;
+
+    margin-right: 8px;
+
+    white-space: nowrap;
 }
 
 
@@ -1048,7 +1142,8 @@ button {
 
     outline: none;
 
-    color: #c8ffda;
+    color:
+        #c8ffda;
 
     font-family: inherit;
 
@@ -1077,7 +1172,7 @@ button {
         calc(100vw - 30px);
 
     background:
-        rgba(14, 17, 24, 0.9);
+        rgba(14, 17, 24, 0.92);
 
     border:
         1px solid var(--nexus-border);
@@ -1126,6 +1221,12 @@ button {
 }
 
 
+.launcher-search::placeholder {
+    color:
+        #737c8c;
+}
+
+
 .apps {
     display: grid;
 
@@ -1146,12 +1247,21 @@ button {
     cursor: pointer;
 
     font-size: 12px;
+
+    background:
+        transparent;
+
+    transition:
+        0.18s ease;
 }
 
 
 .app:hover {
     background:
         rgba(255, 255, 255, 0.07);
+
+    transform:
+        translateY(-2px);
 }
 
 
@@ -1174,8 +1284,11 @@ button {
 
     width: 330px;
 
+    max-width:
+        calc(100vw - 40px);
+
     background:
-        rgba(14, 17, 24, 0.9);
+        rgba(14, 17, 24, 0.92);
 
     backdrop-filter:
         blur(30px);
@@ -1190,14 +1303,11 @@ button {
     box-shadow:
         var(--nexus-shadow);
 
-    display: none;
+    display: block;
 
     z-index: 9500;
-}
 
-
-#notifications.open {
-    display: block;
+    pointer-events: none;
 }
 
 
@@ -1215,9 +1325,25 @@ button {
 }
 
 
-.notification small {
+.notification:first-child {
+    margin-top: 0;
+}
+
+
+.notification strong {
+    display: block;
+
+    margin-bottom: 4px;
+}
+
+
+.notification span {
+    display: block;
+
     color:
         var(--nexus-muted);
+
+    line-height: 1.4;
 }
 
 
@@ -1227,10 +1353,10 @@ button {
 
 @media (max-width: 650px) {
 
-    .status-item:nth-child(1),
-    .status-item:nth-child(2) {
-        display: none;
+    .status {
+        gap: 8px;
     }
+
 
     .window {
         width:
@@ -1240,16 +1366,41 @@ button {
             calc(100vh - 100px);
     }
 
+
     .sidebar {
         width: 125px;
+        min-width: 125px;
     }
+
 
     .center h1 {
         font-size: 34px;
     }
 
+
+    .dock {
+        bottom: 12px;
+    }
+
+
     .dock-item {
         width: 42px;
         height: 42px;
+    }
+
+
+    .apps {
+        grid-template-columns:
+            repeat(3, 1fr);
+    }
+
+
+    .browser-bar {
+        gap: 5px;
+    }
+
+
+    .browser-bar button {
+        width: 34px;
     }
 }
