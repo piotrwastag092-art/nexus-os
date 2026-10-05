@@ -1,115 +1,108 @@
-/* =========================================
-   NEXUS OS — APPLICATIONS
-   apps.js
-========================================= */
-
 "use strict";
 
 
 /* =========================================
-   NEXUS AI — GŁÓWNE POLECENIE
-========================================= */
+   NEXUS AI — POLECENIA Z PULPITU
+   ========================================= */
 
 function setAICommand(text) {
-
     const input =
         document.getElementById("aiCommand");
 
     if (!input) return;
 
     input.value = text;
-
     input.focus();
 }
 
 
 function runAICommand() {
-
     const input =
         document.getElementById("aiCommand");
 
     if (!input) return;
 
+    const originalCommand =
+        input.value.trim();
+
+    if (!originalCommand) return;
+
     const command =
-        input.value.toLowerCase().trim();
-
-    if (!command) return;
-
+        originalCommand.toLowerCase();
 
     if (
-        command.includes("pliki") ||
-        command.includes("plik")
+        command.includes("plik") ||
+        command.includes("folder")
     ) {
-
         openWindow("filesWindow");
 
     } else if (
         command.includes("przeglądark") ||
-        command.includes("internet")
+        command.includes("internet") ||
+        command.includes("stron")
     ) {
-
         openWindow("browserWindow");
 
     } else if (
-        command.includes("ustaw")
+        command.includes("terminal") ||
+        command.includes("konsol")
     ) {
-
-        openWindow("settingsWindow");
+        openWindow("terminalWindow");
 
     } else if (
-        command.includes("terminal")
+        command.includes("ustawien")
     ) {
-
-        openWindow("terminalWindow");
+        openWindow("settingsWindow");
 
     } else if (
         command.includes("ai") ||
         command.includes("asystent")
     ) {
-
         openWindow("aiWindow");
 
     } else {
 
         showNotification(
             "NEXUS AI",
-            "Odebrałem polecenie: „" +
-            input.value +
-            "”. Funkcja AI zostanie rozbudowana."
+            `Odebrałem polecenie: „${originalCommand}”.`
         );
-
     }
 
     input.value = "";
 }
 
 
-document
-    .getElementById("aiCommand")
-    ?.addEventListener(
-        "keydown",
-        function(event) {
+/* =========================================
+   ENTER W POLU AI NA PULPICIE
+   ========================================= */
 
-            if (event.key === "Enter") {
+document.addEventListener("DOMContentLoaded", () => {
 
-                runAICommand();
+    const input =
+        document.getElementById("aiCommand");
 
-            }
+    if (!input) return;
 
+    input.addEventListener("keydown", event => {
+
+        if (event.key === "Enter") {
+            event.preventDefault();
+            runAICommand();
         }
-    );
+
+    });
+});
 
 
 /* =========================================
-   CZAT NEXUS AI
-========================================= */
+   NEXUS AI — CZAT
+   ========================================= */
 
 function handleAIKey(event) {
 
     if (event.key === "Enter") {
-
+        event.preventDefault();
         sendAIMessage();
-
     }
 }
 
@@ -117,88 +110,70 @@ function handleAIKey(event) {
 function sendAIMessage() {
 
     const input =
-        document.getElementById(
-            "aiChatInput"
-        );
+        document.getElementById("aiChatInput");
 
     const messages =
-        document.getElementById(
-            "aiMessages"
-        );
+        document.getElementById("aiMessages");
 
     if (!input || !messages) return;
-
 
     const text =
         input.value.trim();
 
-
     if (!text) return;
 
+
+    /* Wiadomość użytkownika */
 
     const userMessage =
         document.createElement("div");
 
     userMessage.className =
-        "ai-message user";
-
+        "message user";
 
     userMessage.innerHTML = `
-        <div class="ai-bubble">
+        <div class="message-bubble">
             <strong>Ty</strong>
             <p>${escapeHTML(text)}</p>
         </div>
     `;
 
-
-    messages.appendChild(
-        userMessage
-    );
-
+    messages.appendChild(userMessage);
 
     input.value = "";
-
 
     messages.scrollTop =
         messages.scrollHeight;
 
+
+    /* Odpowiedź NEXUS */
 
     setTimeout(() => {
 
         const response =
             document.createElement("div");
 
-
         response.className =
-            "ai-message";
-
+            "message nexus";
 
         response.innerHTML = `
-            <div class="ai-avatar">N</div>
+            <div class="message-avatar">N</div>
 
-            <div class="ai-bubble">
-
+            <div class="message-bubble">
                 <strong>NEXUS AI</strong>
-
                 <p>
-                    Przyjąłem polecenie.
-                    Prawdziwy silnik NEXUS AI
-                    zostanie podłączony do systemu
-                    w kolejnych etapach projektu.
+                    Polecenie zostało odebrane.
+                    Rdzeń sztucznej inteligencji
+                    NEXUS będzie rozwijany
+                    w kolejnych etapach systemu.
                 </p>
-
             </div>
         `;
 
-
-        messages.appendChild(
-            response
-        );
-
+        messages.appendChild(response);
 
         messages.scrollTop =
             messages.scrollHeight;
-
 
     }, 500);
 }
@@ -206,14 +181,13 @@ function sendAIMessage() {
 
 /* =========================================
    PRZEGLĄDARKA
-========================================= */
+   ========================================= */
 
 function handleBrowserKey(event) {
 
     if (event.key === "Enter") {
-
+        event.preventDefault();
         navigateBrowser();
-
     }
 }
 
@@ -221,98 +195,80 @@ function handleBrowserKey(event) {
 function navigateBrowser() {
 
     const input =
-        document.getElementById(
-            "browserAddress"
-        );
+        document.getElementById("browserAddress");
 
-    if (!input) return;
+    const content =
+        document.getElementById("browserContent");
 
+    if (!input || !content) return;
 
-    const address =
+    let address =
         input.value.trim();
-
 
     if (!address) return;
 
 
-    const content =
-        document.getElementById(
-            "browserContent"
-        );
+    /* Jeśli użytkownik wpisał zwykły tekst,
+       traktujemy go jako wyszukiwanie */
 
+    if (
+        !address.startsWith("http://") &&
+        !address.startsWith("https://")
+    ) {
 
-    if (!content) return;
+        const query =
+            encodeURIComponent(address);
+
+        address =
+            `https://www.google.com/search?q=${query}`;
+    }
 
 
     content.innerHTML = `
-
         <div class="browser-start">
 
-            <div class="browser-logo">
-                N
-            </div>
+            <div class="browser-logo">N</div>
 
-            <h1>
-                ${escapeHTML(address)}
-            </h1>
+            <h1>Ładowanie strony…</h1>
 
             <p>
-                NEXUS Browser jest obecnie
-                w wersji demonstracyjnej.
+                NEXUS Browser przygotowuje połączenie.
             </p>
 
         </div>
-
     `;
+
+
+    /*
+       Próba otwarcia strony.
+       Nie każda strona pozwala na osadzenie
+       w iframe — to normalne zabezpieczenie WWW.
+    */
+
+    setTimeout(() => {
+
+        content.innerHTML = `
+            <iframe
+                src="${escapeHTML(address)}"
+                title="NEXUS Browser"
+                style="
+                    width:100%;
+                    height:100%;
+                    border:0;
+                    background:#ffffff;
+                "
+            ></iframe>
+        `;
+
+    }, 300);
 }
 
 
-function browserSearch() {
-
-    const input =
-        document.getElementById(
-            "browserSearch"
-        );
-
-    if (!input) return;
-
-
-    const query =
-        input.value.trim();
-
-
-    if (!query) return;
-
-
-    const address =
-        document.getElementById(
-            "browserAddress"
-        );
-
-
-    if (address) {
-
-        address.value = query;
-
-    }
-
-
-    navigateBrowser();
-}
-
-
-function handleSearchKey(event) {
-
-    if (event.key === "Enter") {
-
-        browserSearch();
-
-    }
-}
-
+/* =========================================
+   PRZYCISKI PRZEGLĄDARKI
+   ========================================= */
 
 function browserBack() {
-
     showNotification(
         "Przeglądarka",
         "Brak poprzedniej strony."
@@ -321,7 +277,6 @@ function browserBack() {
 
 
 function browserForward() {
-
     showNotification(
         "Przeglądarka",
         "Brak następnej strony."
@@ -331,136 +286,199 @@ function browserForward() {
 
 function browserReload() {
 
+    const iframe =
+        document.querySelector(
+            "#browserContent iframe"
+        );
+
+    if (iframe) {
+        iframe.src = iframe.src;
+        return;
+    }
+
     showNotification(
         "Przeglądarka",
-        "Strona została odświeżona."
+        "Brak aktywnej strony."
+    );
+}
+
+
+/* =========================================
+   PLIKI — OTWIERANIE ELEMENTÓW
+   ========================================= */
+
+function openFile(name) {
+
+    showNotification(
+        "Pliki",
+        `Wybrano: ${name}`
+    );
+}
+
+
+function openFolder(name) {
+
+    showNotification(
+        "Pliki",
+        `Otwieranie folderu: ${name}`
     );
 }
 
 
 /* =========================================
    TERMINAL
-========================================= */
+   ========================================= */
 
 function handleTerminalKey(event) {
 
     if (event.key !== "Enter") return;
 
+    event.preventDefault();
 
     const input =
-        document.getElementById(
-            "terminalInput"
-        );
-
+        document.getElementById("terminalInput");
 
     const output =
-        document.getElementById(
-            "terminalOutput"
-        );
-
+        document.getElementById("terminalOutput");
 
     if (!input || !output) return;
-
 
     const command =
         input.value.trim();
 
-
     if (!command) return;
 
+
+    /* Wpisana komenda */
 
     const line =
         document.createElement("div");
 
-
-    line.innerHTML =
-        `<span>nexus@system:~$</span> ${
-            escapeHTML(command)
-        }`;
-
+    line.innerHTML = `
+        <span>nexus@system:~$</span>
+        ${escapeHTML(command)}
+    `;
 
     output.appendChild(line);
-
-
-    const result =
-        document.createElement("div");
 
 
     const lower =
         command.toLowerCase();
 
 
+    /* HELP */
+
     if (lower === "help") {
 
-        result.innerHTML = `
+        const result =
+            document.createElement("div");
 
+        result.innerHTML = `
             Dostępne polecenia:
-            <br>
+            <br><br>
 
             <strong>help</strong>
             — pomoc
-
             <br>
 
             <strong>clear</strong>
             — wyczyść ekran
-
             <br>
 
             <strong>time</strong>
             — aktualny czas
-
             <br>
 
             <strong>system</strong>
             — informacje o systemie
-
             <br>
 
-            <strong>open</strong>
-            — otwórz aplikację
+            <strong>open pliki</strong>
+            — otwórz pliki
+            <br>
 
+            <strong>open browser</strong>
+            — otwórz przeglądarkę
+            <br>
+
+            <strong>open ai</strong>
+            — otwórz NEXUS AI
         `;
 
+        output.appendChild(result);
+    }
 
-    } else if (lower === "clear") {
+
+    /* CLEAR */
+
+    else if (lower === "clear") {
 
         output.innerHTML = "";
 
         input.value = "";
 
         return;
+    }
 
 
-    } else if (lower === "time") {
+    /* TIME */
+
+    else if (lower === "time") {
+
+        const now =
+            new Date();
+
+        const time =
+            new Intl.DateTimeFormat(
+                "pl-PL",
+                {
+                    timeZone: "Europe/Warsaw",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                    hour12: false
+                }
+            ).format(now);
+
+        const result =
+            document.createElement("div");
 
         result.textContent =
-            new Date().toLocaleString(
-                "pl-PL"
-            );
+            time;
+
+        output.appendChild(result);
+    }
 
 
-    } else if (lower === "system") {
+    /* SYSTEM */
+
+    else if (lower === "system") {
+
+        const result =
+            document.createElement("div");
 
         result.innerHTML = `
-
             NEXUS OS
             <br>
-
-            Wersja: 0.1
+            Wersja: ${NEXUS.version}
             <br>
-
-            Tryb: demonstracyjny
+            Platforma: NEXUS Web Shell
             <br>
-
-            Status: aktywny
-
+            Język: polski
+            <br>
+            Status:
+            ${NEXUS.systemReady
+                ? "gotowy"
+                : "uruchamianie"}
         `;
 
+        output.appendChild(result);
+    }
 
-    } else if (
-        lower.startsWith("open ")
-    ) {
+
+    /* OPEN */
+
+    else if (lower.startsWith("open ")) {
 
         const app =
             lower
@@ -469,71 +487,60 @@ function handleTerminalKey(event) {
 
 
         if (
-            app.includes("pliki")
+            app.includes("plik")
         ) {
-
-            openWindow(
-                "filesWindow"
-            );
-
+            openWindow("filesWindow");
 
         } else if (
             app.includes("browser") ||
             app.includes("przeglądark")
         ) {
-
-            openWindow(
-                "browserWindow"
-            );
-
+            openWindow("browserWindow");
 
         } else if (
             app.includes("ai")
         ) {
+            openWindow("aiWindow");
 
-            openWindow(
-                "aiWindow"
-            );
-
+        } else if (
+            app.includes("terminal")
+        ) {
+            openWindow("terminalWindow");
 
         } else if (
             app.includes("ustaw")
         ) {
-
-            openWindow(
-                "settingsWindow"
-            );
-
+            openWindow("settingsWindow");
 
         } else {
+
+            const result =
+                document.createElement("div");
 
             result.textContent =
                 "Nie znaleziono aplikacji.";
 
+            output.appendChild(result);
         }
+    }
 
 
-    } else {
+    /* NIEZNANA KOMENDA */
+
+    else {
+
+        const result =
+            document.createElement("div");
 
         result.textContent =
             "Polecenie nie zostało rozpoznane. Wpisz „help”.";
 
+        output.appendChild(result);
     }
-
-
-    output.appendChild(
-        result
-    );
 
 
     input.value = "";
 
-
     output.scrollTop =
         output.scrollHeight;
 }
-
-
-/* =========================================
-   KONIEC MODUŁU APLIKACJI
-========================================= */
