@@ -1,1802 +1,1345 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NEXUS OS</title>
+
     <link rel="stylesheet" href="css/nexus.css">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEXUS OS</title>
-
-<style>
-:root{
-    --bg:#07090d;
-    --panel:rgba(18,21,28,.78);
-    --panel2:rgba(25,29,38,.92);
-    --border:rgba(255,255,255,.09);
-    --text:#f5f7fb;
-    --muted:#8f98a8;
-    --accent:#7c5cff;
-    --accent2:#00d9ff;
-    --danger:#ff5577;
-    --shadow:0 25px 80px rgba(0,0,0,.55);
-}
-
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    user-select:none;
-}
-
-body{
-    font-family:Inter,Segoe UI,Arial,sans-serif;
-    background:#05070b;
-    color:var(--text);
-    overflow:hidden;
-}
-
-button,
-input{
-    font:inherit;
-}
-
-button{
-    border:0;
-    color:inherit;
-}
-
-/* PULPIT */
-
-#desktop{
-    position:fixed;
-    inset:0;
-    overflow:hidden;
-    background:
-        radial-gradient(circle at 20% 20%,rgba(124,92,255,.16),transparent 30%),
-        radial-gradient(circle at 80% 25%,rgba(0,217,255,.10),transparent 28%),
-        radial-gradient(circle at 50% 100%,rgba(124,92,255,.08),transparent 40%),
-        linear-gradient(135deg,#06080d,#0b0e15 50%,#05070b);
-}
-
-#desktop::before{
-    content:"";
-    position:absolute;
-    inset:0;
-    background:
-        linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px);
-    background-size:60px 60px;
-    mask-image:linear-gradient(to bottom,black,transparent);
-    pointer-events:none;
-}
-
-/* GÓRA */
-
-.topbar{
-    position:absolute;
-    top:0;
-    left:0;
-    right:0;
-    height:58px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 22px;
-    background:rgba(5,7,11,.55);
-    backdrop-filter:blur(25px);
-    border-bottom:1px solid rgba(255,255,255,.06);
-    z-index:9000;
-}
-
-.brand{
-    display:flex;
-    align-items:center;
-    gap:11px;
-    font-weight:700;
-    letter-spacing:.4px;
-}
-
-.nexus-logo{
-    width:29px;
-    height:29px;
-    border-radius:9px;
-    background:
-        linear-gradient(135deg,var(--accent),var(--accent2));
-    display:grid;
-    place-items:center;
-    box-shadow:0 0 25px rgba(124,92,255,.4);
-    font-size:14px;
-}
-
-.status{
-    display:flex;
-    align-items:center;
-    gap:18px;
-    font-size:12px;
-    color:var(--muted);
-}
-
-.status-item{
-    display:flex;
-    align-items:center;
-    gap:7px;
-}
-
-.dot{
-    width:7px;
-    height:7px;
-    border-radius:50%;
-    background:#42e88a;
-    box-shadow:0 0 10px #42e88a;
-}
-
-/* CENTRUM */
-
-.center{
-    position:absolute;
-    left:50%;
-    top:45%;
-    transform:translate(-50%,-50%);
-    width:min(760px,90%);
-    text-align:center;
-}
-
-.ai-orb{
-    width:92px;
-    height:92px;
-    margin:0 auto 28px;
-    border-radius:50%;
-    background:
-        radial-gradient(circle at 35% 30%,#fff,transparent 7%),
-        radial-gradient(circle at 50% 50%,#9b8aff,#4e39d8 50%,#131021 72%);
-    box-shadow:
-        0 0 45px rgba(124,92,255,.35),
-        0 0 120px rgba(0,217,255,.12);
-    animation:orb 5s ease-in-out infinite;
-}
-
-@keyframes orb{
-    0%,100%{transform:scale(1)}
-    50%{transform:scale(1.06)}
-}
-
-.center h1{
-    font-size:clamp(32px,5vw,54px);
-    letter-spacing:-2px;
-    margin-bottom:12px;
-}
-
-.subtitle{
-    color:var(--muted);
-    font-size:15px;
-    margin-bottom:30px;
-}
-
-.ai-search{
-    display:flex;
-    align-items:center;
-    width:100%;
-    padding:6px;
-    border:1px solid var(--border);
-    background:rgba(18,21,28,.7);
-    backdrop-filter:blur(25px);
-    border-radius:19px;
-    box-shadow:var(--shadow);
-}
-
-.ai-search input{
-    flex:1;
-    background:none;
-    border:0;
-    outline:none;
-    padding:17px;
-    color:white;
-    font-size:15px;
-    user-select:text;
-}
-
-.ai-search button{
-    width:48px;
-    height:48px;
-    border-radius:14px;
-    background:linear-gradient(135deg,var(--accent),#5d45e8);
-    cursor:pointer;
-    transition:.2s;
-}
-
-.ai-search button:hover{
-    transform:scale(1.05);
-}
-
-/* SUGESTIE */
-
-.suggestions{
-    display:flex;
-    justify-content:center;
-    flex-wrap:wrap;
-    gap:9px;
-    margin-top:16px;
-}
-
-.suggestion{
-    padding:9px 14px;
-    border-radius:20px;
-    border:1px solid var(--border);
-    background:rgba(255,255,255,.035);
-    color:#b8bfca;
-    cursor:pointer;
-    font-size:12px;
-    transition:.2s;
-}
-
-.suggestion:hover{
-    background:rgba(124,92,255,.15);
-    border-color:rgba(124,92,255,.35);
-    color:white;
-}
-
-/* DOCK */
-
-.dock{
-    position:absolute;
-    left:50%;
-    bottom:20px;
-    transform:translateX(-50%);
-    display:flex;
-    align-items:center;
-    gap:8px;
-    padding:9px;
-    border:1px solid var(--border);
-    background:rgba(13,16,22,.78);
-    backdrop-filter:blur(30px);
-    border-radius:21px;
-    box-shadow:0 20px 60px rgba(0,0,0,.5);
-    z-index:9500;
-}
-
-.dock-item{
-    width:48px;
-    height:48px;
-    border-radius:14px;
-    display:grid;
-    place-items:center;
-    cursor:pointer;
-    font-size:20px;
-    transition:.2s;
-    position:relative;
-}
-
-.dock-item:hover{
-    background:rgba(255,255,255,.09);
-    transform:translateY(-5px) scale(1.05);
-}
-
-.dock-item.active{
-    background:rgba(124,92,255,.2);
-}
-
-.dock-item.active::after{
-    content:"";
-    position:absolute;
-    bottom:-5px;
-    width:5px;
-    height:5px;
-    border-radius:50%;
-    background:var(--accent);
-}
-
-/* OKNA */
-
-.window{
-    position:absolute;
-    width:760px;
-    height:520px;
-    max-width:calc(100vw - 30px);
-    max-height:calc(100vh - 100px);
-    min-width:330px;
-    min-height:230px;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-50%);
-    background:var(--panel);
-    border:1px solid var(--border);
-    border-radius:18px;
-    box-shadow:var(--shadow);
-    backdrop-filter:blur(35px);
-    overflow:hidden;
-    display:none;
-    z-index:100;
-}
-
-.window.open{
-    display:flex;
-    flex-direction:column;
-}
-
-.window-header{
-    height:54px;
-    display:flex;
-    align-items:center;
-    padding:0 16px;
-    border-bottom:1px solid var(--border);
-    cursor:grab;
-    background:rgba(255,255,255,.025);
-}
-
-.window-title{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    font-size:13px;
-    font-weight:600;
-}
-
-.window-controls{
-    margin-left:auto;
-    display:flex;
-    gap:7px;
-}
-
-.window-controls button{
-    width:30px;
-    height:30px;
-    border-radius:9px;
-    background:rgba(255,255,255,.05);
-    cursor:pointer;
-}
-
-.window-controls button:hover{
-    background:rgba(255,255,255,.1);
-}
-
-.window-controls .close:hover{
-    background:rgba(255,70,100,.25);
-}
-
-.window-body{
-    flex:1;
-    overflow:auto;
-}
-
-/* PLIKI */
-
-.files-layout{
-    display:flex;
-    height:100%;
-}
-
-.sidebar{
-    width:190px;
-    border-right:1px solid var(--border);
-    padding:15px;
-}
-
-.side-item{
-    padding:11px 12px;
-    border-radius:10px;
-    color:var(--muted);
-    cursor:pointer;
-    margin-bottom:4px;
-    font-size:13px;
-}
-
-.side-item:hover,
-.side-item.selected{
-    color:white;
-    background:rgba(124,92,255,.13);
-}
-
-.file-area{
-    flex:1;
-    padding:24px;
-}
-
-.file-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
-    gap:12px;
-}
-
-.file{
-    padding:18px 12px;
-    border-radius:14px;
-    background:rgba(255,255,255,.035);
-    border:1px solid transparent;
-    cursor:pointer;
-    text-align:center;
-}
-
-.file:hover{
-    border-color:rgba(124,92,255,.3);
-    background:rgba(124,92,255,.08);
-}
-
-.file-icon{
-    font-size:34px;
-    margin-bottom:10px;
-}
-
-.file-name{
-    font-size:12px;
-}
-
-/* AI */
-
-.ai-chat{
-    display:flex;
-    flex-direction:column;
-    height:100%;
-}
-
-.chat-messages{
-    flex:1;
-    overflow:auto;
-    padding:24px;
-}
-
-.message{
-    max-width:75%;
-    padding:13px 15px;
-    border-radius:14px;
-    margin-bottom:12px;
-    font-size:13px;
-    line-height:1.5;
-}
-
-.message.nexus{
-    background:rgba(124,92,255,.11);
-    border:1px solid rgba(124,92,255,.12);
-}
-
-.message.user{
-    margin-left:auto;
-    background:rgba(255,255,255,.07);
-}
-
-.chat-input{
-    padding:13px;
-    border-top:1px solid var(--border);
-    display:flex;
-    gap:8px;
-}
-
-.chat-input input{
-    flex:1;
-    background:rgba(255,255,255,.05);
-    border:1px solid var(--border);
-    outline:none;
-    color:white;
-    padding:12px;
-    border-radius:11px;
-    user-select:text;
-}
-
-.chat-input button{
-    width:45px;
-    border-radius:11px;
-    background:var(--accent);
-    cursor:pointer;
-}
-
-/* USTAWIENIA */
-
-.settings{
-    padding:24px;
-}
-
-.setting-section{
-    margin-bottom:26px;
-}
-
-.setting-section h3{
-    font-size:14px;
-    margin-bottom:12px;
-}
-
-.setting{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:15px;
-    background:rgba(255,255,255,.035);
-    border:1px solid var(--border);
-    border-radius:13px;
-    margin-bottom:8px;
-}
-
-.setting-info small{
-    display:block;
-    color:var(--muted);
-    margin-top:4px;
-}
-
-.switch{
-    width:44px;
-    height:24px;
-    border-radius:20px;
-    background:#343945;
-    cursor:pointer;
-    padding:3px;
-}
-
-.switch span{
-    display:block;
-    width:18px;
-    height:18px;
-    border-radius:50%;
-    background:white;
-    transition:.2s;
-}
-
-.switch.on{
-    background:var(--accent);
-}
-
-.switch.on span{
-    transform:translateX(20px);
-}
-
-/* PRZEGLĄDARKA */
-
-.browser{
-    height:100%;
-    display:flex;
-    flex-direction:column;
-}
-
-.browser-bar{
-    padding:10px;
-    border-bottom:1px solid var(--border);
-    display:flex;
-    gap:8px;
-}
-
-.browser-bar input{
-    flex:1;
-    background:rgba(255,255,255,.05);
-    border:1px solid var(--border);
-    border-radius:10px;
-    padding:10px 13px;
-    color:white;
-    outline:none;
-    user-select:text;
-}
-
-.browser-page{
-    flex:1;
-    display:grid;
-    place-items:center;
-    text-align:center;
-    color:var(--muted);
-}
-
-.browser-page strong{
-    display:block;
-    color:white;
-    font-size:26px;
-    margin-bottom:8px;
-}
-
-/* TERMINAL */
-
-.terminal{
-    height:100%;
-    background:#050607;
-    padding:18px;
-    font-family:Consolas,monospace;
-    font-size:13px;
-    overflow:auto;
-}
-
-.terminal-line{
-    margin-bottom:7px;
-}
-
-.terminal-input{
-    background:none;
-    border:0;
-    outline:none;
-    color:#c8ffda;
-    font-family:inherit;
-    width:80%;
-    user-select:text;
-}
-
-/* LAUNCHER */
-
-#launcher{
-    position:absolute;
-    left:50%;
-    bottom:90px;
-    transform:translateX(-50%);
-    width:460px;
-    max-width:calc(100vw - 30px);
-    background:rgba(14,17,24,.9);
-    border:1px solid var(--border);
-    backdrop-filter:blur(35px);
-    border-radius:20px;
-    padding:14px;
-    box-shadow:var(--shadow);
-    display:none;
-    z-index:9400;
-}
-
-#launcher.open{
-    display:block;
-}
-
-.launcher-search{
-    width:100%;
-    padding:13px;
-    border-radius:12px;
-    border:1px solid var(--border);
-    background:rgba(255,255,255,.05);
-    color:white;
-    outline:none;
-    user-select:text;
-    margin-bottom:12px;
-}
-
-.apps{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:8px;
-}
-
-.app{
-    padding:15px 8px;
-    border-radius:12px;
-    text-align:center;
-    cursor:pointer;
-    font-size:12px;
-}
-
-.app:hover{
-    background:rgba(255,255,255,.07);
-}
-
-.app-icon{
-    font-size:24px;
-    margin-bottom:7px;
-}
-
-/* POWIADOMIENIA */
-
-#notifications{
-    position:absolute;
-    right:20px;
-    top:72px;
-    width:330px;
-    background:rgba(14,17,24,.9);
-    backdrop-filter:blur(30px);
-    border:1px solid var(--border);
-    border-radius:18px;
-    padding:16px;
-    box-shadow:var(--shadow);
-    display:none;
-    z-index:9500;
-}
-
-#notifications.open{
-    display:block;
-}
-
-.notification{
-    padding:13px;
-    background:rgba(255,255,255,.04);
-    border-radius:12px;
-    margin-top:9px;
-    font-size:12px;
-}
-
-.notification small{
-    color:var(--muted);
-}
-
-/* RESPONSYWNOŚĆ */
-
-@media(max-width:650px){
-    .status-item:nth-child(1),
-    .status-item:nth-child(2){
-        display:none;
-    }
-
-    .window{
-        width:calc(100vw - 20px);
-        height:calc(100vh - 100px);
-    }
-
-    .sidebar{
-        width:125px;
-    }
-
-    .center h1{
-        font-size:34px;
-    }
-
-    .dock-item{
-        width:42px;
-        height:42px;
-    }
-}
-</style>
 </head>
 
 <body>
 
-<div id="desktop">
+    <!-- =========================================
+         NEXUS OS — PULPIT
+    ========================================== -->
 
-    <!-- GÓRNY PASEK -->
+    <div id="desktop">
 
-    <div class="topbar">
+        <!-- GÓRNY PASEK -->
+        <header class="topbar">
 
-        <div class="brand">
-            <div class="nexus-logo">N</div>
-            <span>NEXUS OS</span>
-        </div>
-
-        <div class="status">
-
-            <div class="status-item">
-                <span class="dot"></span>
-                SIEĆ
+            <div class="brand">
+                <div class="nexus-logo">N</div>
+                <div>
+                    <strong>NEXUS</strong>
+                    <span>OS</span>
+                </div>
             </div>
 
-            <div class="status-item">
-                🔒 SYSTEM BEZPIECZNY
+            <div class="center">
+                <div class="ai-orb"></div>
+
+                <div class="ai-search">
+                    <span>✦</span>
+                    <input
+                        id="aiCommand"
+                        type="text"
+                        placeholder="Zapytaj NEXUS AI..."
+                        autocomplete="off"
+                    >
+                    <button onclick="runAICommand()">↵</button>
+                </div>
+
+                <div class="suggestions">
+                    <button onclick="setAICommand('Otwórz pliki')">Otwórz pliki</button>
+                    <button onclick="setAICommand('Otwórz przeglądarkę')">Przeglądarka</button>
+                    <button onclick="setAICommand('Pokaż ustawienia')">Ustawienia</button>
+                </div>
             </div>
 
-            <div class="status-item" id="clock">
-                00:00
+            <div class="status">
+                <span id="networkStatus">● Połączono</span>
+                <span id="systemTime">00:00</span>
             </div>
 
-            <div class="status-item" id="notificationButton" style="cursor:pointer">
-                🔔
+        </header>
+
+
+        <!-- =========================================
+             GŁÓWNA PRZESTRZEŃ PULPITU
+        ========================================== -->
+
+        <main id="workspace">
+
+            <div class="desktop-welcome">
+                <div class="welcome-title">Witaj w NEXUS OS</div>
+                <div class="welcome-subtitle">
+                    System nowej generacji
+                </div>
             </div>
 
-        </div>
+        </main>
 
-    </div>
 
-    <!-- CENTRUM -->
+        <!-- =========================================
+             STACJA / DOCK
+        ========================================== -->
 
-    <main class="center">
+        <nav class="dock">
 
-        <div class="ai-orb"></div>
-
-        <h1>Co chcesz dziś zrobić?</h1>
-
-        <p class="subtitle">
-            NEXUS jest gotowy. Możesz otworzyć aplikację albo po prostu powiedzieć, czego potrzebujesz.
-        </p>
-
-        <div class="ai-search">
-
-            <input
-                id="mainAI"
-                placeholder="Zapytaj NEXUS o cokolwiek…"
-                autocomplete="off"
+            <button
+                class="dock-item"
+                title="Pliki"
+                onclick="openWindow('filesWindow')"
             >
+                <span>▣</span>
+            </button>
 
-            <button onclick="askNexus()">➜</button>
+            <button
+                class="dock-item"
+                title="Przeglądarka"
+                onclick="openWindow('browserWindow')"
+            >
+                <span>◎</span>
+            </button>
 
-        </div>
+            <button
+                class="dock-item"
+                title="NEXUS AI"
+                onclick="openWindow('aiWindow')"
+            >
+                <span>✦</span>
+            </button>
 
-        <div class="suggestions">
+            <button
+                class="dock-item"
+                title="Terminal"
+                onclick="openWindow('terminalWindow')"
+            >
+                <span>⌘</span>
+            </button>
 
-            <div class="suggestion" onclick="openWindow('files')">
-                📁 Otwórz pliki
+            <button
+                class="dock-item"
+                title="Ustawienia"
+                onclick="openWindow('settingsWindow')"
+            >
+                <span>⚙</span>
+            </button>
+
+            <div class="dock-separator"></div>
+
+            <button
+                class="dock-item"
+                title="Menu NEXUS"
+                onclick="toggleLauncher()"
+            >
+                <span>◈</span>
+            </button>
+
+        </nav>
+
+
+        <!-- =========================================
+             OKNO — PLIKI
+        ========================================== -->
+
+        <section
+            class="window"
+            id="filesWindow"
+            style="display:none;"
+        >
+
+            <div class="window-header">
+
+                <div class="window-title">
+                    <span>▣</span>
+                    <strong>Pliki</strong>
+                </div>
+
+                <div class="window-controls">
+                    <button onclick="minimizeWindow('filesWindow')">−</button>
+                    <button onclick="maximizeWindow('filesWindow')">□</button>
+                    <button onclick="closeWindow('filesWindow')">×</button>
+                </div>
+
             </div>
-
-            <div class="suggestion" onclick="openWindow('browser')">
-                🌐 Otwórz przeglądarkę
-            </div>
-
-            <div class="suggestion" onclick="openWindow('terminal')">
-                💻 Terminal
-            </div>
-
-            <div class="suggestion" onclick="openWindow('settings')">
-                ⚙️ Ustawienia
-            </div>
-
-        </div>
-
-    </main>
-
-
-    <!-- OKNO PLIKÓW -->
-
-    <div class="window" id="window-files">
-
-        <div class="window-header">
-
-            <div class="window-title">
-                📁 Pliki
-            </div>
-
-            <div class="window-controls">
-                <button onclick="minimizeWindow('files')">−</button>
-                <button class="close" onclick="closeWindow('files')">×</button>
-            </div>
-
-        </div>
-
-        <div class="window-body">
 
             <div class="files-layout">
 
                 <aside class="sidebar">
 
-                    <div class="side-item selected">
-                        🏠 Pulpit
-                    </div>
+                    <button class="sidebar-item active">
+                        <span>⌂</span>
+                        Pulpit
+                    </button>
 
-                    <div class="side-item">
-                        📄 Dokumenty
-                    </div>
+                    <button class="sidebar-item">
+                        <span>▣</span>
+                        Dokumenty
+                    </button>
 
-                    <div class="side-item">
-                        🖼️ Obrazy
-                    </div>
+                    <button class="sidebar-item">
+                        <span>↓</span>
+                        Pobrane
+                    </button>
 
-                    <div class="side-item">
-                        🎵 Muzyka
-                    </div>
+                    <button class="sidebar-item">
+                        <span>◈</span>
+                        Obrazy
+                    </button>
 
-                    <div class="side-item">
-                        🎬 Wideo
-                    </div>
+                    <button class="sidebar-item">
+                        <span>♫</span>
+                        Muzyka
+                    </button>
 
-                    <div class="side-item">
-                        ⬇️ Pobrane
-                    </div>
+                    <button class="sidebar-item">
+                        <span>▶</span>
+                        Wideo
+                    </button>
 
                 </aside>
 
-                <section class="file-area">
+                <div class="file-grid">
 
-                    <h2 style="margin-bottom:18px;font-size:18px">
-                        Pulpit
-                    </h2>
-
-                    <div class="file-grid">
-
-                        <div class="file">
-                            <div class="file-icon">📁</div>
-                            <div class="file-name">Projekty</div>
-                        </div>
-
-                        <div class="file">
-                            <div class="file-icon">📄</div>
-                            <div class="file-name">Notatki.txt</div>
-                        </div>
-
-                        <div class="file">
-                            <div class="file-icon">🖼️</div>
-                            <div class="file-name">Zdjęcia</div>
-                        </div>
-
-                        <div class="file">
-                            <div class="file-icon">🎵</div>
-                            <div class="file-name">Muzyka</div>
-                        </div>
-
+                    <div class="file-item">
+                        <div class="file-icon">📁</div>
+                        <span>Dokumenty</span>
                     </div>
 
-                </section>
+                    <div class="file-item">
+                        <div class="file-icon">📁</div>
+                        <span>Pobrane</span>
+                    </div>
+
+                    <div class="file-item">
+                        <div class="file-icon">📁</div>
+                        <span>Obrazy</span>
+                    </div>
+
+                    <div class="file-item">
+                        <div class="file-icon">📁</div>
+                        <span>Projekty</span>
+                    </div>
+
+                    <div class="file-item">
+                        <div class="file-icon">📄</div>
+                        <span>README.txt</span>
+                    </div>
+
+                    <div class="file-item">
+                        <div class="file-icon">⚙</div>
+                        <span>system.config</span>
+                    </div>
+
+                </div>
 
             </div>
 
-        </div>
-
-    </div>
+        </section>
 
 
-    <!-- AI -->
+        <!-- =========================================
+             OKNO — NEXUS AI
+        ========================================== -->
 
-    <div class="window" id="window-ai">
+        <section
+            class="window"
+            id="aiWindow"
+            style="display:none;"
+        >
 
-        <div class="window-header">
+            <div class="window-header">
 
-            <div class="window-title">
-                ✦ NEXUS AI
+                <div class="window-title">
+                    <span>✦</span>
+                    <strong>NEXUS AI</strong>
+                </div>
+
+                <div class="window-controls">
+                    <button onclick="minimizeWindow('aiWindow')">−</button>
+                    <button onclick="maximizeWindow('aiWindow')">□</button>
+                    <button onclick="closeWindow('aiWindow')">×</button>
+                </div>
+
             </div>
-
-            <div class="window-controls">
-                <button onclick="minimizeWindow('ai')">−</button>
-                <button class="close" onclick="closeWindow('ai')">×</button>
-            </div>
-
-        </div>
-
-        <div class="window-body">
 
             <div class="ai-chat">
 
-                <div class="chat-messages" id="chatMessages">
+                <div class="ai-message">
+                    <div class="ai-avatar">N</div>
 
-                    <div class="message nexus">
-                        <strong>NEXUS</strong><br><br>
-                        Witaj. Jestem centrum inteligencji systemu NEXUS OS.
-                        W tej wersji mogę obsługiwać podstawowe funkcje pulpitu.
+                    <div class="ai-bubble">
+                        <strong>NEXUS AI</strong>
+                        <p>
+                            Witaj. Jestem centralnym asystentem NEXUS OS.
+                            W czym mogę Ci pomóc?
+                        </p>
                     </div>
-
                 </div>
 
-                <div class="chat-input">
+                <div
+                    class="ai-messages"
+                    id="aiMessages"
+                ></div>
+
+                <div class="ai-input">
 
                     <input
-                        id="chatInput"
-                        placeholder="Napisz do NEXUS…"
-                        onkeydown="if(event.key==='Enter') sendChat()"
+                        id="aiChatInput"
+                        type="text"
+                        placeholder="Napisz polecenie..."
+                        autocomplete="off"
+                        onkeydown="handleAIKey(event)"
                     >
 
-                    <button onclick="sendChat()">➜</button>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- USTAWIENIA -->
-
-    <div class="window" id="window-settings">
-
-        <div class="window-header">
-
-            <div class="window-title">
-                ⚙️ Ustawienia
-            </div>
-
-            <div class="window-controls">
-                <button onclick="minimizeWindow('settings')">−</button>
-                <button class="close" onclick="closeWindow('settings')">×</button>
-            </div>
-
-        </div>
-
-        <div class="window-body">
-
-            <div class="settings">
-
-                <div class="setting-section">
-
-                    <h3>Wygląd</h3>
-
-                    <div class="setting">
-
-                        <div class="setting-info">
-                            Tryb ciemny
-                            <small>Preferowany wygląd NEXUS OS</small>
-                        </div>
-
-                        <div class="switch on" onclick="toggleTheme(this)">
-                            <span></span>
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div class="setting-section">
-
-                    <h3>System</h3>
-
-                    <div class="setting">
-
-                        <div class="setting-info">
-                            Animacje
-                            <small>Płynne przejścia interfejsu</small>
-                        </div>
-
-                        <div class="switch on">
-                            <span></span>
-                        </div>
-
-                    </div>
-
-                    <div class="setting">
-
-                        <div class="setting-info">
-                            Powiadomienia
-                            <small>Pokazuj informacje systemowe</small>
-                        </div>
-
-                        <div class="switch on">
-                            <span></span>
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div class="setting-section">
-
-                    <h3>O systemie</h3>
-
-                    <div class="setting">
-
-                        <div class="setting-info">
-                            NEXUS OS
-                            <small>Wersja demonstracyjna 0.1</small>
-                        </div>
-
-                        <strong>0.1.0</strong>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- PRZEGLĄDARKA -->
-
-    <div class="window" id="window-browser">
-
-        <div class="window-header">
-
-            <div class="window-title">
-                🌐 Przeglądarka NEXUS
-            </div>
-
-            <div class="window-controls">
-                <button onclick="minimizeWindow('browser')">−</button>
-                <button class="close" onclick="closeWindow('browser')">×</button>
-            </div>
-
-        </div>
-
-        <div class="window-body">
-
-            <div class="browser">
-
-                <div class="browser-bar">
-
-                    <input
-                        id="browserInput"
-                        placeholder="Wpisz adres lub wyszukiwane hasło…"
-                        onkeydown="if(event.key==='Enter') browserSearch()"
-                    >
-
-                    <button
-                        onclick="browserSearch()"
-                        style="background:var(--accent);padding:0 15px;border-radius:10px;cursor:pointer"
-                    >
-                        Szukaj
+                    <button onclick="sendAIMessage()">
+                        Wyślij
                     </button>
 
                 </div>
 
-                <div class="browser-page" id="browserPage">
+            </div>
 
-                    <div>
-                        <strong>Przeglądarka NEXUS</strong>
-                        <span>
-                            Wpisz adres lub wyszukiwane hasło powyżej.
-                        </span>
+        </section>
+
+
+        <!-- =========================================
+             OKNO — USTAWIENIA
+        ========================================== -->
+
+        <section
+            class="window"
+            id="settingsWindow"
+            style="display:none;"
+        >
+
+            <div class="window-header">
+
+                <div class="window-title">
+                    <span>⚙</span>
+                    <strong>Ustawienia</strong>
+                </div>
+
+                <div class="window-controls">
+                    <button onclick="minimizeWindow('settingsWindow')">−</button>
+                    <button onclick="maximizeWindow('settingsWindow')">□</button>
+                    <button onclick="closeWindow('settingsWindow')">×</button>
+                </div>
+
+            </div>
+
+            <div class="settings">
+
+                <div class="settings-section">
+
+                    <h3>System</h3>
+
+                    <button class="settings-item">
+                        <span>🖥</span>
+                        <div>
+                            <strong>Wygląd</strong>
+                            <small>Personalizacja NEXUS OS</small>
+                        </div>
+                    </button>
+
+                    <button class="settings-item">
+                        <span>🔔</span>
+                        <div>
+                            <strong>Powiadomienia</strong>
+                            <small>Zarządzanie powiadomieniami</small>
+                        </div>
+                    </button>
+
+                    <button class="settings-item">
+                        <span>🔒</span>
+                        <div>
+                            <strong>Bezpieczeństwo</strong>
+                            <small>Uprawnienia i ochrona systemu</small>
+                        </div>
+                    </button>
+
+                </div>
+
+                <div class="settings-section">
+
+                    <h3>NEXUS AI</h3>
+
+                    <button class="settings-item">
+                        <span>✦</span>
+                        <div>
+                            <strong>Asystent AI</strong>
+                            <small>Konfiguracja NEXUS AI</small>
+                        </div>
+                    </button>
+
+                    <button class="settings-item">
+                        <span>🧠</span>
+                        <div>
+                            <strong>Pamięć AI</strong>
+                            <small>Zarządzanie pamięcią i kontekstem</small>
+                        </div>
+                    </button>
+
+                </div>
+
+                <div class="settings-section">
+
+                    <h3>Informacje</h3>
+
+                    <div class="settings-info">
+                        <strong>NEXUS OS</strong>
+                        <span>Wersja demonstracyjna 0.1</span>
                     </div>
 
                 </div>
 
             </div>
 
-        </div>
-
-    </div>
+        </section>
 
 
-    <!-- TERMINAL -->
+        <!-- =========================================
+             OKNO — PRZEGLĄDARKA
+        ========================================== -->
 
-    <div class="window" id="window-terminal">
+        <section
+            class="window"
+            id="browserWindow"
+            style="display:none;"
+        >
 
-        <div class="window-header">
+            <div class="window-header">
 
-            <div class="window-title">
-                💻 Terminal NEXUS
+                <div class="window-title">
+                    <span>◎</span>
+                    <strong>Przeglądarka NEXUS</strong>
+                </div>
+
+                <div class="window-controls">
+                    <button onclick="minimizeWindow('browserWindow')">−</button>
+                    <button onclick="maximizeWindow('browserWindow')">□</button>
+                    <button onclick="closeWindow('browserWindow')">×</button>
+                </div>
+
             </div>
 
-            <div class="window-controls">
-                <button onclick="minimizeWindow('terminal')">−</button>
-                <button class="close" onclick="closeWindow('terminal')">×</button>
-            </div>
+            <div class="browser">
 
-        </div>
+                <div class="browser-toolbar">
 
-        <div class="window-body">
+                    <button onclick="browserBack()">←</button>
+                    <button onclick="browserForward()">→</button>
+                    <button onclick="browserReload()">↻</button>
 
-            <div class="terminal" id="terminal">
-
-                <div class="terminal-line">
-                    NEXUS Terminal 0.1
-                </div>
-
-                <div class="terminal-line">
-                    System gotowy.
-                </div>
-
-                <div class="terminal-line">
-                    Wpisz „pomoc”, aby zobaczyć dostępne polecenia.
-                </div>
-
-                <br>
-
-                <div class="terminal-line">
-                    nexus@system:~$
                     <input
-                        class="terminal-input"
-                        id="terminalInput"
-                        autofocus
-                        onkeydown="terminalCommand(event)"
+                        id="browserAddress"
+                        type="text"
+                        value="nexus://start"
+                        placeholder="Wpisz adres lub wyszukiwane hasło..."
+                        onkeydown="handleBrowserKey(event)"
                     >
+
+                    <button onclick="navigateBrowser()">
+                        Przejdź
+                    </button>
+
+                </div>
+
+                <div
+                    class="browser-content"
+                    id="browserContent"
+                >
+
+                    <div class="browser-start">
+
+                        <div class="browser-logo">
+                            N
+                        </div>
+
+                        <h1>NEXUS</h1>
+
+                        <p>
+                            Prywatna przestrzeń internetowa
+                        </p>
+
+                        <div class="browser-search">
+
+                            <input
+                                id="browserSearch"
+                                type="text"
+                                placeholder="Czego szukasz?"
+                                onkeydown="handleSearchKey(event)"
+                            >
+
+                            <button onclick="browserSearch()">
+                                Szukaj
+                            </button>
+
+                        </div>
+
+                    </div>
+
                 </div>
 
             </div>
 
+        </section>
+
+
+        <!-- =========================================
+             OKNO — TERMINAL
+        ========================================== -->
+
+        <section
+            class="window"
+            id="terminalWindow"
+            style="display:none;"
+        >
+
+            <div class="window-header">
+
+                <div class="window-title">
+                    <span>⌘</span>
+                    <strong>Terminal NEXUS</strong>
+                </div>
+
+                <div class="window-controls">
+                    <button onclick="minimizeWindow('terminalWindow')">−</button>
+                    <button onclick="maximizeWindow('terminalWindow')">□</button>
+                    <button onclick="closeWindow('terminalWindow')">×</button>
+                </div>
+
+            </div>
+
+            <div class="terminal">
+
+                <div id="terminalOutput">
+
+                    <div>
+                        NEXUS Terminal 0.1
+                    </div>
+
+                    <div>
+                        Wpisz <strong>help</strong>, aby zobaczyć dostępne polecenia.
+                    </div>
+
+                </div>
+
+                <div class="terminal-input">
+
+                    <span>nexus@system:~$</span>
+
+                    <input
+                        id="terminalInput"
+                        type="text"
+                        autocomplete="off"
+                        onkeydown="handleTerminalKey(event)"
+                    >
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             LAUNCHER
+        ========================================== -->
+
+        <div
+            id="launcher"
+            style="display:none;"
+        >
+
+            <div class="launcher-header">
+
+                <div>
+                    <strong>NEXUS</strong>
+                    <span>Wszystkie aplikacje</span>
+                </div>
+
+                <button onclick="toggleLauncher()">×</button>
+
+            </div>
+
+            <div class="launcher-search">
+
+                <input
+                    id="launcherSearch"
+                    type="text"
+                    placeholder="Szukaj aplikacji..."
+                    oninput="filterLauncher()"
+                >
+
+            </div>
+
+            <div
+                class="launcher-grid"
+                id="launcherGrid"
+            >
+
+                <button
+                    class="launcher-app"
+                    data-name="pliki"
+                    onclick="launchApp('filesWindow')"
+                >
+                    <span>▣</span>
+                    <strong>Pliki</strong>
+                </button>
+
+                <button
+                    class="launcher-app"
+                    data-name="przegladarka"
+                    onclick="launchApp('browserWindow')"
+                >
+                    <span>◎</span>
+                    <strong>Przeglądarka</strong>
+                </button>
+
+                <button
+                    class="launcher-app"
+                    data-name="nexus ai"
+                    onclick="launchApp('aiWindow')"
+                >
+                    <span>✦</span>
+                    <strong>NEXUS AI</strong>
+                </button>
+
+                <button
+                    class="launcher-app"
+                    data-name="terminal"
+                    onclick="launchApp('terminalWindow')"
+                >
+                    <span>⌘</span>
+                    <strong>Terminal</strong>
+                </button>
+
+                <button
+                    class="launcher-app"
+                    data-name="ustawienia"
+                    onclick="launchApp('settingsWindow')"
+                >
+                    <span>⚙</span>
+                    <strong>Ustawienia</strong>
+                </button>
+
+                <button
+                    class="launcher-app"
+                    data-name="gry"
+                    onclick="showNotification('NEXUS Arcade','Moduł gier zostanie uruchomiony w kolejnej wersji.')"
+                >
+                    <span>🎮</span>
+                    <strong>Gry</strong>
+                </button>
+
+                <button
+                    class="launcher-app"
+                    data-name="tv"
+                    onclick="showNotification('NEXUS TV','Moduł telewizji zostanie uruchomiony w kolejnej wersji.')"
+                >
+                    <span>📺</span>
+                    <strong>NEXUS TV</strong>
+                </button>
+
+            </div>
+
         </div>
+
+
+        <!-- =========================================
+             POWIADOMIENIA
+        ========================================== -->
+
+        <div id="notifications"></div>
 
     </div>
 
 
-    <!-- LAUNCHER -->
+    <!-- =========================================
+         JAVASCRIPT — TYMCZASOWO TUTAJ
+    ========================================== -->
 
-    <div id="launcher">
+    <script>
 
-        <input
-            class="launcher-search"
-            id="launcherSearch"
-            placeholder="Szukaj aplikacji…"
-            oninput="filterApps()"
-        >
+        /* -----------------------------------------
+           ZMIENNE SYSTEMOWE
+        ----------------------------------------- */
 
-        <div class="apps" id="apps">
-
-            <div class="app" data-name="pliki" onclick="openFromLauncher('files')">
-                <div class="app-icon">📁</div>
-                Pliki
-            </div>
-
-            <div class="app" data-name="przeglądarka" onclick="openFromLauncher('browser')">
-                <div class="app-icon">🌐</div>
-                Przeglądarka
-            </div>
-
-            <div class="app" data-name="nexus ai sztuczna inteligencja" onclick="openFromLauncher('ai')">
-                <div class="app-icon">✦</div>
-                NEXUS AI
-            </div>
-
-            <div class="app" data-name="terminal" onclick="openFromLauncher('terminal')">
-                <div class="app-icon">💻</div>
-                Terminal
-            </div>
-
-            <div class="app" data-name="gry" onclick="showComingSoon('Gry')">
-                <div class="app-icon">🎮</div>
-                Gry
-            </div>
-
-            <div class="app" data-name="telewizja" onclick="showComingSoon('Telewizja')">
-                <div class="app-icon">📺</div>
-                Telewizja
-            </div>
-
-            <div class="app" data-name="ustawienia" onclick="openFromLauncher('settings')">
-                <div class="app-icon">⚙️</div>
-                Ustawienia
-            </div>
-
-        </div>
-
-    </div>
+        let activeWindow = null;
+        let highestZIndex = 100;
+        let maximizedWindows = {};
 
 
-    <!-- POWIADOMIENIA -->
+        /* -----------------------------------------
+           ZEGAR
+        ----------------------------------------- */
 
-    <div id="notifications">
+        function updateClock() {
 
-        <strong>Powiadomienia</strong>
+            const clock = document.getElementById("systemTime");
 
-        <div class="notification">
-            🟣 <strong>NEXUS OS</strong>
-            <br>
-            <small>System działa prawidłowo.</small>
-        </div>
+            if (!clock) return;
 
-        <div class="notification">
-            🔐 <strong>Bezpieczeństwo</strong>
-            <br>
-            <small>Ochrona systemu jest aktywna.</small>
-        </div>
+            const now = new Date();
 
-    </div>
+            clock.textContent =
+                now.toLocaleTimeString("pl-PL", {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                });
+        }
 
-
-    <!-- DOCK -->
-
-    <div class="dock">
-
-        <div
-            class="dock-item"
-            title="NEXUS"
-            onclick="toggleLauncher()"
-        >
-            ✦
-        </div>
-
-        <div
-            class="dock-item"
-            title="Pliki"
-            onclick="openWindow('files')"
-        >
-            📁
-        </div>
-
-        <div
-            class="dock-item"
-            title="Przeglądarka"
-            onclick="openWindow('browser')"
-        >
-            🌐
-        </div>
-
-        <div
-            class="dock-item"
-            title="Gry"
-            onclick="showComingSoon('Gry')"
-        >
-            🎮
-        </div>
-
-        <div
-            class="dock-item"
-            title="Telewizja"
-            onclick="showComingSoon('Telewizja')"
-        >
-            📺
-        </div>
-
-        <div
-            class="dock-item"
-            title="NEXUS AI"
-            onclick="openWindow('ai')"
-        >
-            🧠
-        </div>
-
-        <div
-            class="dock-item"
-            title="Terminal"
-            onclick="openWindow('terminal')"
-        >
-            💻
-        </div>
-
-        <div
-            class="dock-item"
-            title="Ustawienia"
-            onclick="openWindow('settings')"
-        >
-            ⚙️
-        </div>
-
-    </div>
-
-</div>
+        updateClock();
+        setInterval(updateClock, 1000);
 
 
-<script>
+        /* -----------------------------------------
+           OKNA
+        ----------------------------------------- */
 
-/* ==========================================
-   ZEGAR
-========================================== */
+        function openWindow(id) {
 
-function updateClock(){
+            const win = document.getElementById(id);
 
-    const now = new Date();
+            if (!win) return;
 
-    document.getElementById("clock").textContent =
-        now.toLocaleTimeString("pl-PL",{
-            hour:"2-digit",
-            minute:"2-digit"
+            win.style.display = "flex";
+
+            highestZIndex++;
+
+            win.style.zIndex = highestZIndex;
+
+            activeWindow = id;
+
+            closeLauncher();
+
+            if (id === "terminalWindow") {
+
+                setTimeout(() => {
+
+                    const input =
+                        document.getElementById("terminalInput");
+
+                    if (input) input.focus();
+
+                }, 100);
+
+            }
+
+            if (id === "aiWindow") {
+
+                setTimeout(() => {
+
+                    const input =
+                        document.getElementById("aiChatInput");
+
+                    if (input) input.focus();
+
+                }, 100);
+
+            }
+        }
+
+
+        function closeWindow(id) {
+
+            const win = document.getElementById(id);
+
+            if (!win) return;
+
+            win.style.display = "none";
+
+            if (activeWindow === id) {
+                activeWindow = null;
+            }
+        }
+
+
+        function minimizeWindow(id) {
+
+            const win = document.getElementById(id);
+
+            if (!win) return;
+
+            win.style.display = "none";
+        }
+
+
+        function maximizeWindow(id) {
+
+            const win = document.getElementById(id);
+
+            if (!win) return;
+
+            if (!maximizedWindows[id]) {
+
+                win.dataset.previousStyle =
+                    win.getAttribute("style") || "";
+
+                win.style.left = "0";
+                win.style.top = "0";
+                win.style.width = "100%";
+                win.style.height = "calc(100% - 90px)";
+                win.style.borderRadius = "0";
+
+                maximizedWindows[id] = true;
+
+            } else {
+
+                win.setAttribute(
+                    "style",
+                    win.dataset.previousStyle || "display:flex;"
+                );
+
+                win.style.display = "flex";
+
+                maximizedWindows[id] = false;
+            }
+        }
+
+
+        /* -----------------------------------------
+           AKTYWNE OKNO
+        ----------------------------------------- */
+
+        document.addEventListener("mousedown", function(event) {
+
+            const win =
+                event.target.closest(".window");
+
+            if (!win) return;
+
+            highestZIndex++;
+
+            win.style.zIndex = highestZIndex;
+
+            activeWindow = win.id;
         });
 
-}
 
-setInterval(updateClock,1000);
-updateClock();
+        /* -----------------------------------------
+           LAUNCHER
+        ----------------------------------------- */
 
+        function toggleLauncher() {
 
-/* ==========================================
-   OKNA
-========================================== */
+            const launcher =
+                document.getElementById("launcher");
 
-let zIndex = 100;
+            if (!launcher) return;
 
-function openWindow(name){
+            if (
+                launcher.style.display === "none" ||
+                launcher.style.display === ""
+            ) {
 
-    const win = document.getElementById("window-"+name);
+                launcher.style.display = "block";
 
-    if(!win) return;
+                const input =
+                    document.getElementById("launcherSearch");
 
-    zIndex++;
+                if (input) {
 
-    win.style.zIndex = zIndex;
+                    setTimeout(() => {
+                        input.focus();
+                    }, 100);
+                }
 
-    win.classList.add("open");
+            } else {
 
-    document.getElementById("launcher").classList.remove("open");
-
-}
-
-function closeWindow(name){
-
-    const win = document.getElementById("window-"+name);
-
-    if(win){
-        win.classList.remove("open");
-    }
-
-}
-
-function minimizeWindow(name){
-
-    closeWindow(name);
-
-}
+                closeLauncher();
+            }
+        }
 
 
-/* ==========================================
-   LAUNCHER
-========================================== */
+        function closeLauncher() {
 
-function toggleLauncher(){
+            const launcher =
+                document.getElementById("launcher");
 
-    document
-        .getElementById("launcher")
-        .classList.toggle("open");
+            if (launcher) {
+                launcher.style.display = "none";
+            }
+        }
 
-}
 
-function openFromLauncher(name){
+        function launchApp(id) {
 
-    document
-        .getElementById("launcher")
-        .classList.remove("open");
+            closeLauncher();
+            openWindow(id);
+        }
 
-    openWindow(name);
 
-}
+        function filterLauncher() {
 
-function filterApps(){
+            const input =
+                document.getElementById("launcherSearch");
 
-    const query =
+            const query =
+                input.value.toLowerCase().trim();
+
+            document
+                .querySelectorAll(".launcher-app")
+                .forEach(app => {
+
+                    const name =
+                        app.dataset.name || "";
+
+                    app.style.display =
+                        name.includes(query)
+                            ? "flex"
+                            : "none";
+                });
+        }
+
+
+        /* -----------------------------------------
+           NEXUS AI — GŁÓWNY PANEL
+        ----------------------------------------- */
+
+        function setAICommand(text) {
+
+            const input =
+                document.getElementById("aiCommand");
+
+            if (!input) return;
+
+            input.value = text;
+
+            input.focus();
+        }
+
+
+        function runAICommand() {
+
+            const input =
+                document.getElementById("aiCommand");
+
+            if (!input) return;
+
+            const command =
+                input.value.toLowerCase().trim();
+
+            if (!command) return;
+
+
+            if (
+                command.includes("pliki") ||
+                command.includes("plik")
+            ) {
+
+                openWindow("filesWindow");
+
+            } else if (
+                command.includes("przeglądark") ||
+                command.includes("internet")
+            ) {
+
+                openWindow("browserWindow");
+
+            } else if (
+                command.includes("ustaw")
+            ) {
+
+                openWindow("settingsWindow");
+
+            } else if (
+                command.includes("terminal")
+            ) {
+
+                openWindow("terminalWindow");
+
+            } else if (
+                command.includes("ai") ||
+                command.includes("asystent")
+            ) {
+
+                openWindow("aiWindow");
+
+            } else {
+
+                showNotification(
+                    "NEXUS AI",
+                    "Odebrałem polecenie: „" +
+                    input.value +
+                    "”. Funkcja AI zostanie rozbudowana."
+                );
+
+            }
+
+            input.value = "";
+        }
+
+
         document
-        .getElementById("launcherSearch")
-        .value
-        .toLowerCase();
+            .getElementById("aiCommand")
+            ?.addEventListener("keydown", function(event) {
 
-    document
-        .querySelectorAll(".app")
-        .forEach(app=>{
+                if (event.key === "Enter") {
+                    runAICommand();
+                }
 
-            app.style.display =
-                app.dataset.name.includes(query)
-                ? "block"
-                : "none";
-
-        });
-
-}
+            });
 
 
-/* ==========================================
-   POWIADOMIENIA
-========================================== */
+        /* -----------------------------------------
+           CZAT AI
+        ----------------------------------------- */
 
-document
-    .getElementById("notificationButton")
-    .onclick = function(){
+        function handleAIKey(event) {
 
-        document
-            .getElementById("notifications")
-            .classList.toggle("open");
-
-    };
-
-
-/* ==========================================
-   NEXUS AI
-========================================== */
-
-function askNexus(){
-
-    const input =
-        document.getElementById("mainAI");
-
-    const value =
-        input.value.trim();
-
-    if(!value) return;
-
-    input.value = "";
-
-    openWindow("ai");
-
-    addMessage("user",value);
-
-    setTimeout(()=>{
-
-        let response =
-            "Rozumiem. Jestem jeszcze w trybie demonstracyjnym, ale w kolejnych wersjach otrzymam dostęp do prawdziwych funkcji systemowych.";
-
-        const lower = value.toLowerCase();
-
-        if(lower.includes("plik")){
-            response =
-                "Otwieram Menedżer plików.";
-            openWindow("files");
+            if (event.key === "Enter") {
+                sendAIMessage();
+            }
         }
 
-        else if(lower.includes("ustaw")){
-            response =
-                "Otwieram Ustawienia NEXUS OS.";
-            openWindow("settings");
-        }
 
-        else if(lower.includes("terminal")){
-            response =
-                "Otwieram Terminal NEXUS.";
-            openWindow("terminal");
-        }
+        function sendAIMessage() {
 
-        else if(lower.includes("przeglądark")){
-            response =
-                "Otwieram Przeglądarkę NEXUS.";
-            openWindow("browser");
-        }
+            const input =
+                document.getElementById("aiChatInput");
 
-        addMessage("nexus",response);
+            const messages =
+                document.getElementById("aiMessages");
 
-    },500);
+            if (!input || !messages) return;
 
-}
+            const text =
+                input.value.trim();
 
-function addMessage(type,text){
-
-    const box =
-        document.getElementById("chatMessages");
-
-    const message =
-        document.createElement("div");
-
-    message.className =
-        "message "+type;
-
-    message.innerHTML =
-        type === "nexus"
-        ? "<strong>NEXUS</strong><br><br>"+text
-        : text;
-
-    box.appendChild(message);
-
-    box.scrollTop =
-        box.scrollHeight;
-
-}
-
-function sendChat(){
-
-    const input =
-        document.getElementById("chatInput");
-
-    const value =
-        input.value.trim();
-
-    if(!value) return;
-
-    input.value = "";
-
-    addMessage("user",value);
-
-    setTimeout(()=>{
-
-        addMessage(
-            "nexus",
-            "Otrzymałem polecenie: „"+
-            value+
-            "”. Moduł prawdziwej inteligencji zostanie podłączony do NEXUS OS w następnym etapie."
-        );
-
-    },500);
-
-}
+            if (!text) return;
 
 
-/* ==========================================
-   PRZEGLĄDARKA
-========================================== */
+            const userMessage =
+                document.createElement("div");
 
-function browserSearch(){
+            userMessage.className =
+                "ai-message user";
 
-    const input =
-        document.getElementById("browserInput");
-
-    const query =
-        input.value.trim();
-
-    if(!query) return;
-
-    const page =
-        document.getElementById("browserPage");
-
-    page.innerHTML = `
-        <div>
-            <strong>Wyszukiwanie</strong>
-            <span>NEXUS otrzymał zapytanie:</span>
-            <br><br>
-            <b style="color:white">${escapeHtml(query)}</b>
-        </div>
-    `;
-
-}
-
-
-/* ==========================================
-   TERMINAL
-========================================== */
-
-function terminalCommand(event){
-
-    if(event.key !== "Enter") return;
-
-    const input =
-        document.getElementById("terminalInput");
-
-    const command =
-        input.value.trim();
-
-    if(!command) return;
-
-    const terminal =
-        document.getElementById("terminal");
-
-    const line =
-        document.createElement("div");
-
-    line.className =
-        "terminal-line";
-
-    line.textContent =
-        "nexus@system:~$ "+command;
-
-    terminal.insertBefore(
-        line,
-        input.parentElement
-    );
-
-    let response = "";
-
-    switch(command.toLowerCase()){
-
-        case "pomoc":
-
-            response =
-                "Dostępne polecenia: pomoc, czysc, data, system, wersja";
-
-            break;
-
-        case "data":
-
-            response =
-                new Date().toLocaleString("pl-PL");
-
-            break;
-
-        case "system":
-
-            response =
-                "NEXUS OS — system aktywny";
-
-            break;
-
-        case "wersja":
-
-            response =
-                "NEXUS OS 0.1.0";
-
-            break;
-
-        case "czysc":
-
-            terminal.innerHTML = `
-                <div class="terminal-line">
-                    NEXUS Terminal 0.1
+            userMessage.innerHTML = `
+                <div class="ai-bubble">
+                    <strong>Ty</strong>
+                    <p>${escapeHTML(text)}</p>
                 </div>
             `;
 
-            break;
+            messages.appendChild(userMessage);
 
-        default:
+            input.value = "";
 
-            response =
-                "Nie znaleziono polecenia. Wpisz „pomoc”.";
-
-    }
-
-    if(response){
-
-        const output =
-            document.createElement("div");
-
-        output.className =
-            "terminal-line";
-
-        output.style.color =
-            "#8f98a8";
-
-        output.textContent =
-            response;
-
-        terminal.insertBefore(
-            output,
-            input.parentElement
-        );
-
-    }
-
-    input.value = "";
-
-    terminal.scrollTop =
-        terminal.scrollHeight;
-
-}
+            messages.scrollTop =
+                messages.scrollHeight;
 
 
-/* ==========================================
-   USTAWIENIA
-========================================== */
+            setTimeout(() => {
 
-function toggleTheme(element){
+                const response =
+                    document.createElement("div");
 
-    element.classList.toggle("on");
+                response.className =
+                    "ai-message";
 
-}
+                response.innerHTML = `
+                    <div class="ai-avatar">N</div>
+                    <div class="ai-bubble">
+                        <strong>NEXUS AI</strong>
+                        <p>
+                            Przyjąłem polecenie.
+                            Prawdziwy silnik NEXUS AI
+                            zostanie podłączony do systemu
+                            w kolejnych etapach projektu.
+                        </p>
+                    </div>
+                `;
 
+                messages.appendChild(response);
 
-/* ==========================================
-   FUNKCJE POMOCNICZE
-========================================== */
+                messages.scrollTop =
+                    messages.scrollHeight;
 
-function showComingSoon(name){
-
-    alert(
-        name+
-        " jest obecnie modułem rozwojowym NEXUS OS."
-    );
-
-}
-
-function escapeHtml(text){
-
-    const div =
-        document.createElement("div");
-
-    div.textContent = text;
-
-    return div.innerHTML;
-
-}
-
-
-/* ==========================================
-   PRZECIĄGANIE OKIEN
-========================================== */
-
-document
-    .querySelectorAll(".window")
-    .forEach(win=>{
-
-        const header =
-            win.querySelector(".window-header");
-
-        let dragging = false;
-        let offsetX = 0;
-        let offsetY = 0;
-
-        header.addEventListener(
-            "mousedown",
-            e=>{
-
-                dragging = true;
-
-                zIndex++;
-
-                win.style.zIndex =
-                    zIndex;
-
-                const rect =
-                    win.getBoundingClientRect();
-
-                offsetX =
-                    e.clientX -
-                    rect.left;
-
-                offsetY =
-                    e.clientY -
-                    rect.top;
-
-                win.style.transform =
-                    "none";
-
-                win.style.left =
-                    rect.left+"px";
-
-                win.style.top =
-                    rect.top+"px";
-
-            }
-        );
-
-        document.addEventListener(
-            "mousemove",
-            e=>{
-
-                if(!dragging) return;
-
-                win.style.left =
-                    (e.clientX-offsetX)+"px";
-
-                win.style.top =
-                    (e.clientY-offsetY)+"px";
-
-            }
-        );
-
-        document.addEventListener(
-            "mouseup",
-            ()=>{
-
-                dragging = false;
-
-            }
-        );
-
-    });
-
-
-/* ==========================================
-   KLAWISZ ESC
-========================================== */
-
-document.addEventListener(
-    "keydown",
-    e=>{
-
-        if(e.key === "Escape"){
-
-            document
-                .getElementById("launcher")
-                .classList.remove("open");
-
-            document
-                .getElementById("notifications")
-                .classList.remove("open");
-
+            }, 500);
         }
 
-    }
-);
 
-</script>
+        /* -----------------------------------------
+           PRZEGLĄDARKA
+        ----------------------------------------- */
+
+        function handleBrowserKey(event) {
+
+            if (event.key === "Enter") {
+                navigateBrowser();
+            }
+        }
+
+
+        function navigateBrowser() {
+
+            const input =
+                document.getElementById("browserAddress");
+
+            if (!input) return;
+
+            const address =
+                input.value.trim();
+
+            if (!address) return;
+
+            const content =
+                document.getElementById("browserContent");
+
+            if (!content) return;
+
+            content.innerHTML = `
+                <div class="browser-start">
+                    <div class="browser-logo">N</div>
+                    <h1>${escapeHTML(address)}</h1>
+                    <p>
+                        NEXUS Browser jest obecnie
+                        w wersji demonstracyjnej.
+                    </p>
+                </div>
+            `;
+        }
+
+
+        function browserSearch() {
+
+            const input =
+                document.getElementById("browserSearch");
+
+            if (!input) return;
+
+            const query =
+                input.value.trim();
+
+            if (!query) return;
+
+            const address =
+                document.getElementById("browserAddress");
+
+            if (address) {
+                address.value = query;
+            }
+
+            navigateBrowser();
+        }
+
+
+        function handleSearchKey(event) {
+
+            if (event.key === "Enter") {
+                browserSearch();
+            }
+        }
+
+
+        function browserBack() {
+
+            showNotification(
+                "Przeglądarka",
+                "Brak poprzedniej strony."
+            );
+        }
+
+
+        function browserForward() {
+
+            showNotification(
+                "Przeglądarka",
+                "Brak następnej strony."
+            );
+        }
+
+
+        function browserReload() {
+
+            showNotification(
+                "Przeglądarka",
+                "Strona została odświeżona."
+            );
+        }
+
+
+        /* -----------------------------------------
+           TERMINAL
+        ----------------------------------------- */
+
+        function handleTerminalKey(event) {
+
+            if (event.key !== "Enter") return;
+
+            const input =
+                document.getElementById("terminalInput");
+
+            const output =
+                document.getElementById("terminalOutput");
+
+            if (!input || !output) return;
+
+            const command =
+                input.value.trim();
+
+            if (!command) return;
+
+            const line =
+                document.createElement("div");
+
+            line.innerHTML =
+                `<span>nexus@system:~$</span> ${
+                    escapeHTML(command)
+                }`;
+
+            output.appendChild(line);
+
+
+            const result =
+                document.createElement("div");
+
+            const lower =
+                command.toLowerCase();
+
+
+            if (lower === "help") {
+
+                result.innerHTML = `
+                    Dostępne polecenia:
+                    <br>
+                    <strong>help</strong> — pomoc
+                    <br>
+                    <strong>clear</strong> — wyczyść ekran
+                    <br>
+                    <strong>time</strong> — aktualny czas
+                    <br>
+                    <strong>system</strong> — informacje o systemie
+                    <br>
+                    <strong>open</strong> — otwórz aplikację
+                `;
+
+            } else if (lower === "clear") {
+
+                output.innerHTML = "";
+
+                input.value = "";
+
+                return;
+
+            } else if (lower === "time") {
+
+                result.textContent =
+                    new Date().toLocaleString("pl-PL");
+
+            } else if (lower === "system") {
+
+                result.innerHTML = `
+                    NEXUS OS<br>
+                    Wersja: 0.1<br>
+                    Tryb: demonstracyjny<br>
+                    Status: aktywny
+                `;
+
+            } else if (lower.startsWith("open ")) {
+
+                const app =
+                    lower.replace("open ", "").trim();
+
+                if (app.includes("pliki")) {
+
+                    openWindow("filesWindow");
+
+                } else if (app.includes("browser") ||
+                           app.includes("przeglądark")) {
+
+                    openWindow("browserWindow");
+
+                } else if (app.includes("ai")) {
+
+                    openWindow("aiWindow");
+
+                } else if (app.includes("ustaw")) {
+
+                    openWindow("settingsWindow");
+
+                } else {
+
+                    result.textContent =
+                        "Nie znaleziono aplikacji.";
+
+                }
+
+            } else {
+
+                result.textContent =
+                    "Polecenie nie zostało rozpoznane. Wpisz „help”.";
+
+            }
+
+            output.appendChild(result);
+
+            input.value = "";
+
+            output.scrollTop =
+                output.scrollHeight;
+        }
+
+
+        /* -----------------------------------------
+           POWIADOMIENIA
+        ----------------------------------------- */
+
+        function showNotification(title, message) {
+
+            const container =
+                document.getElementById("notifications");
+
+            if (!container) return;
+
+            const notification =
+                document.createElement("div");
+
+            notification.className =
+                "notification";
+
+            notification.innerHTML = `
+                <strong>${escapeHTML(title)}</strong>
+                <span>${escapeHTML(message)}</span>
+            `;
+
+            container.appendChild(notification);
+
+
+            setTimeout(() => {
+
+                notification.remove();
+
+            }, 4500);
+        }
+
+
+        /* -----------------------------------------
+           ZABEZPIECZENIE TEKSTU
+        ----------------------------------------- */
+
+        function escapeHTML(text) {
+
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+
+        /* -----------------------------------------
+           START SYSTEMU
+        ----------------------------------------- */
+
+        setTimeout(() => {
+
+            showNotification(
+                "NEXUS OS",
+                "System został uruchomiony."
+            );
+
+        }, 1000);
+
+    </script>
 
 </body>
 </html>
