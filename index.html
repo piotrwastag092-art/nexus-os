@@ -1,639 +1,99 @@
 <!DOCTYPE html>
 <html lang="pl">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>NEXUS OS</title>
 
-    <link rel="stylesheet" href="css/nexus.css">
+    <!-- GŁÓWNY STYL NEXUS OS -->
+    <link
+        rel="stylesheet"
+        href="css/nexus.css"
+    >
+
 </head>
+
 
 <body>
 
-    <!-- =========================================
-         NEXUS OS — PULPIT
-    ========================================== -->
+<div id="desktop">
 
-    <div id="desktop">
 
-        <!-- GÓRNY PASEK -->
-        <header class="topbar">
+    <!-- =====================================
+         GÓRNY PASEK
+    ====================================== -->
 
-            <div class="brand">
-                <div class="nexus-logo">N</div>
-                <div>
-                    <strong>NEXUS</strong>
-                    <span>OS</span>
-                </div>
+    <header class="topbar">
+
+        <div class="brand">
+
+            <div class="nexus-logo">
+                N
             </div>
 
-            <div class="center">
-                <div class="ai-orb"></div>
+            <div>
 
-                <div class="ai-search">
-                    <span>✦</span>
-                    <input
-                        id="aiCommand"
-                        type="text"
-                        placeholder="Zapytaj NEXUS AI..."
-                        autocomplete="off"
-                    >
-                    <button onclick="runAICommand()">↵</button>
-                </div>
+                <strong>NEXUS</strong>
 
-                <div class="suggestions">
-                    <button onclick="setAICommand('Otwórz pliki')">Otwórz pliki</button>
-                    <button onclick="setAICommand('Otwórz przeglądarkę')">Przeglądarka</button>
-                    <button onclick="setAICommand('Pokaż ustawienia')">Ustawienia</button>
-                </div>
+                <span>OS</span>
+
             </div>
 
-            <div class="status">
-                <span id="networkStatus">● Połączono</span>
-                <span id="systemTime">00:00</span>
-            </div>
-
-        </header>
+        </div>
 
 
-        <!-- =========================================
-             GŁÓWNA PRZESTRZEŃ PULPITU
-        ========================================== -->
+        <div class="center">
 
-        <main id="workspace">
-
-            <div class="desktop-welcome">
-                <div class="welcome-title">Witaj w NEXUS OS</div>
-                <div class="welcome-subtitle">
-                    System nowej generacji
-                </div>
-            </div>
-
-        </main>
+            <div class="ai-orb"></div>
 
 
-        <!-- =========================================
-             STACJA / DOCK
-        ========================================== -->
+            <div class="ai-search">
 
-        <nav class="dock">
-
-            <button
-                class="dock-item"
-                title="Pliki"
-                onclick="openWindow('filesWindow')"
-            >
-                <span>▣</span>
-            </button>
-
-            <button
-                class="dock-item"
-                title="Przeglądarka"
-                onclick="openWindow('browserWindow')"
-            >
-                <span>◎</span>
-            </button>
-
-            <button
-                class="dock-item"
-                title="NEXUS AI"
-                onclick="openWindow('aiWindow')"
-            >
                 <span>✦</span>
-            </button>
-
-            <button
-                class="dock-item"
-                title="Terminal"
-                onclick="openWindow('terminalWindow')"
-            >
-                <span>⌘</span>
-            </button>
-
-            <button
-                class="dock-item"
-                title="Ustawienia"
-                onclick="openWindow('settingsWindow')"
-            >
-                <span>⚙</span>
-            </button>
-
-            <div class="dock-separator"></div>
-
-            <button
-                class="dock-item"
-                title="Menu NEXUS"
-                onclick="toggleLauncher()"
-            >
-                <span>◈</span>
-            </button>
-
-        </nav>
-
-
-        <!-- =========================================
-             OKNO — PLIKI
-        ========================================== -->
-
-        <section
-            class="window"
-            id="filesWindow"
-            style="display:none;"
-        >
-
-            <div class="window-header">
-
-                <div class="window-title">
-                    <span>▣</span>
-                    <strong>Pliki</strong>
-                </div>
-
-                <div class="window-controls">
-                    <button onclick="minimizeWindow('filesWindow')">−</button>
-                    <button onclick="maximizeWindow('filesWindow')">□</button>
-                    <button onclick="closeWindow('filesWindow')">×</button>
-                </div>
-
-            </div>
-
-            <div class="files-layout">
-
-                <aside class="sidebar">
-
-                    <button class="sidebar-item active">
-                        <span>⌂</span>
-                        Pulpit
-                    </button>
-
-                    <button class="sidebar-item">
-                        <span>▣</span>
-                        Dokumenty
-                    </button>
-
-                    <button class="sidebar-item">
-                        <span>↓</span>
-                        Pobrane
-                    </button>
-
-                    <button class="sidebar-item">
-                        <span>◈</span>
-                        Obrazy
-                    </button>
-
-                    <button class="sidebar-item">
-                        <span>♫</span>
-                        Muzyka
-                    </button>
-
-                    <button class="sidebar-item">
-                        <span>▶</span>
-                        Wideo
-                    </button>
-
-                </aside>
-
-                <div class="file-grid">
-
-                    <div class="file-item">
-                        <div class="file-icon">📁</div>
-                        <span>Dokumenty</span>
-                    </div>
-
-                    <div class="file-item">
-                        <div class="file-icon">📁</div>
-                        <span>Pobrane</span>
-                    </div>
-
-                    <div class="file-item">
-                        <div class="file-icon">📁</div>
-                        <span>Obrazy</span>
-                    </div>
-
-                    <div class="file-item">
-                        <div class="file-icon">📁</div>
-                        <span>Projekty</span>
-                    </div>
-
-                    <div class="file-item">
-                        <div class="file-icon">📄</div>
-                        <span>README.txt</span>
-                    </div>
-
-                    <div class="file-item">
-                        <div class="file-icon">⚙</div>
-                        <span>system.config</span>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================================
-             OKNO — NEXUS AI
-        ========================================== -->
-
-        <section
-            class="window"
-            id="aiWindow"
-            style="display:none;"
-        >
-
-            <div class="window-header">
-
-                <div class="window-title">
-                    <span>✦</span>
-                    <strong>NEXUS AI</strong>
-                </div>
-
-                <div class="window-controls">
-                    <button onclick="minimizeWindow('aiWindow')">−</button>
-                    <button onclick="maximizeWindow('aiWindow')">□</button>
-                    <button onclick="closeWindow('aiWindow')">×</button>
-                </div>
-
-            </div>
-
-            <div class="ai-chat">
-
-                <div class="ai-message">
-                    <div class="ai-avatar">N</div>
-
-                    <div class="ai-bubble">
-                        <strong>NEXUS AI</strong>
-                        <p>
-                            Witaj. Jestem centralnym asystentem NEXUS OS.
-                            W czym mogę Ci pomóc?
-                        </p>
-                    </div>
-                </div>
-
-                <div
-                    class="ai-messages"
-                    id="aiMessages"
-                ></div>
-
-                <div class="ai-input">
-
-                    <input
-                        id="aiChatInput"
-                        type="text"
-                        placeholder="Napisz polecenie..."
-                        autocomplete="off"
-                        onkeydown="handleAIKey(event)"
-                    >
-
-                    <button onclick="sendAIMessage()">
-                        Wyślij
-                    </button>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================================
-             OKNO — USTAWIENIA
-        ========================================== -->
-
-        <section
-            class="window"
-            id="settingsWindow"
-            style="display:none;"
-        >
-
-            <div class="window-header">
-
-                <div class="window-title">
-                    <span>⚙</span>
-                    <strong>Ustawienia</strong>
-                </div>
-
-                <div class="window-controls">
-                    <button onclick="minimizeWindow('settingsWindow')">−</button>
-                    <button onclick="maximizeWindow('settingsWindow')">□</button>
-                    <button onclick="closeWindow('settingsWindow')">×</button>
-                </div>
-
-            </div>
-
-            <div class="settings">
-
-                <div class="settings-section">
-
-                    <h3>System</h3>
-
-                    <button class="settings-item">
-                        <span>🖥</span>
-                        <div>
-                            <strong>Wygląd</strong>
-                            <small>Personalizacja NEXUS OS</small>
-                        </div>
-                    </button>
-
-                    <button class="settings-item">
-                        <span>🔔</span>
-                        <div>
-                            <strong>Powiadomienia</strong>
-                            <small>Zarządzanie powiadomieniami</small>
-                        </div>
-                    </button>
-
-                    <button class="settings-item">
-                        <span>🔒</span>
-                        <div>
-                            <strong>Bezpieczeństwo</strong>
-                            <small>Uprawnienia i ochrona systemu</small>
-                        </div>
-                    </button>
-
-                </div>
-
-                <div class="settings-section">
-
-                    <h3>NEXUS AI</h3>
-
-                    <button class="settings-item">
-                        <span>✦</span>
-                        <div>
-                            <strong>Asystent AI</strong>
-                            <small>Konfiguracja NEXUS AI</small>
-                        </div>
-                    </button>
-
-                    <button class="settings-item">
-                        <span>🧠</span>
-                        <div>
-                            <strong>Pamięć AI</strong>
-                            <small>Zarządzanie pamięcią i kontekstem</small>
-                        </div>
-                    </button>
-
-                </div>
-
-                <div class="settings-section">
-
-                    <h3>Informacje</h3>
-
-                    <div class="settings-info">
-                        <strong>NEXUS OS</strong>
-                        <span>Wersja demonstracyjna 0.1</span>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================================
-             OKNO — PRZEGLĄDARKA
-        ========================================== -->
-
-        <section
-            class="window"
-            id="browserWindow"
-            style="display:none;"
-        >
-
-            <div class="window-header">
-
-                <div class="window-title">
-                    <span>◎</span>
-                    <strong>Przeglądarka NEXUS</strong>
-                </div>
-
-                <div class="window-controls">
-                    <button onclick="minimizeWindow('browserWindow')">−</button>
-                    <button onclick="maximizeWindow('browserWindow')">□</button>
-                    <button onclick="closeWindow('browserWindow')">×</button>
-                </div>
-
-            </div>
-
-            <div class="browser">
-
-                <div class="browser-toolbar">
-
-                    <button onclick="browserBack()">←</button>
-                    <button onclick="browserForward()">→</button>
-                    <button onclick="browserReload()">↻</button>
-
-                    <input
-                        id="browserAddress"
-                        type="text"
-                        value="nexus://start"
-                        placeholder="Wpisz adres lub wyszukiwane hasło..."
-                        onkeydown="handleBrowserKey(event)"
-                    >
-
-                    <button onclick="navigateBrowser()">
-                        Przejdź
-                    </button>
-
-                </div>
-
-                <div
-                    class="browser-content"
-                    id="browserContent"
-                >
-
-                    <div class="browser-start">
-
-                        <div class="browser-logo">
-                            N
-                        </div>
-
-                        <h1>NEXUS</h1>
-
-                        <p>
-                            Prywatna przestrzeń internetowa
-                        </p>
-
-                        <div class="browser-search">
-
-                            <input
-                                id="browserSearch"
-                                type="text"
-                                placeholder="Czego szukasz?"
-                                onkeydown="handleSearchKey(event)"
-                            >
-
-                            <button onclick="browserSearch()">
-                                Szukaj
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================================
-             OKNO — TERMINAL
-        ========================================== -->
-
-        <section
-            class="window"
-            id="terminalWindow"
-            style="display:none;"
-        >
-
-            <div class="window-header">
-
-                <div class="window-title">
-                    <span>⌘</span>
-                    <strong>Terminal NEXUS</strong>
-                </div>
-
-                <div class="window-controls">
-                    <button onclick="minimizeWindow('terminalWindow')">−</button>
-                    <button onclick="maximizeWindow('terminalWindow')">□</button>
-                    <button onclick="closeWindow('terminalWindow')">×</button>
-                </div>
-
-            </div>
-
-            <div class="terminal">
-
-                <div id="terminalOutput">
-
-                    <div>
-                        NEXUS Terminal 0.1
-                    </div>
-
-                    <div>
-                        Wpisz <strong>help</strong>, aby zobaczyć dostępne polecenia.
-                    </div>
-
-                </div>
-
-                <div class="terminal-input">
-
-                    <span>nexus@system:~$</span>
-
-                    <input
-                        id="terminalInput"
-                        type="text"
-                        autocomplete="off"
-                        onkeydown="handleTerminalKey(event)"
-                    >
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================================
-             LAUNCHER
-        ========================================== -->
-
-        <div
-            id="launcher"
-            style="display:none;"
-        >
-
-            <div class="launcher-header">
-
-                <div>
-                    <strong>NEXUS</strong>
-                    <span>Wszystkie aplikacje</span>
-                </div>
-
-                <button onclick="toggleLauncher()">×</button>
-
-            </div>
-
-            <div class="launcher-search">
 
                 <input
-                    id="launcherSearch"
+                    id="aiCommand"
                     type="text"
-                    placeholder="Szukaj aplikacji..."
-                    oninput="filterLauncher()"
+                    placeholder="Zapytaj NEXUS AI..."
+                    autocomplete="off"
                 >
+
+                <button
+                    onclick="runAICommand()"
+                >
+                    ↵
+                </button>
 
             </div>
 
-            <div
-                class="launcher-grid"
-                id="launcherGrid"
-            >
+
+            <div class="suggestions">
 
                 <button
-                    class="launcher-app"
-                    data-name="pliki"
-                    onclick="launchApp('filesWindow')"
+                    onclick="setAICommand('Otwórz pliki')"
                 >
-                    <span>▣</span>
-                    <strong>Pliki</strong>
+                    Otwórz pliki
                 </button>
 
-                <button
-                    class="launcher-app"
-                    data-name="przegladarka"
-                    onclick="launchApp('browserWindow')"
-                >
-                    <span>◎</span>
-                    <strong>Przeglądarka</strong>
-                </button>
 
                 <button
-                    class="launcher-app"
-                    data-name="nexus ai"
-                    onclick="launchApp('aiWindow')"
+                    onclick="setAICommand('Otwórz przeglądarkę')"
                 >
-                    <span>✦</span>
-                    <strong>NEXUS AI</strong>
+                    Przeglądarka
                 </button>
 
-                <button
-                    class="launcher-app"
-                    data-name="terminal"
-                    onclick="launchApp('terminalWindow')"
-                >
-                    <span>⌘</span>
-                    <strong>Terminal</strong>
-                </button>
 
                 <button
-                    class="launcher-app"
-                    data-name="ustawienia"
-                    onclick="launchApp('settingsWindow')"
+                    onclick="setAICommand('Pokaż ustawienia')"
                 >
-                    <span>⚙</span>
-                    <strong>Ustawienia</strong>
-                </button>
-
-                <button
-                    class="launcher-app"
-                    data-name="gry"
-                    onclick="showNotification('NEXUS Arcade','Moduł gier zostanie uruchomiony w kolejnej wersji.')"
-                >
-                    <span>🎮</span>
-                    <strong>Gry</strong>
-                </button>
-
-                <button
-                    class="launcher-app"
-                    data-name="tv"
-                    onclick="showNotification('NEXUS TV','Moduł telewizji zostanie uruchomiony w kolejnej wersji.')"
-                >
-                    <span>📺</span>
-                    <strong>NEXUS TV</strong>
+                    Ustawienia
                 </button>
 
             </div>
@@ -641,705 +101,1050 @@
         </div>
 
 
-        <!-- =========================================
-             POWIADOMIENIA
-        ========================================== -->
+        <div class="status">
 
-        <div id="notifications"></div>
+            <span id="networkStatus">
+                ● Połączono
+            </span>
+
+            <span id="systemTime">
+                00:00
+            </span>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================
+         PULPIT
+    ====================================== -->
+
+    <main id="workspace">
+
+        <div class="desktop-welcome">
+
+            <div class="welcome-title">
+                Witaj w NEXUS OS
+            </div>
+
+            <div class="welcome-subtitle">
+                System nowej generacji
+            </div>
+
+        </div>
+
+    </main>
+
+
+
+    <!-- =====================================
+         DOCK
+    ====================================== -->
+
+    <nav class="dock">
+
+
+        <button
+            class="dock-item"
+            title="Pliki"
+            onclick="openWindow('filesWindow')"
+        >
+
+            <span>▣</span>
+
+        </button>
+
+
+        <button
+            class="dock-item"
+            title="Przeglądarka"
+            onclick="openWindow('browserWindow')"
+        >
+
+            <span>◎</span>
+
+        </button>
+
+
+        <button
+            class="dock-item"
+            title="NEXUS AI"
+            onclick="openWindow('aiWindow')"
+        >
+
+            <span>✦</span>
+
+        </button>
+
+
+        <button
+            class="dock-item"
+            title="Terminal"
+            onclick="openWindow('terminalWindow')"
+        >
+
+            <span>⌘</span>
+
+        </button>
+
+
+        <button
+            class="dock-item"
+            title="Ustawienia"
+            onclick="openWindow('settingsWindow')"
+        >
+
+            <span>⚙</span>
+
+        </button>
+
+
+        <div class="dock-separator"></div>
+
+
+        <button
+            class="dock-item"
+            title="Menu NEXUS"
+            onclick="toggleLauncher()"
+        >
+
+            <span>◈</span>
+
+        </button>
+
+    </nav>
+
+
+
+    <!-- =====================================
+         OKNO — PLIKI
+    ====================================== -->
+
+    <section
+        class="window"
+        id="filesWindow"
+        style="display:none;"
+    >
+
+        <div class="window-header">
+
+            <div class="window-title">
+
+                <span>▣</span>
+
+                <strong>
+                    Pliki
+                </strong>
+
+            </div>
+
+
+            <div class="window-controls">
+
+                <button
+                    onclick="minimizeWindow('filesWindow')"
+                >
+                    −
+                </button>
+
+                <button
+                    onclick="maximizeWindow('filesWindow')"
+                >
+                    □
+                </button>
+
+                <button
+                    onclick="closeWindow('filesWindow')"
+                >
+                    ×
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="files-layout">
+
+
+            <aside class="sidebar">
+
+                <button
+                    class="sidebar-item active"
+                >
+                    <span>⌂</span>
+                    Pulpit
+                </button>
+
+
+                <button
+                    class="sidebar-item"
+                >
+                    <span>▣</span>
+                    Dokumenty
+                </button>
+
+
+                <button
+                    class="sidebar-item"
+                >
+                    <span>↓</span>
+                    Pobrane
+                </button>
+
+
+                <button
+                    class="sidebar-item"
+                >
+                    <span>◈</span>
+                    Obrazy
+                </button>
+
+
+                <button
+                    class="sidebar-item"
+                >
+                    <span>♫</span>
+                    Muzyka
+                </button>
+
+
+                <button
+                    class="sidebar-item"
+                >
+                    <span>▶</span>
+                    Wideo
+                </button>
+
+            </aside>
+
+
+            <div class="file-grid">
+
+
+                <div class="file-item">
+
+                    <div class="file-icon">
+                        📁
+                    </div>
+
+                    <span>
+                        Dokumenty
+                    </span>
+
+                </div>
+
+
+                <div class="file-item">
+
+                    <div class="file-icon">
+                        📁
+                    </div>
+
+                    <span>
+                        Pobrane
+                    </span>
+
+                </div>
+
+
+                <div class="file-item">
+
+                    <div class="file-icon">
+                        📁
+                    </div>
+
+                    <span>
+                        Obrazy
+                    </span>
+
+                </div>
+
+
+                <div class="file-item">
+
+                    <div class="file-icon">
+                        📁
+                    </div>
+
+                    <span>
+                        Projekty
+                    </span>
+
+                </div>
+
+
+                <div class="file-item">
+
+                    <div class="file-icon">
+                        📄
+                    </div>
+
+                    <span>
+                        README.txt
+                    </span>
+
+                </div>
+
+
+                <div class="file-item">
+
+                    <div class="file-icon">
+                        ⚙
+                    </div>
+
+                    <span>
+                        system.config
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================
+         OKNO — NEXUS AI
+    ====================================== -->
+
+    <section
+        class="window"
+        id="aiWindow"
+        style="display:none;"
+    >
+
+        <div class="window-header">
+
+            <div class="window-title">
+
+                <span>✦</span>
+
+                <strong>
+                    NEXUS AI
+                </strong>
+
+            </div>
+
+
+            <div class="window-controls">
+
+                <button
+                    onclick="minimizeWindow('aiWindow')"
+                >
+                    −
+                </button>
+
+                <button
+                    onclick="maximizeWindow('aiWindow')"
+                >
+                    □
+                </button>
+
+                <button
+                    onclick="closeWindow('aiWindow')"
+                >
+                    ×
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="ai-chat">
+
+
+            <div class="ai-message">
+
+                <div class="ai-avatar">
+                    N
+                </div>
+
+
+                <div class="ai-bubble">
+
+                    <strong>
+                        NEXUS AI
+                    </strong>
+
+                    <p>
+                        Witaj. Jestem centralnym
+                        asystentem NEXUS OS.
+                        W czym mogę Ci pomóc?
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="ai-messages"
+                id="aiMessages"
+            ></div>
+
+
+            <div class="ai-input">
+
+                <input
+                    id="aiChatInput"
+                    type="text"
+                    placeholder="Napisz polecenie..."
+                    autocomplete="off"
+                    onkeydown="handleAIKey(event)"
+                >
+
+
+                <button
+                    onclick="sendAIMessage()"
+                >
+                    Wyślij
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================
+         OKNO — USTAWIENIA
+    ====================================== -->
+
+    <section
+        class="window"
+        id="settingsWindow"
+        style="display:none;"
+    >
+
+        <div class="window-header">
+
+            <div class="window-title">
+
+                <span>⚙</span>
+
+                <strong>
+                    Ustawienia
+                </strong>
+
+            </div>
+
+
+            <div class="window-controls">
+
+                <button
+                    onclick="minimizeWindow('settingsWindow')"
+                >
+                    −
+                </button>
+
+                <button
+                    onclick="maximizeWindow('settingsWindow')"
+                >
+                    □
+                </button>
+
+                <button
+                    onclick="closeWindow('settingsWindow')"
+                >
+                    ×
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="settings">
+
+
+            <div class="settings-section">
+
+                <h3>
+                    System
+                </h3>
+
+
+                <button class="settings-item">
+
+                    <span>
+                        🖥
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Wygląd
+                        </strong>
+
+                        <small>
+                            Personalizacja NEXUS OS
+                        </small>
+
+                    </div>
+
+                </button>
+
+
+                <button class="settings-item">
+
+                    <span>
+                        🔔
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Powiadomienia
+                        </strong>
+
+                        <small>
+                            Zarządzanie powiadomieniami
+                        </small>
+
+                    </div>
+
+                </button>
+
+
+                <button class="settings-item">
+
+                    <span>
+                        🔒
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Bezpieczeństwo
+                        </strong>
+
+                        <small>
+                            Uprawnienia i ochrona systemu
+                        </small>
+
+                    </div>
+
+                </button>
+
+            </div>
+
+
+            <div class="settings-section">
+
+                <h3>
+                    NEXUS AI
+                </h3>
+
+
+                <button class="settings-item">
+
+                    <span>
+                        ✦
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Asystent AI
+                        </strong>
+
+                        <small>
+                            Konfiguracja NEXUS AI
+                        </small>
+
+                    </div>
+
+                </button>
+
+
+                <button class="settings-item">
+
+                    <span>
+                        🧠
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Pamięć AI
+                        </strong>
+
+                        <small>
+                            Zarządzanie pamięcią i kontekstem
+                        </small>
+
+                    </div>
+
+                </button>
+
+            </div>
+
+
+            <div class="settings-section">
+
+                <h3>
+                    Informacje
+                </h3>
+
+
+                <div class="settings-info">
+
+                    <strong>
+                        NEXUS OS
+                    </strong>
+
+                    <span>
+                        Wersja demonstracyjna 0.1
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================
+         OKNO — PRZEGLĄDARKA
+    ====================================== -->
+
+    <section
+        class="window"
+        id="browserWindow"
+        style="display:none;"
+    >
+
+        <div class="window-header">
+
+            <div class="window-title">
+
+                <span>◎</span>
+
+                <strong>
+                    Przeglądarka NEXUS
+                </strong>
+
+            </div>
+
+
+            <div class="window-controls">
+
+                <button
+                    onclick="minimizeWindow('browserWindow')"
+                >
+                    −
+                </button>
+
+                <button
+                    onclick="maximizeWindow('browserWindow')"
+                >
+                    □
+                </button>
+
+                <button
+                    onclick="closeWindow('browserWindow')"
+                >
+                    ×
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="browser">
+
+
+            <div class="browser-toolbar">
+
+                <button
+                    onclick="browserBack()"
+                >
+                    ←
+                </button>
+
+                <button
+                    onclick="browserForward()"
+                >
+                    →
+                </button>
+
+                <button
+                    onclick="browserReload()"
+                >
+                    ↻
+                </button>
+
+
+                <input
+                    id="browserAddress"
+                    type="text"
+                    value="nexus://start"
+                    placeholder="Wpisz adres lub wyszukiwane hasło..."
+                    onkeydown="handleBrowserKey(event)"
+                >
+
+
+                <button
+                    onclick="navigateBrowser()"
+                >
+                    Przejdź
+                </button>
+
+            </div>
+
+
+            <div
+                class="browser-content"
+                id="browserContent"
+            >
+
+                <div class="browser-start">
+
+                    <div class="browser-logo">
+                        N
+                    </div>
+
+                    <h1>
+                        NEXUS
+                    </h1>
+
+                    <p>
+                        Prywatna przestrzeń internetowa
+                    </p>
+
+
+                    <div class="browser-search">
+
+                        <input
+                            id="browserSearch"
+                            type="text"
+                            placeholder="Czego szukasz?"
+                            onkeydown="handleSearchKey(event)"
+                        >
+
+
+                        <button
+                            onclick="browserSearch()"
+                        >
+                            Szukaj
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================
+         OKNO — TERMINAL
+    ====================================== -->
+
+    <section
+        class="window"
+        id="terminalWindow"
+        style="display:none;"
+    >
+
+        <div class="window-header">
+
+            <div class="window-title">
+
+                <span>⌘</span>
+
+                <strong>
+                    Terminal NEXUS
+                </strong>
+
+            </div>
+
+
+            <div class="window-controls">
+
+                <button
+                    onclick="minimizeWindow('terminalWindow')"
+                >
+                    −
+                </button>
+
+                <button
+                    onclick="maximizeWindow('terminalWindow')"
+                >
+                    □
+                </button>
+
+                <button
+                    onclick="closeWindow('terminalWindow')"
+                >
+                    ×
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="terminal">
+
+            <div id="terminalOutput">
+
+                <div>
+                    NEXUS Terminal 0.1
+                </div>
+
+                <div>
+                    Wpisz
+                    <strong>help</strong>,
+                    aby zobaczyć dostępne polecenia.
+                </div>
+
+            </div>
+
+
+            <div class="terminal-input">
+
+                <span>
+                    nexus@system:~$
+                </span>
+
+
+                <input
+                    id="terminalInput"
+                    type="text"
+                    autocomplete="off"
+                    onkeydown="handleTerminalKey(event)"
+                >
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================
+         LAUNCHER
+    ====================================== -->
+
+    <div
+        id="launcher"
+        style="display:none;"
+    >
+
+        <div class="launcher-header">
+
+            <div>
+
+                <strong>
+                    NEXUS
+                </strong>
+
+                <span>
+                    Wszystkie aplikacje
+                </span>
+
+            </div>
+
+
+            <button
+                onclick="toggleLauncher()"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="launcher-search">
+
+            <input
+                id="launcherSearch"
+                type="text"
+                placeholder="Szukaj aplikacji..."
+                oninput="filterLauncher()"
+            >
+
+        </div>
+
+
+        <div
+            class="launcher-grid"
+            id="launcherGrid"
+        >
+
+
+            <button
+                class="launcher-app"
+                data-name="pliki"
+                onclick="launchApp('filesWindow')"
+            >
+
+                <span>
+                    ▣
+                </span>
+
+                <strong>
+                    Pliki
+                </strong>
+
+            </button>
+
+
+            <button
+                class="launcher-app"
+                data-name="przegladarka"
+                onclick="launchApp('browserWindow')"
+            >
+
+                <span>
+                    ◎
+                </span>
+
+                <strong>
+                    Przeglądarka
+                </strong>
+
+            </button>
+
+
+            <button
+                class="launcher-app"
+                data-name="nexus ai"
+                onclick="launchApp('aiWindow')"
+            >
+
+                <span>
+                    ✦
+                </span>
+
+                <strong>
+                    NEXUS AI
+                </strong>
+
+            </button>
+
+
+            <button
+                class="launcher-app"
+                data-name="terminal"
+                onclick="launchApp('terminalWindow')"
+            >
+
+                <span>
+                    ⌘
+                </span>
+
+                <strong>
+                    Terminal
+                </strong>
+
+            </button>
+
+
+            <button
+                class="launcher-app"
+                data-name="ustawienia"
+                onclick="launchApp('settingsWindow')"
+            >
+
+                <span>
+                    ⚙
+                </span>
+
+                <strong>
+                    Ustawienia
+                </strong>
+
+            </button>
+
+
+            <button
+                class="launcher-app"
+                data-name="gry"
+                onclick="showNotification(
+                    'NEXUS Arcade',
+                    'Moduł gier zostanie uruchomiony w kolejnej wersji.'
+                )"
+            >
+
+                <span>
+                    🎮
+                </span>
+
+                <strong>
+                    Gry
+                </strong>
+
+            </button>
+
+
+            <button
+                class="launcher-app"
+                data-name="tv"
+                onclick="showNotification(
+                    'NEXUS TV',
+                    'Moduł telewizji zostanie uruchomiony w kolejnej wersji.'
+                )"
+            >
+
+                <span>
+                    📺
+                </span>
+
+                <strong>
+                    NEXUS TV
+                </strong>
+
+            </button>
+
+        </div>
 
     </div>
 
 
-    <!-- =========================================
-         JAVASCRIPT — TYMCZASOWO TUTAJ
-    ========================================== -->
 
-    <script>
+    <!-- =====================================
+         POWIADOMIENIA
+    ====================================== -->
 
-        /* -----------------------------------------
-           ZMIENNE SYSTEMOWE
-        ----------------------------------------- */
+    <div id="notifications"></div>
 
-        let activeWindow = null;
-        let highestZIndex = 100;
-        let maximizedWindows = {};
 
+</div>
 
-        /* -----------------------------------------
-           ZEGAR
-        ----------------------------------------- */
 
-        function updateClock() {
+<!-- =====================================
+     NEXUS OS — MODUŁY JAVASCRIPT
+====================================== -->
 
-            const clock = document.getElementById("systemTime");
+<script src="js/nexus.js"></script>
 
-            if (!clock) return;
+<script src="js/windows.js"></script>
 
-            const now = new Date();
+<script src="js/launcher.js"></script>
 
-            clock.textContent =
-                now.toLocaleTimeString("pl-PL", {
-                    hour: "2-digit",
-                    minute: "2-digit"
-                });
-        }
+<script src="js/apps.js"></script>
 
-        updateClock();
-        setInterval(updateClock, 1000);
-
-
-        /* -----------------------------------------
-           OKNA
-        ----------------------------------------- */
-
-        function openWindow(id) {
-
-            const win = document.getElementById(id);
-
-            if (!win) return;
-
-            win.style.display = "flex";
-
-            highestZIndex++;
-
-            win.style.zIndex = highestZIndex;
-
-            activeWindow = id;
-
-            closeLauncher();
-
-            if (id === "terminalWindow") {
-
-                setTimeout(() => {
-
-                    const input =
-                        document.getElementById("terminalInput");
-
-                    if (input) input.focus();
-
-                }, 100);
-
-            }
-
-            if (id === "aiWindow") {
-
-                setTimeout(() => {
-
-                    const input =
-                        document.getElementById("aiChatInput");
-
-                    if (input) input.focus();
-
-                }, 100);
-
-            }
-        }
-
-
-        function closeWindow(id) {
-
-            const win = document.getElementById(id);
-
-            if (!win) return;
-
-            win.style.display = "none";
-
-            if (activeWindow === id) {
-                activeWindow = null;
-            }
-        }
-
-
-        function minimizeWindow(id) {
-
-            const win = document.getElementById(id);
-
-            if (!win) return;
-
-            win.style.display = "none";
-        }
-
-
-        function maximizeWindow(id) {
-
-            const win = document.getElementById(id);
-
-            if (!win) return;
-
-            if (!maximizedWindows[id]) {
-
-                win.dataset.previousStyle =
-                    win.getAttribute("style") || "";
-
-                win.style.left = "0";
-                win.style.top = "0";
-                win.style.width = "100%";
-                win.style.height = "calc(100% - 90px)";
-                win.style.borderRadius = "0";
-
-                maximizedWindows[id] = true;
-
-            } else {
-
-                win.setAttribute(
-                    "style",
-                    win.dataset.previousStyle || "display:flex;"
-                );
-
-                win.style.display = "flex";
-
-                maximizedWindows[id] = false;
-            }
-        }
-
-
-        /* -----------------------------------------
-           AKTYWNE OKNO
-        ----------------------------------------- */
-
-        document.addEventListener("mousedown", function(event) {
-
-            const win =
-                event.target.closest(".window");
-
-            if (!win) return;
-
-            highestZIndex++;
-
-            win.style.zIndex = highestZIndex;
-
-            activeWindow = win.id;
-        });
-
-
-        /* -----------------------------------------
-           LAUNCHER
-        ----------------------------------------- */
-
-        function toggleLauncher() {
-
-            const launcher =
-                document.getElementById("launcher");
-
-            if (!launcher) return;
-
-            if (
-                launcher.style.display === "none" ||
-                launcher.style.display === ""
-            ) {
-
-                launcher.style.display = "block";
-
-                const input =
-                    document.getElementById("launcherSearch");
-
-                if (input) {
-
-                    setTimeout(() => {
-                        input.focus();
-                    }, 100);
-                }
-
-            } else {
-
-                closeLauncher();
-            }
-        }
-
-
-        function closeLauncher() {
-
-            const launcher =
-                document.getElementById("launcher");
-
-            if (launcher) {
-                launcher.style.display = "none";
-            }
-        }
-
-
-        function launchApp(id) {
-
-            closeLauncher();
-            openWindow(id);
-        }
-
-
-        function filterLauncher() {
-
-            const input =
-                document.getElementById("launcherSearch");
-
-            const query =
-                input.value.toLowerCase().trim();
-
-            document
-                .querySelectorAll(".launcher-app")
-                .forEach(app => {
-
-                    const name =
-                        app.dataset.name || "";
-
-                    app.style.display =
-                        name.includes(query)
-                            ? "flex"
-                            : "none";
-                });
-        }
-
-
-        /* -----------------------------------------
-           NEXUS AI — GŁÓWNY PANEL
-        ----------------------------------------- */
-
-        function setAICommand(text) {
-
-            const input =
-                document.getElementById("aiCommand");
-
-            if (!input) return;
-
-            input.value = text;
-
-            input.focus();
-        }
-
-
-        function runAICommand() {
-
-            const input =
-                document.getElementById("aiCommand");
-
-            if (!input) return;
-
-            const command =
-                input.value.toLowerCase().trim();
-
-            if (!command) return;
-
-
-            if (
-                command.includes("pliki") ||
-                command.includes("plik")
-            ) {
-
-                openWindow("filesWindow");
-
-            } else if (
-                command.includes("przeglądark") ||
-                command.includes("internet")
-            ) {
-
-                openWindow("browserWindow");
-
-            } else if (
-                command.includes("ustaw")
-            ) {
-
-                openWindow("settingsWindow");
-
-            } else if (
-                command.includes("terminal")
-            ) {
-
-                openWindow("terminalWindow");
-
-            } else if (
-                command.includes("ai") ||
-                command.includes("asystent")
-            ) {
-
-                openWindow("aiWindow");
-
-            } else {
-
-                showNotification(
-                    "NEXUS AI",
-                    "Odebrałem polecenie: „" +
-                    input.value +
-                    "”. Funkcja AI zostanie rozbudowana."
-                );
-
-            }
-
-            input.value = "";
-        }
-
-
-        document
-            .getElementById("aiCommand")
-            ?.addEventListener("keydown", function(event) {
-
-                if (event.key === "Enter") {
-                    runAICommand();
-                }
-
-            });
-
-
-        /* -----------------------------------------
-           CZAT AI
-        ----------------------------------------- */
-
-        function handleAIKey(event) {
-
-            if (event.key === "Enter") {
-                sendAIMessage();
-            }
-        }
-
-
-        function sendAIMessage() {
-
-            const input =
-                document.getElementById("aiChatInput");
-
-            const messages =
-                document.getElementById("aiMessages");
-
-            if (!input || !messages) return;
-
-            const text =
-                input.value.trim();
-
-            if (!text) return;
-
-
-            const userMessage =
-                document.createElement("div");
-
-            userMessage.className =
-                "ai-message user";
-
-            userMessage.innerHTML = `
-                <div class="ai-bubble">
-                    <strong>Ty</strong>
-                    <p>${escapeHTML(text)}</p>
-                </div>
-            `;
-
-            messages.appendChild(userMessage);
-
-            input.value = "";
-
-            messages.scrollTop =
-                messages.scrollHeight;
-
-
-            setTimeout(() => {
-
-                const response =
-                    document.createElement("div");
-
-                response.className =
-                    "ai-message";
-
-                response.innerHTML = `
-                    <div class="ai-avatar">N</div>
-                    <div class="ai-bubble">
-                        <strong>NEXUS AI</strong>
-                        <p>
-                            Przyjąłem polecenie.
-                            Prawdziwy silnik NEXUS AI
-                            zostanie podłączony do systemu
-                            w kolejnych etapach projektu.
-                        </p>
-                    </div>
-                `;
-
-                messages.appendChild(response);
-
-                messages.scrollTop =
-                    messages.scrollHeight;
-
-            }, 500);
-        }
-
-
-        /* -----------------------------------------
-           PRZEGLĄDARKA
-        ----------------------------------------- */
-
-        function handleBrowserKey(event) {
-
-            if (event.key === "Enter") {
-                navigateBrowser();
-            }
-        }
-
-
-        function navigateBrowser() {
-
-            const input =
-                document.getElementById("browserAddress");
-
-            if (!input) return;
-
-            const address =
-                input.value.trim();
-
-            if (!address) return;
-
-            const content =
-                document.getElementById("browserContent");
-
-            if (!content) return;
-
-            content.innerHTML = `
-                <div class="browser-start">
-                    <div class="browser-logo">N</div>
-                    <h1>${escapeHTML(address)}</h1>
-                    <p>
-                        NEXUS Browser jest obecnie
-                        w wersji demonstracyjnej.
-                    </p>
-                </div>
-            `;
-        }
-
-
-        function browserSearch() {
-
-            const input =
-                document.getElementById("browserSearch");
-
-            if (!input) return;
-
-            const query =
-                input.value.trim();
-
-            if (!query) return;
-
-            const address =
-                document.getElementById("browserAddress");
-
-            if (address) {
-                address.value = query;
-            }
-
-            navigateBrowser();
-        }
-
-
-        function handleSearchKey(event) {
-
-            if (event.key === "Enter") {
-                browserSearch();
-            }
-        }
-
-
-        function browserBack() {
-
-            showNotification(
-                "Przeglądarka",
-                "Brak poprzedniej strony."
-            );
-        }
-
-
-        function browserForward() {
-
-            showNotification(
-                "Przeglądarka",
-                "Brak następnej strony."
-            );
-        }
-
-
-        function browserReload() {
-
-            showNotification(
-                "Przeglądarka",
-                "Strona została odświeżona."
-            );
-        }
-
-
-        /* -----------------------------------------
-           TERMINAL
-        ----------------------------------------- */
-
-        function handleTerminalKey(event) {
-
-            if (event.key !== "Enter") return;
-
-            const input =
-                document.getElementById("terminalInput");
-
-            const output =
-                document.getElementById("terminalOutput");
-
-            if (!input || !output) return;
-
-            const command =
-                input.value.trim();
-
-            if (!command) return;
-
-            const line =
-                document.createElement("div");
-
-            line.innerHTML =
-                `<span>nexus@system:~$</span> ${
-                    escapeHTML(command)
-                }`;
-
-            output.appendChild(line);
-
-
-            const result =
-                document.createElement("div");
-
-            const lower =
-                command.toLowerCase();
-
-
-            if (lower === "help") {
-
-                result.innerHTML = `
-                    Dostępne polecenia:
-                    <br>
-                    <strong>help</strong> — pomoc
-                    <br>
-                    <strong>clear</strong> — wyczyść ekran
-                    <br>
-                    <strong>time</strong> — aktualny czas
-                    <br>
-                    <strong>system</strong> — informacje o systemie
-                    <br>
-                    <strong>open</strong> — otwórz aplikację
-                `;
-
-            } else if (lower === "clear") {
-
-                output.innerHTML = "";
-
-                input.value = "";
-
-                return;
-
-            } else if (lower === "time") {
-
-                result.textContent =
-                    new Date().toLocaleString("pl-PL");
-
-            } else if (lower === "system") {
-
-                result.innerHTML = `
-                    NEXUS OS<br>
-                    Wersja: 0.1<br>
-                    Tryb: demonstracyjny<br>
-                    Status: aktywny
-                `;
-
-            } else if (lower.startsWith("open ")) {
-
-                const app =
-                    lower.replace("open ", "").trim();
-
-                if (app.includes("pliki")) {
-
-                    openWindow("filesWindow");
-
-                } else if (app.includes("browser") ||
-                           app.includes("przeglądark")) {
-
-                    openWindow("browserWindow");
-
-                } else if (app.includes("ai")) {
-
-                    openWindow("aiWindow");
-
-                } else if (app.includes("ustaw")) {
-
-                    openWindow("settingsWindow");
-
-                } else {
-
-                    result.textContent =
-                        "Nie znaleziono aplikacji.";
-
-                }
-
-            } else {
-
-                result.textContent =
-                    "Polecenie nie zostało rozpoznane. Wpisz „help”.";
-
-            }
-
-            output.appendChild(result);
-
-            input.value = "";
-
-            output.scrollTop =
-                output.scrollHeight;
-        }
-
-
-        /* -----------------------------------------
-           POWIADOMIENIA
-        ----------------------------------------- */
-
-        function showNotification(title, message) {
-
-            const container =
-                document.getElementById("notifications");
-
-            if (!container) return;
-
-            const notification =
-                document.createElement("div");
-
-            notification.className =
-                "notification";
-
-            notification.innerHTML = `
-                <strong>${escapeHTML(title)}</strong>
-                <span>${escapeHTML(message)}</span>
-            `;
-
-            container.appendChild(notification);
-
-
-            setTimeout(() => {
-
-                notification.remove();
-
-            }, 4500);
-        }
-
-
-        /* -----------------------------------------
-           ZABEZPIECZENIE TEKSTU
-        ----------------------------------------- */
-
-        function escapeHTML(text) {
-
-            return String(text)
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
-
-
-        /* -----------------------------------------
-           START SYSTEMU
-        ----------------------------------------- */
-
-        setTimeout(() => {
-
-            showNotification(
-                "NEXUS OS",
-                "System został uruchomiony."
-            );
-
-        }, 1000);
-
-    </script>
 
 </body>
+
 </html>
