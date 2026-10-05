@@ -6,15 +6,11 @@
 "use strict";
 
 
-/* =========================================
-   ZMIENNE SYSTEMOWE
-========================================= */
-
 window.NEXUS = {
 
-    version: "0.1",
-
     name: "NEXUS OS",
+
+    version: "0.1",
 
     activeWindow: null,
 
@@ -28,7 +24,7 @@ window.NEXUS = {
 
 
 /* =========================================
-   ZEGAR SYSTEMOWY
+   ZEGAR — CZAS WARSZAWSKI
 ========================================= */
 
 function updateClock() {
@@ -38,13 +34,23 @@ function updateClock() {
 
     if (!clock) return;
 
+
     const now = new Date();
 
-    clock.textContent =
-        now.toLocaleTimeString("pl-PL", {
-            hour: "2-digit",
-            minute: "2-digit"
-        });
+
+    const time =
+        new Intl.DateTimeFormat(
+            "pl-PL",
+            {
+                timeZone: "Europe/Warsaw",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false
+            }
+        ).format(now);
+
+
+    clock.textContent = time;
 }
 
 
@@ -54,15 +60,18 @@ setInterval(updateClock, 1000);
 
 
 /* =========================================
-   SYSTEM — STATUS
+   STATUS SYSTEMU
 ========================================= */
 
 function setSystemStatus(status) {
 
     const element =
-        document.getElementById("networkStatus");
+        document.getElementById(
+            "networkStatus"
+        );
 
     if (!element) return;
+
 
     if (status === "online") {
 
@@ -82,10 +91,15 @@ function setSystemStatus(status) {
    POWIADOMIENIA
 ========================================= */
 
-function showNotification(title, message) {
+function showNotification(
+    title,
+    message
+) {
 
     const container =
-        document.getElementById("notifications");
+        document.getElementById(
+            "notifications"
+        );
 
     if (!container) return;
 
@@ -93,17 +107,25 @@ function showNotification(title, message) {
     const notification =
         document.createElement("div");
 
+
     notification.className =
         "notification";
 
 
     notification.innerHTML = `
-        <strong>${escapeHTML(title)}</strong>
-        <span>${escapeHTML(message)}</span>
+        <strong>
+            ${escapeHTML(title)}
+        </strong>
+
+        <span>
+            ${escapeHTML(message)}
+        </span>
     `;
 
 
-    container.appendChild(notification);
+    container.appendChild(
+        notification
+    );
 
 
     setTimeout(() => {
@@ -115,17 +137,34 @@ function showNotification(title, message) {
 
 
 /* =========================================
-   BEZPIECZNE WSTAWIANIE TEKSTU
+   BEZPIECZNY TEKST
 ========================================= */
 
 function escapeHTML(text) {
 
     return String(text)
+
         .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 }
 
 
@@ -145,16 +184,17 @@ function getSystemInfo() {
 
         language: "pl-PL",
 
-        status: NEXUS.systemReady
-            ? "gotowy"
-            : "uruchamianie"
+        status:
+            NEXUS.systemReady
+                ? "gotowy"
+                : "uruchamianie"
 
     };
 }
 
 
 /* =========================================
-   INICJALIZACJA NEXUS OS
+   START SYSTEMU
 ========================================= */
 
 function initializeNexus() {
@@ -164,12 +204,15 @@ function initializeNexus() {
     );
 
 
-    setSystemStatus("online");
+    setSystemStatus(
+        "online"
+    );
 
 
     setTimeout(() => {
 
-        NEXUS.systemReady = true;
+        NEXUS.systemReady =
+            true;
 
 
         console.log(
@@ -180,10 +223,6 @@ function initializeNexus() {
     }, 500);
 }
 
-
-/* =========================================
-   START
-========================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
