@@ -1,196 +1,129 @@
-/* =========================================
-   NEXUS OS — WINDOW MANAGER
-   windows.js
-========================================= */
-
 "use strict";
 
-
 /* =========================================
-   OTWIERANIE OKNA
-========================================= */
+   NEXUS OS — SYSTEM OKIEN
+   ========================================= */
 
+/* Otwieranie okna */
 function openWindow(id) {
-
-    const win =
-        document.getElementById(id);
+    const win = document.getElementById(id);
 
     if (!win) return;
-
 
     win.style.display = "flex";
 
-
     NEXUS.highestZIndex++;
-
-    win.style.zIndex =
-        NEXUS.highestZIndex;
-
+    win.style.zIndex = NEXUS.highestZIndex;
 
     NEXUS.activeWindow = id;
 
-
     closeLauncher();
 
-
-    /* Automatyczne ustawienie fokusu */
-
+    /* Automatyczny fokus dla terminala */
     if (id === "terminalWindow") {
-
         setTimeout(() => {
-
             const input =
-                document.getElementById(
-                    "terminalInput"
-                );
+                document.getElementById("terminalInput");
 
-            if (input) {
-                input.focus();
-            }
-
+            if (input) input.focus();
         }, 100);
     }
 
-
+    /* Automatyczny fokus dla AI */
     if (id === "aiWindow") {
-
         setTimeout(() => {
-
             const input =
-                document.getElementById(
-                    "aiChatInput"
-                );
+                document.getElementById("aiChatInput");
 
-            if (input) {
-                input.focus();
-            }
-
+            if (input) input.focus();
         }, 100);
     }
 }
 
 
-/* =========================================
-   ZAMYKANIE OKNA
-========================================= */
-
+/* Zamknięcie okna */
 function closeWindow(id) {
-
-    const win =
-        document.getElementById(id);
+    const win = document.getElementById(id);
 
     if (!win) return;
 
-
     win.style.display = "none";
-
 
     if (NEXUS.activeWindow === id) {
-
         NEXUS.activeWindow = null;
-
     }
 }
 
 
-/* =========================================
-   MINIMALIZOWANIE
-========================================= */
-
+/* Minimalizacja okna */
 function minimizeWindow(id) {
-
-    const win =
-        document.getElementById(id);
+    const win = document.getElementById(id);
 
     if (!win) return;
 
-
     win.style.display = "none";
+
+    if (NEXUS.activeWindow === id) {
+        NEXUS.activeWindow = null;
+    }
 }
 
 
-/* =========================================
-   MAKSYMALIZOWANIE
-========================================= */
-
+/* Maksymalizacja / przywrócenie */
 function maximizeWindow(id) {
-
-    const win =
-        document.getElementById(id);
+    const win = document.getElementById(id);
 
     if (!win) return;
-
 
     if (!NEXUS.maximizedWindows[id]) {
 
-        /*
-         * Zapamiętujemy poprzedni wygląd
-         */
-
+        /* Zapamiętujemy poprzedni wygląd */
         win.dataset.previousStyle =
             win.getAttribute("style") || "";
-
 
         win.style.left = "0";
         win.style.top = "0";
         win.style.width = "100%";
-        win.style.height =
-            "calc(100% - 90px)";
-
+        win.style.height = "calc(100% - 90px)";
         win.style.borderRadius = "0";
 
-
-        NEXUS.maximizedWindows[id] =
-            true;
+        NEXUS.maximizedWindows[id] = true;
 
     } else {
 
-        /*
-         * Przywracamy poprzedni wygląd
-         */
-
+        /* Przywracamy poprzedni wygląd */
         win.setAttribute(
             "style",
-            win.dataset.previousStyle ||
-            "display:flex;"
+            win.dataset.previousStyle || ""
         );
-
 
         win.style.display = "flex";
 
-
-        NEXUS.maximizedWindows[id] =
-            false;
+        NEXUS.maximizedWindows[id] = false;
     }
+
+    focusWindow(id);
 }
 
 
-/* =========================================
-   USTAWIANIE AKTYWNEGO OKNA
-========================================= */
-
+/* Ustawienie okna na pierwszym planie */
 function focusWindow(id) {
-
-    const win =
-        document.getElementById(id);
+    const win = document.getElementById(id);
 
     if (!win) return;
 
-
     NEXUS.highestZIndex++;
-
 
     win.style.zIndex =
         NEXUS.highestZIndex;
-
 
     NEXUS.activeWindow = id;
 }
 
 
 /* =========================================
-   KLIKNIĘCIE W OKNO
-========================================= */
+   KLIKNIĘCIE W OKNO = PIERWSZY PLAN
+   ========================================= */
 
 document.addEventListener(
     "mousedown",
@@ -199,38 +132,28 @@ document.addEventListener(
         const win =
             event.target.closest(".window");
 
-
         if (!win) return;
 
-
         focusWindow(win.id);
-
     }
 );
 
 
 /* =========================================
-   PODSTAWOWE ZARZĄDZANIE KLAWIATURĄ
-========================================= */
+   ESC = ZAMKNIĘCIE AKTYWNEGO OKNA
+   ========================================= */
 
 document.addEventListener(
     "keydown",
     function(event) {
 
-        /*
-         * ESC zamyka aktywne okno
-         */
-
         if (
             event.key === "Escape" &&
             NEXUS.activeWindow
         ) {
-
             closeWindow(
                 NEXUS.activeWindow
             );
-
         }
-
     }
 );
