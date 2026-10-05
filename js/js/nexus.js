@@ -1,1406 +1,162 @@
-:root {
-    --nexus-bg: #07090d;
-    --nexus-panel: rgba(18, 21, 28, 0.82);
-    --nexus-panel-solid: #12151c;
-    --nexus-border: rgba(255, 255, 255, 0.09);
+"use strict";
 
-    --nexus-text: #f5f7fb;
-    --nexus-muted: #8f98a8;
+/* =========================================
+   NEXUS OS — RDZEŃ SYSTEMU
+   ========================================= */
 
-    --nexus-accent: #7c5cff;
-    --nexus-accent-2: #00d9ff;
+window.NEXUS = {
+    name: "NEXUS OS",
+    version: "0.1",
+    activeWindow: null,
+    highestZIndex: 100,
+    maximizedWindows: {},
+    systemReady: false
+};
 
-    --nexus-success: #42e88a;
-    --nexus-danger: #ff5577;
 
-    --nexus-shadow:
-        0 25px 80px rgba(0, 0, 0, 0.55);
+/* =========================================
+   ZEGAR
+   ========================================= */
+
+function updateClock() {
+    const clock = document.getElementById("systemTime");
+
+    if (!clock) return;
+
+    const now = new Date();
+
+    const hours = new Intl.DateTimeFormat("pl-PL", {
+        timeZone: "Europe/Warsaw",
+        hour: "2-digit",
+        hour12: false
+    }).format(now);
+
+    const minutes = new Intl.DateTimeFormat("pl-PL", {
+        timeZone: "Europe/Warsaw",
+        minute: "2-digit",
+        hour: "2-digit",
+        hour12: false
+    }).format(now);
+
+    clock.textContent = `${hours}:${minutes.split(":").pop()}`;
 }
 
 
 /* =========================================
-   PODSTAWY
-========================================= */
+   STATUS SYSTEMU
+   ========================================= */
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    user-select: none;
-}
+function setSystemStatus(status) {
+    const element = document.getElementById("systemStatus");
 
-html,
-body {
-    width: 100%;
-    height: 100%;
-}
+    if (!element) return;
 
-body {
-    font-family:
-        Inter,
-        "Segoe UI",
-        Arial,
-        sans-serif;
-
-    background: var(--nexus-bg);
-    color: var(--nexus-text);
-
-    overflow: hidden;
-}
-
-button,
-input {
-    font: inherit;
-}
-
-button {
-    border: 0;
-    color: inherit;
-}
-
-
-/* =========================================
-   PULPIT
-========================================= */
-
-#desktop {
-    position: fixed;
-    inset: 0;
-
-    overflow: hidden;
-
-    background:
-        radial-gradient(
-            circle at 20% 20%,
-            rgba(124, 92, 255, 0.16),
-            transparent 30%
-        ),
-
-        radial-gradient(
-            circle at 80% 25%,
-            rgba(0, 217, 255, 0.10),
-            transparent 28%
-        ),
-
-        radial-gradient(
-            circle at 50% 100%,
-            rgba(124, 92, 255, 0.08),
-            transparent 40%
-        ),
-
-        linear-gradient(
-            135deg,
-            #06080d,
-            #0b0e15 50%,
-            #05070b
-        );
-}
-
-
-#desktop::before {
-    content: "";
-
-    position: absolute;
-    inset: 0;
-
-    background:
-        linear-gradient(
-            rgba(255, 255, 255, 0.015) 1px,
-            transparent 1px
-        ),
-
-        linear-gradient(
-            90deg,
-            rgba(255, 255, 255, 0.015) 1px,
-            transparent 1px
-        );
-
-    background-size: 60px 60px;
-
-    mask-image:
-        linear-gradient(
-            to bottom,
-            black,
-            transparent
-        );
-
-    pointer-events: none;
-}
-
-
-/* =========================================
-   GÓRNY PASEK
-========================================= */
-
-.topbar {
-    position: absolute;
-
-    top: 0;
-    left: 0;
-    right: 0;
-
-    height: 58px;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    padding: 0 22px;
-
-    background:
-        rgba(5, 7, 11, 0.55);
-
-    backdrop-filter:
-        blur(25px);
-
-    border-bottom:
-        1px solid rgba(255, 255, 255, 0.06);
-
-    z-index: 9000;
-}
-
-
-.brand {
-    display: flex;
-    align-items: center;
-
-    gap: 11px;
-
-    font-weight: 700;
-
-    letter-spacing: 0.4px;
-}
-
-
-.nexus-logo {
-    width: 29px;
-    height: 29px;
-
-    border-radius: 9px;
-
-    display: grid;
-    place-items: center;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--nexus-accent),
-            var(--nexus-accent-2)
-        );
-
-    box-shadow:
-        0 0 25px rgba(124, 92, 255, 0.4);
-
-    font-size: 14px;
-}
-
-
-/* =========================================
-   STATUS / ZEGAR
-========================================= */
-
-.status {
-    display: flex;
-    align-items: center;
-
-    gap: 18px;
-
-    font-size: 12px;
-
-    color: var(--nexus-muted);
-}
-
-
-.status-item {
-    display: flex;
-    align-items: center;
-
-    gap: 7px;
-}
-
-
-.status-dot {
-    width: 7px;
-    height: 7px;
-
-    border-radius: 50%;
-
-    background:
-        var(--nexus-success);
-
-    box-shadow:
-        0 0 10px var(--nexus-success);
-}
-
-
-/* =========================================
-   CENTRALNY PANEL
-========================================= */
-
-.center {
-    position: absolute;
-
-    left: 50%;
-    top: 45%;
-
-    transform:
-        translate(-50%, -50%);
-
-    width:
-        min(760px, 90%);
-
-    text-align: center;
-}
-
-
-.ai-orb {
-    width: 92px;
-    height: 92px;
-
-    margin:
-        0 auto 28px;
-
-    border-radius: 50%;
-
-    background:
-        radial-gradient(
-            circle at 35% 30%,
-            #ffffff,
-            transparent 7%
-        ),
-
-        radial-gradient(
-            circle at 50% 50%,
-            #9b8aff,
-            #4e39d8 50%,
-            #131021 72%
-        );
-
-    box-shadow:
-        0 0 45px rgba(124, 92, 255, 0.35),
-        0 0 120px rgba(0, 217, 255, 0.12);
-
-    animation:
-        nexusOrb 5s ease-in-out infinite;
-
-    cursor: pointer;
-
-    transition:
-        transform 0.25s ease,
-        box-shadow 0.25s ease;
-}
-
-
-.ai-orb:hover {
-    box-shadow:
-        0 0 55px rgba(124, 92, 255, 0.5),
-        0 0 140px rgba(0, 217, 255, 0.18);
-}
-
-
-@keyframes nexusOrb {
-
-    0%,
-    100% {
-        transform: scale(1);
+    if (status === "booting") {
+        element.innerHTML =
+            '<span class="status-dot"></span> URUCHAMIANIE';
     }
 
-    50% {
-        transform: scale(1.06);
+    if (status === "online") {
+        element.innerHTML =
+            '<span class="status-dot"></span> SYSTEM GOTOWY';
     }
-}
 
-
-.center h1 {
-    font-size:
-        clamp(32px, 5vw, 54px);
-
-    letter-spacing: -2px;
-
-    margin-bottom: 12px;
-}
-
-
-.subtitle {
-    color:
-        var(--nexus-muted);
-
-    font-size: 15px;
-
-    margin-bottom: 30px;
-}
-
-
-/* =========================================
-   AI SEARCH
-========================================= */
-
-.ai-search {
-    display: flex;
-    align-items: center;
-
-    width: 100%;
-
-    padding: 6px;
-
-    border:
-        1px solid var(--nexus-border);
-
-    background:
-        rgba(18, 21, 28, 0.7);
-
-    backdrop-filter:
-        blur(25px);
-
-    border-radius: 19px;
-
-    box-shadow:
-        var(--nexus-shadow);
-}
-
-
-.search-icon {
-    width: 48px;
-
-    display: grid;
-    place-items: center;
-
-    color:
-        var(--nexus-accent-2);
-
-    font-size: 18px;
-}
-
-
-.ai-search input {
-    flex: 1;
-
-    background: none;
-
-    border: 0;
-    outline: none;
-
-    padding: 17px 8px;
-
-    color: white;
-
-    font-size: 15px;
-
-    user-select: text;
-}
-
-
-.ai-search input::placeholder {
-    color:
-        #737c8c;
-}
-
-
-.ai-search button {
-    width: 48px;
-    height: 48px;
-
-    border-radius: 14px;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--nexus-accent),
-            #5d45e8
-        );
-
-    cursor: pointer;
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-
-.ai-search button:hover {
-    transform:
-        scale(1.05);
-
-    box-shadow:
-        0 0 25px rgba(124, 92, 255, 0.35);
-}
-
-
-/* =========================================
-   SUGESTIE
-========================================= */
-
-.suggestions {
-    display: flex;
-
-    justify-content: center;
-
-    flex-wrap: wrap;
-
-    gap: 9px;
-
-    margin-top: 16px;
-}
-
-
-.suggestion {
-    padding: 9px 14px;
-
-    border-radius: 20px;
-
-    border:
-        1px solid var(--nexus-border);
-
-    background:
-        rgba(255, 255, 255, 0.035);
-
-    color:
-        #b8bfca;
-
-    cursor: pointer;
-
-    font-size: 12px;
-
-    transition:
-        0.2s ease;
-}
-
-
-.suggestion:hover {
-    background:
-        rgba(124, 92, 255, 0.15);
-
-    border-color:
-        rgba(124, 92, 255, 0.35);
-
-    color: white;
-
-    transform:
-        translateY(-1px);
-}
-
-
-/* =========================================
-   DOCK
-========================================= */
-
-.dock {
-    position: absolute;
-
-    left: 50%;
-    bottom: 20px;
-
-    transform:
-        translateX(-50%);
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 8px;
-
-    padding: 9px;
-
-    border:
-        1px solid var(--nexus-border);
-
-    background:
-        rgba(13, 16, 22, 0.78);
-
-    backdrop-filter:
-        blur(30px);
-
-    border-radius: 21px;
-
-    box-shadow:
-        0 20px 60px rgba(0, 0, 0, 0.5);
-
-    z-index: 9500;
-}
-
-
-.dock-item {
-    width: 48px;
-    height: 48px;
-
-    border-radius: 14px;
-
-    display: grid;
-    place-items: center;
-
-    cursor: pointer;
-
-    font-size: 20px;
-
-    transition:
-        0.2s ease;
-
-    position: relative;
-
-    background:
-        transparent;
-}
-
-
-.dock-item:hover {
-    background:
-        rgba(255, 255, 255, 0.09);
-
-    transform:
-        translateY(-5px)
-        scale(1.05);
-}
-
-
-.dock-item:active {
-    transform:
-        translateY(-2px)
-        scale(0.98);
-}
-
-
-/* =========================================
-   OKNA
-========================================= */
-
-.window {
-    position: absolute;
-
-    width: 760px;
-    height: 520px;
-
-    max-width:
-        calc(100vw - 30px);
-
-    max-height:
-        calc(100vh - 100px);
-
-    min-width: 330px;
-    min-height: 230px;
-
-    left: 50%;
-    top: 50%;
-
-    transform:
-        translate(-50%, -50%);
-
-    background:
-        var(--nexus-panel);
-
-    border:
-        1px solid var(--nexus-border);
-
-    border-radius: 18px;
-
-    box-shadow:
-        var(--nexus-shadow);
-
-    backdrop-filter:
-        blur(35px);
-
-    overflow: hidden;
-
-    display: none;
-
-    flex-direction: column;
-
-    z-index: 100;
-}
-
-
-.window.open {
-    display: flex;
-}
-
-
-.window-header {
-    height: 54px;
-    min-height: 54px;
-
-    display: flex;
-
-    align-items: center;
-
-    padding: 0 16px;
-
-    border-bottom:
-        1px solid var(--nexus-border);
-
-    cursor: grab;
-
-    background:
-        rgba(255, 255, 255, 0.025);
-}
-
-
-.window-header:active {
-    cursor: grabbing;
-}
-
-
-.window-title {
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    font-size: 13px;
-
-    font-weight: 600;
-}
-
-
-.window-controls {
-    margin-left: auto;
-
-    display: flex;
-
-    gap: 7px;
-}
-
-
-.window-controls button {
-    width: 30px;
-    height: 30px;
-
-    border-radius: 9px;
-
-    background:
-        rgba(255, 255, 255, 0.05);
-
-    cursor: pointer;
-
-    transition:
-        0.15s ease;
-}
-
-
-.window-controls button:hover {
-    background:
-        rgba(255, 255, 255, 0.1);
-}
-
-
-.window-controls .close:hover {
-    background:
-        rgba(255, 70, 100, 0.25);
-}
-
-
-.window-body {
-    flex: 1;
-
-    min-height: 0;
-
-    overflow: hidden;
-}
-
-
-/* =========================================
-   PLIKI
-========================================= */
-
-.files-layout {
-    display: flex;
-
-    height: 100%;
-}
-
-
-.sidebar {
-    width: 190px;
-    min-width: 190px;
-
-    border-right:
-        1px solid var(--nexus-border);
-
-    padding: 15px;
-}
-
-
-.side-item {
-    padding: 11px 12px;
-
-    border-radius: 10px;
-
-    color:
-        var(--nexus-muted);
-
-    cursor: pointer;
-
-    margin-bottom: 4px;
-
-    font-size: 13px;
-
-    transition:
-        0.15s ease;
-}
-
-
-.side-item:hover,
-.side-item.selected {
-    color: white;
-
-    background:
-        rgba(124, 92, 255, 0.13);
-}
-
-
-.file-area {
-    flex: 1;
-
-    padding: 24px;
-
-    overflow: auto;
-}
-
-
-.file-grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(
-            auto-fill,
-            minmax(120px, 1fr)
-        );
-
-    gap: 12px;
-}
-
-
-.file {
-    padding: 18px 12px;
-
-    border-radius: 14px;
-
-    background:
-        rgba(255, 255, 255, 0.035);
-
-    border:
-        1px solid transparent;
-
-    cursor: pointer;
-
-    text-align: center;
-
-    transition:
-        0.18s ease;
-}
-
-
-.file:hover {
-    border-color:
-        rgba(124, 92, 255, 0.3);
-
-    background:
-        rgba(124, 92, 255, 0.08);
-
-    transform:
-        translateY(-2px);
-}
-
-
-.file-icon {
-    font-size: 34px;
-
-    margin-bottom: 10px;
-}
-
-
-.file-name {
-    font-size: 12px;
-}
-
-
-/* =========================================
-   NEXUS AI
-========================================= */
-
-.ai-chat {
-    display: flex;
-
-    flex-direction: column;
-
-    height: 100%;
-}
-
-
-.chat-messages {
-    flex: 1;
-
-    min-height: 0;
-
-    overflow: auto;
-
-    padding: 24px;
-}
-
-
-.message {
-    max-width: 75%;
-
-    padding: 13px 15px;
-
-    border-radius: 14px;
-
-    margin-bottom: 12px;
-
-    font-size: 13px;
-
-    line-height: 1.5;
-}
-
-
-.message.nexus {
-    background:
-        rgba(124, 92, 255, 0.11);
-
-    border:
-        1px solid rgba(124, 92, 255, 0.12);
-}
-
-
-.message.user {
-    margin-left: auto;
-
-    background:
-        rgba(255, 255, 255, 0.07);
-}
-
-
-.chat-input {
-    padding: 13px;
-
-    border-top:
-        1px solid var(--nexus-border);
-
-    display: flex;
-
-    gap: 8px;
-}
-
-
-.chat-input input {
-    flex: 1;
-
-    background:
-        rgba(255, 255, 255, 0.05);
-
-    border:
-        1px solid var(--nexus-border);
-
-    outline: none;
-
-    color: white;
-
-    padding: 12px;
-
-    border-radius: 11px;
-
-    user-select: text;
-}
-
-
-.chat-input input::placeholder {
-    color:
-        #737c8c;
-}
-
-
-.chat-input button {
-    width: 45px;
-
-    border-radius: 11px;
-
-    background:
-        var(--nexus-accent);
-
-    cursor: pointer;
-
-    transition:
-        0.2s ease;
-}
-
-
-.chat-input button:hover {
-    transform:
-        scale(1.04);
-}
-
-
-/* =========================================
-   USTAWIENIA
-========================================= */
-
-.settings {
-    padding: 24px;
-
-    height: 100%;
-
-    overflow: auto;
-}
-
-
-.setting-section {
-    margin-bottom: 26px;
-}
-
-
-.setting-section h3 {
-    font-size: 14px;
-
-    margin-bottom: 12px;
-}
-
-
-.setting {
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    padding: 15px;
-
-    background:
-        rgba(255, 255, 255, 0.035);
-
-    border:
-        1px solid var(--nexus-border);
-
-    border-radius: 13px;
-
-    margin-bottom: 8px;
-}
-
-
-.setting-info small {
-    display: block;
-
-    color:
-        var(--nexus-muted);
-
-    margin-top: 4px;
-}
-
-
-/* =========================================
-   PRZEGLĄDARKA
-========================================= */
-
-.browser {
-    height: 100%;
-
-    display: flex;
-
-    flex-direction: column;
-}
-
-
-.browser-bar {
-    padding: 10px;
-
-    border-bottom:
-        1px solid var(--nexus-border);
-
-    display: flex;
-
-    gap: 8px;
-}
-
-
-.browser-bar button {
-    width: 38px;
-
-    border-radius: 10px;
-
-    background:
-        rgba(255, 255, 255, 0.05);
-
-    cursor: pointer;
-
-    transition:
-        0.15s ease;
-}
-
-
-.browser-bar button:hover {
-    background:
-        rgba(255, 255, 255, 0.1);
-}
-
-
-.browser-bar input {
-    flex: 1;
-
-    background:
-        rgba(255, 255, 255, 0.05);
-
-    border:
-        1px solid var(--nexus-border);
-
-    border-radius: 10px;
-
-    padding: 10px 13px;
-
-    color: white;
-
-    outline: none;
-
-    user-select: text;
-}
-
-
-.browser-bar input::placeholder {
-    color:
-        #737c8c;
-}
-
-
-.browser-page {
-    flex: 1;
-
-    display: grid;
-
-    place-items: center;
-
-    text-align: center;
-
-    color:
-        var(--nexus-muted);
-}
-
-
-.browser-page strong {
-    display: block;
-
-    color: white;
-
-    font-size: 26px;
-
-    margin-bottom: 8px;
-}
-
-
-/* =========================================
-   TERMINAL
-========================================= */
-
-.terminal {
-    height: 100%;
-
-    background:
-        #050607;
-
-    padding: 18px;
-
-    font-family:
-        Consolas,
-        "Courier New",
-        monospace;
-
-    font-size: 13px;
-
-    overflow: auto;
-}
-
-
-.terminal-output {
-    line-height: 1.6;
-}
-
-
-.terminal-output div {
-    margin-bottom: 5px;
-}
-
-
-.terminal-input-line {
-    display: flex;
-
-    align-items: center;
-
-    margin-top: 8px;
-}
-
-
-.terminal-prompt {
-    color:
-        #8df5ad;
-
-    margin-right: 8px;
-
-    white-space: nowrap;
-}
-
-
-.terminal-input {
-    background: none;
-
-    border: 0;
-
-    outline: none;
-
-    color:
-        #c8ffda;
-
-    font-family: inherit;
-
-    width: 80%;
-
-    user-select: text;
-}
-
-
-/* =========================================
-   LAUNCHER
-========================================= */
-
-#launcher {
-    position: absolute;
-
-    left: 50%;
-    bottom: 90px;
-
-    transform:
-        translateX(-50%);
-
-    width: 460px;
-
-    max-width:
-        calc(100vw - 30px);
-
-    background:
-        rgba(14, 17, 24, 0.92);
-
-    border:
-        1px solid var(--nexus-border);
-
-    backdrop-filter:
-        blur(35px);
-
-    border-radius: 20px;
-
-    padding: 14px;
-
-    box-shadow:
-        var(--nexus-shadow);
-
-    display: none;
-
-    z-index: 9400;
-}
-
-
-#launcher.open {
-    display: block;
-}
-
-
-.launcher-search {
-    width: 100%;
-
-    padding: 13px;
-
-    border-radius: 12px;
-
-    border:
-        1px solid var(--nexus-border);
-
-    background:
-        rgba(255, 255, 255, 0.05);
-
-    color: white;
-
-    outline: none;
-
-    user-select: text;
-
-    margin-bottom: 12px;
-}
-
-
-.launcher-search::placeholder {
-    color:
-        #737c8c;
-}
-
-
-.apps {
-    display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
-    gap: 8px;
-}
-
-
-.app {
-    padding: 15px 8px;
-
-    border-radius: 12px;
-
-    text-align: center;
-
-    cursor: pointer;
-
-    font-size: 12px;
-
-    background:
-        transparent;
-
-    transition:
-        0.18s ease;
-}
-
-
-.app:hover {
-    background:
-        rgba(255, 255, 255, 0.07);
-
-    transform:
-        translateY(-2px);
-}
-
-
-.app-icon {
-    font-size: 24px;
-
-    margin-bottom: 7px;
+    if (status === "offline") {
+        element.innerHTML =
+            '<span class="status-dot"></span> OFFLINE';
+    }
 }
 
 
 /* =========================================
    POWIADOMIENIA
-========================================= */
+   ========================================= */
 
-#notifications {
-    position: absolute;
+function showNotification(title, message) {
+    const container =
+        document.getElementById("notifications");
 
-    right: 20px;
-    top: 72px;
+    if (!container) return;
 
-    width: 330px;
+    const notification =
+        document.createElement("div");
 
-    max-width:
-        calc(100vw - 40px);
+    notification.className = "notification";
 
-    background:
-        rgba(14, 17, 24, 0.92);
+    notification.innerHTML = `
+        <strong>${escapeHTML(title)}</strong>
+        <span>${escapeHTML(message)}</span>
+    `;
 
-    backdrop-filter:
-        blur(30px);
+    container.appendChild(notification);
 
-    border:
-        1px solid var(--nexus-border);
-
-    border-radius: 18px;
-
-    padding: 16px;
-
-    box-shadow:
-        var(--nexus-shadow);
-
-    display: block;
-
-    z-index: 9500;
-
-    pointer-events: none;
-}
-
-
-.notification {
-    padding: 13px;
-
-    background:
-        rgba(255, 255, 255, 0.04);
-
-    border-radius: 12px;
-
-    margin-top: 9px;
-
-    font-size: 12px;
-}
-
-
-.notification:first-child {
-    margin-top: 0;
-}
-
-
-.notification strong {
-    display: block;
-
-    margin-bottom: 4px;
-}
-
-
-.notification span {
-    display: block;
-
-    color:
-        var(--nexus-muted);
-
-    line-height: 1.4;
+    setTimeout(() => {
+        notification.remove();
+    }, 4500);
 }
 
 
 /* =========================================
-   RESPONSYWNOŚĆ
-========================================= */
+   ZABEZPIECZENIE HTML
+   ========================================= */
 
-@media (max-width: 650px) {
-
-    .status {
-        gap: 8px;
-    }
-
-
-    .window {
-        width:
-            calc(100vw - 20px);
-
-        height:
-            calc(100vh - 100px);
-    }
-
-
-    .sidebar {
-        width: 125px;
-        min-width: 125px;
-    }
-
-
-    .center h1 {
-        font-size: 34px;
-    }
-
-
-    .dock {
-        bottom: 12px;
-    }
-
-
-    .dock-item {
-        width: 42px;
-        height: 42px;
-    }
-
-
-    .apps {
-        grid-template-columns:
-            repeat(3, 1fr);
-    }
-
-
-    .browser-bar {
-        gap: 5px;
-    }
-
-
-    .browser-bar button {
-        width: 34px;
-    }
+function escapeHTML(text) {
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
+
+
+/* =========================================
+   INFORMACJE O SYSTEMIE
+   ========================================= */
+
+function getSystemInfo() {
+    return {
+        name: NEXUS.name,
+        version: NEXUS.version,
+        platform: "NEXUS Web Shell",
+        language: "pl-PL",
+        status: NEXUS.systemReady
+            ? "gotowy"
+            : "uruchamianie"
+    };
+}
+
+
+/* =========================================
+   START SYSTEMU
+   ========================================= */
+
+function initializeNexus() {
+    console.log("NEXUS OS — uruchamianie systemu...");
+
+    setSystemStatus("booting");
+
+    updateClock();
+
+    setTimeout(() => {
+        NEXUS.systemReady = true;
+
+        setSystemStatus("online");
+
+        console.log("NEXUS OS — system gotowy.");
+    }, 700);
+}
+
+
+/* =========================================
+   URUCHOMIENIE
+   ========================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    updateClock();
+
+    setInterval(updateClock, 1000);
+
+    initializeNexus();
+});
