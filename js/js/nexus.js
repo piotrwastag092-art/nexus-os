@@ -2,7 +2,7 @@
 
 window.NEXUS = {
     name: "NEXUS OS",
-    version: "0.7",
+    version: "0.8",
     activeWindow: null,
     highestZIndex: 100,
     maximizedWindows: {},
@@ -185,6 +185,7 @@ function renderDesktopIcons() {
         '<div class="desk-icon" ondblclick="openWindow(\'filesWindow\')"><div class="ico">📁</div>Pliki</div>' +
         '<div class="desk-icon" ondblclick="openWindow(\'aiWindow\')"><div class="ico">✦</div>AI</div>' +
         '<div class="desk-icon" ondblclick="openWindow(\'notepadWindow\')"><div class="ico">📝</div>Notatnik</div>' +
+        '<div class="desk-icon" ondblclick="openWindow(\'labWindow\');setTimeout(startLab,200)"><div class="ico">◈</div>Lab</div>' +
         '<div class="desk-icon" ondblclick="openTrash()"><div class="ico">🗑</div>Kosz</div>';
 }
 
