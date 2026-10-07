@@ -5,23 +5,150 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NEXUS OS</title>
     <link rel="stylesheet" href="css/nexus.css">
+    <style>
+        #bootScreen {
+            position: fixed !important;
+            inset: 0 !important;
+            background: #02040a !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            z-index: 999999 !important;
+            overflow: hidden !important;
+            transition: opacity 0.9s ease, visibility 0.9s ease !important;
+        }
+        #bootScreen.boot-hidden {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
+        .boot-bg-glow {
+            position: absolute;
+            width: 600px; height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(124,92,255,0.25) 0%, transparent 70%);
+            animation: bootGlow 2.5s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+        @keyframes bootGlow {
+            from { transform: scale(0.8); opacity: 0.5; }
+            to   { transform: scale(1.3); opacity: 1; }
+        }
+        .boot-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-top-color: #7c5cff;
+            border-right-color: #00d9ff;
+            animation: bootSpin 1.8s linear infinite;
+        }
+        .boot-ring-1 { width: 140px; height: 140px; }
+        .boot-ring-2 { width: 190px; height: 190px; animation-duration: 2.6s; animation-direction: reverse; border-top-color: #00d9ff; border-right-color: #7c5cff; }
+        .boot-ring-3 { width: 240px; height: 240px; animation-duration: 3.4s; opacity: 0.5; }
+        @keyframes bootSpin { to { transform: rotate(360deg); } }
+        .boot-logo-wrap {
+            position: relative;
+            z-index: 5;
+            width: 100px; height: 100px;
+            display: grid; place-items: center;
+        }
+        .boot-logo {
+            width: 84px; height: 84px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #7c5cff, #00d9ff);
+            display: grid; place-items: center;
+            font-size: 42px; font-weight: 800; color: #fff;
+            box-shadow: 0 0 60px rgba(124,92,255,0.7), 0 0 120px rgba(0,217,255,0.3);
+            animation: bootLogoPulse 1.4s ease-in-out infinite;
+        }
+        @keyframes bootLogoPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.12); }
+        }
+        .boot-title {
+            margin-top: 32px;
+            font-size: 15px;
+            letter-spacing: 8px;
+            color: #c8cdd8;
+            text-transform: uppercase;
+            z-index: 5;
+            animation: bootFadeIn 0.8s ease 0.3s both;
+        }
+        .boot-status {
+            margin-top: 16px;
+            font-size: 13px;
+            color: #00d9ff;
+            z-index: 5;
+            min-height: 20px;
+            animation: bootFadeIn 0.6s ease 0.5s both;
+        }
+        @keyframes bootFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .boot-bar-wrap {
+            margin-top: 28px;
+            width: 240px; height: 4px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 4px;
+            overflow: hidden;
+            z-index: 5;
+        }
+        .boot-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #7c5cff, #00d9ff);
+            border-radius: 4px;
+            transition: width 0.35s ease;
+        }
+        .boot-scanline {
+            position: absolute;
+            left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0,217,255,0.4), transparent);
+            animation: bootScan 2.2s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes bootScan {
+            0%   { top: 0; opacity: 0; }
+            10%  { opacity: 1; }
+            90%  { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+        .boot-spark {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: #7c5cff;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: bootSpark 1.2s ease-out forwards;
+        }
+        @keyframes bootSpark {
+            0%   { transform: translate(0,0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--sx), var(--sy)) scale(0); opacity: 0; }
+        }
+    </style>
 </head>
 <body>
 
 <div id="desktop">
 
-    <!-- ========== BOOT (dynamiczny) ========== -->
     <div id="bootScreen">
-        <div class="boot-particles" id="bootParticles"></div>
-        <div class="boot-ring"></div>
+        <div class="boot-bg-glow"></div>
+        <div class="boot-scanline"></div>
+        <div class="boot-ring boot-ring-1"></div>
         <div class="boot-ring boot-ring-2"></div>
-        <div class="boot-logo">N</div>
-        <div class="boot-text">NEXUS OS</div>
-        <div class="boot-status" id="bootStatus">Inicjalizacja rdzenia...</div>
-        <div class="boot-bar"><div class="boot-bar-fill" id="bootBar"></div></div>
+        <div class="boot-ring boot-ring-3"></div>
+        <div class="boot-logo-wrap">
+            <div class="boot-logo">N</div>
+        </div>
+        <div class="boot-title">NEXUS OS</div>
+        <div class="boot-status" id="bootStatus">Uruchamianie systemu...</div>
+        <div class="boot-bar-wrap">
+            <div class="boot-bar-fill" id="bootBar"></div>
+        </div>
     </div>
 
-    <!-- GÓRNY PASEK -->
     <header class="topbar">
         <div class="brand">
             <div class="nexus-logo">N</div>
@@ -35,7 +162,6 @@
         </div>
     </header>
 
-    <!-- CENTRALNY EKRAN -->
     <main class="center">
         <div class="ai-orb" onclick="openWindow('aiWindow')" title="NEXUS AI"></div>
         <h1>NEXUS</h1>
@@ -53,7 +179,6 @@
         </div>
     </main>
 
-    <!-- DOCK -->
     <nav class="dock">
         <button type="button" class="dock-item" onclick="openWindow('filesWindow')" title="Pliki">📁</button>
         <button type="button" class="dock-item" onclick="openWindow('browserWindow')" title="Internet">◉</button>
@@ -64,7 +189,6 @@
         <button type="button" class="dock-item" onclick="toggleLauncher()" title="Menu">◈</button>
     </nav>
 
-    <!-- OKNO PLIKI -->
     <section id="filesWindow" class="window" style="display:none">
         <div class="window-header">
             <div class="window-title">📁 Pliki</div>
@@ -99,7 +223,6 @@
         <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
     </section>
 
-    <!-- OKNO AI -->
     <section id="aiWindow" class="window" style="display:none">
         <div class="window-header">
             <div class="window-title">✦ NEXUS AI</div>
@@ -136,7 +259,6 @@
         <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
     </section>
 
-    <!-- OKNO USTAWIENIA -->
     <section id="settingsWindow" class="window" style="display:none">
         <div class="window-header">
             <div class="window-title">⚙ Ustawienia</div>
@@ -186,7 +308,6 @@
         <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
     </section>
 
-    <!-- OKNO PRZEGLĄDARKA -->
     <section id="browserWindow" class="window" style="display:none">
         <div class="window-header">
             <div class="window-title">◉ NEXUS Browser</div>
@@ -222,7 +343,6 @@
         <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
     </section>
 
-    <!-- OKNO TERMINAL -->
     <section id="terminalWindow" class="window" style="display:none">
         <div class="window-header">
             <div class="window-title">&gt;_ Terminal NEXUS</div>
@@ -254,7 +374,6 @@
         <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
     </section>
 
-    <!-- OKNO NOTATNIK -->
     <section id="notepadWindow" class="window" style="display:none">
         <div class="window-header">
             <div class="window-title">📝 Notatnik</div>
@@ -284,7 +403,6 @@
         <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
     </section>
 
-    <!-- LAUNCHER -->
     <div id="launcher" style="display:none">
         <input id="launcherSearch" class="launcher-search" type="text" placeholder="Szukaj aplikacji..." oninput="filterLauncher()">
         <div class="apps">
