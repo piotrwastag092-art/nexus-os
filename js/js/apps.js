@@ -1,7 +1,7 @@
 "use strict";
 
 /* =========================================
-   NEXUS OS — APPS (ulepszone)
+   NEXUS OS — APPS (v0.2)
    ========================================= */
 
 function setAICommand(text) {
@@ -10,6 +10,7 @@ function setAICommand(text) {
     input.value = text;
     input.focus();
 }
+
 
 function runAICommand() {
     const input = document.getElementById("aiCommand");
@@ -45,6 +46,7 @@ function runAICommand() {
     input.value = "";
 }
 
+
 document.addEventListener("DOMContentLoaded", () => {
     const input = document.getElementById("aiCommand");
     if (!input) return;
@@ -56,14 +58,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-/* ===== AI CZAT ===== */
 
+/* ===== AI CZAT ===== */
 function handleAIKey(event) {
     if (event.key === "Enter") {
         event.preventDefault();
         sendAIMessage();
     }
 }
+
 
 function sendAIMessage() {
     const input = document.getElementById("aiChatInput");
@@ -101,6 +104,7 @@ function sendAIMessage() {
     }, 450);
 }
 
+
 function generateAIReply(text) {
     const t = text.toLowerCase();
 
@@ -123,14 +127,15 @@ function generateAIReply(text) {
     return "Zrozumiałem. Rdzeń AI jeszcze się uczy, ale już działam. Napisz konkretniej albo otwórz terminal i wpisz help.";
 }
 
-/* ===== PRZEGLĄDARKA ===== */
 
+/* ===== PRZEGLĄDARKA ===== */
 function handleBrowserKey(event) {
     if (event.key === "Enter") {
         event.preventDefault();
         navigateBrowser();
     }
 }
+
 
 function navigateBrowser() {
     const input = document.getElementById("browserAddress");
@@ -163,6 +168,7 @@ function navigateBrowser() {
     }, 280);
 }
 
+
 function browserBack() {
     showNotification("Przeglądarka", "Historia wstecz jeszcze nie zaimplementowana.");
 }
@@ -180,8 +186,8 @@ function browserReload() {
     }
 }
 
-/* ===== PLIKI ===== */
 
+/* ===== PLIKI ===== */
 function openFile(name) {
     showNotification("Pliki", `Plik: ${name}`);
 }
@@ -190,8 +196,8 @@ function openFolder(name) {
     showNotification("Pliki", `Folder: ${name}`);
 }
 
-/* ===== TERMINAL ===== */
 
+/* ===== TERMINAL ===== */
 function handleTerminalKey(event) {
     if (event.key !== "Enter") return;
     event.preventDefault();
@@ -282,4 +288,20 @@ Uptime:    od załadowania strony
 
     input.value = "";
     output.scrollTop = output.scrollHeight;
+}
+
+
+/* ===== USTAWIENIA ===== */
+function changeAccent(color) {
+    NEXUS.settings.accent = color;
+    applySettings();
+    saveState();
+    showNotification("Ustawienia", "Zmieniono kolor akcentu");
+}
+
+function changeAccent2(color) {
+    NEXUS.settings.accent2 = color;
+    applySettings();
+    saveState();
+    showNotification("Ustawienia", "Zmieniono drugi akcent");
 }
