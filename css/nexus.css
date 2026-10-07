@@ -292,3 +292,17 @@ document.addEventListener("DOMContentLoaded", () => {
 .resize-handle.nw { top: 0; left: 0; width: 12px; height: 12px; cursor: nw-resize; }
 .resize-handle.se { bottom: 0; right: 0; width: 12px; height: 12px; cursor: se-resize; }
 .resize-handle.sw { bottom: 0; left: 0; width: 12px; height: 12px; cursor: sw-resize; }
+function createParticles() {
+    const desktop = document.getElementById("desktop");
+    if (!desktop) return;
+
+    for (let i = 0; i < 18; i++) {
+        const p = document.createElement("div");
+        p.className = "particle";
+        p.style.left = Math.random() * 100 + "%";
+        p.style.top = Math.random() * 100 + "%";
+        p.style.animationDuration = (12 + Math.random() * 18) + "s";
+        p.style.animationDelay = (Math.random() * 10) + "s";
+        desktop.appendChild(p);
+    }
+}
