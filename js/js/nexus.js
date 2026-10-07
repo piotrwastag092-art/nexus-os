@@ -2,7 +2,7 @@
 
 window.NEXUS = {
     name: "NEXUS OS",
-    version: "0.6",
+    version: "0.7",
     activeWindow: null,
     highestZIndex: 100,
     maximizedWindows: {},
@@ -10,35 +10,41 @@ window.NEXUS = {
     settings: {
         accent: "#7c5cff",
         accent2: "#00d9ff",
-        wallpaper: "default"
+        theme: "default",
+        lockPass: ""
     },
     fs: {
         "Dokumenty": {
             type: "folder",
             children: {
-                "Witaj.txt": {
-                    type: "file",
-                    content: "Witaj w NEXUS OS!\nTo Twój wirtualny dysk.\nMożesz tworzyć i edytować pliki."
-                }
+                "Witaj.txt": { type: "file", content: "Witaj w NEXUS OS 0.7!\nCtrl+K = palette\nAlt+Tab = okna\nMeta+L = blokada" }
             }
         },
         "Obrazy": { type: "folder", children: {} },
         "Muzyka": { type: "folder", children: {} },
-        "Wideo": { type: "folder", children: {} },
         "Pobrane": { type: "folder", children: {} }
     },
+    trash: [],
     currentPath: [],
     terminalHistory: [],
-    terminalHistoryIndex: -1
+    terminalHistoryIndex: -1,
+    viewingTrash: false
 };
 
 function updateClock() {
-    var clock = document.getElementById("systemTime");
-    if (!clock) return;
     var now = new Date();
-    var h = new Intl.DateTimeFormat("pl-PL", { timeZone: "Europe/Warsaw", hour: "2-digit", hour12: false }).format(now);
-    var m = new Intl.DateTimeFormat("pl-PL", { timeZone: "Europe/Warsaw", minute: "2-digit", hour: "2-digit", hour12: false }).format(now);
-    clock.textContent = h + ":" + m.split(":").pop();
+    var t = new Intl.DateTimeFormat("pl-PL", { timeZone: "Europe/Warsaw", hour: "2-digit", minute: "2-digit", hour12: false }).format(now);
+    var d = new Intl.DateTimeFormat("pl-PL", { timeZone: "Europe/Warsaw", weekday: "long", day: "numeric", month: "long" }).format(now);
+    var clock = document.getElementById("systemTime");
+    if (clock) clock.textContent = t;
+    var wc = document.getElementById("widgetClock");
+    if (wc) wc.textContent = t;
+    var wd = document.getElementById("widgetDate");
+    if (wd) wd.textContent = d;
+    var lt = document.getElementById("lockTime");
+    if (lt) lt.textContent = t;
+    var ld = document.getElementById("lockDate");
+    if (ld) ld.textContent = d;
 }
 
 function setSystemStatus(status) {
@@ -46,7 +52,6 @@ function setSystemStatus(status) {
     if (!el) return;
     if (status === "booting") el.innerHTML = '<span class="status-dot"></span> URUCHAMIANIE';
     if (status === "online") el.innerHTML = '<span class="status-dot"></span> SYSTEM GOTOWY';
-    if (status === "offline") el.innerHTML = '<span class="status-dot"></span> OFFLINE';
 }
 
 function showNotification(title, message) {
@@ -56,16 +61,27 @@ function showNotification(title, message) {
     n.className = "notification";
     n.innerHTML = "<strong>" + escapeHTML(title) + "</strong><span>" + escapeHTML(message) + "</span>";
     container.appendChild(n);
-    setTimeout(function () { n.remove(); }, 4200);
+    setTimeout(function () { n.remove(); }, 4000);
 }
 
 function escapeHTML(text) {
     return String(text)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+function playBeep(freq, dur) {
+    try {
+        var ctx = new (window.AudioContext || window.webkitAudioContext)();
+        var o = ctx.createOscillator();
+        var g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.frequency.value = freq || 520;
+        g.gain.value = 0.04;
+        o.start();
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (dur || 0.12));
+        o.stop(ctx.currentTime + (dur || 0.12));
+    } catch (e) {}
 }
 
 function saveState() {
@@ -73,17 +89,16 @@ function saveState() {
         maximized: NEXUS.maximizedWindows,
         settings: NEXUS.settings,
         fs: NEXUS.fs,
+        trash: NEXUS.trash,
         terminalHistory: (NEXUS.terminalHistory || []).slice(-50),
-        windows: {}
+        windows: {},
+        widgetNote: (document.getElementById("widgetNote") || {}).value || ""
     };
     document.querySelectorAll(".window").forEach(function (win) {
-        if (win.style.display === "none" || win.classList.contains("window-closing")) return;
+        if (win.style.display === "none") return;
         state.windows[win.id] = {
-            left: win.style.left,
-            top: win.style.top,
-            width: win.style.width,
-            height: win.style.height,
-            zIndex: win.style.zIndex
+            left: win.style.left, top: win.style.top,
+            width: win.style.width, height: win.style.height, zIndex: win.style.zIndex
         };
     });
     try { localStorage.setItem("nexus-os-state", JSON.stringify(state)); } catch (e) {}
@@ -97,20 +112,24 @@ function loadState() {
         if (state.settings) {
             NEXUS.settings = Object.assign({}, NEXUS.settings, state.settings);
             applySettings();
+            setTheme(NEXUS.settings.theme || "default");
         }
-        if (state.maximized) NEXUS.maximizedWindows = state.maximized;
         if (state.fs) NEXUS.fs = state.fs;
+        if (state.trash) NEXUS.trash = state.trash;
         if (state.terminalHistory) NEXUS.terminalHistory = state.terminalHistory;
+        if (state.widgetNote) {
+            var wn = document.getElementById("widgetNote");
+            if (wn) wn.value = state.widgetNote;
+        }
         if (state.windows) {
             Object.keys(state.windows).forEach(function (id) {
                 var win = document.getElementById(id);
                 if (!win) return;
                 var s = state.windows[id];
-                win.style.left = s.left || "120px";
-                win.style.top = s.top || "100px";
-                win.style.width = s.width || "720px";
-                win.style.height = s.height || "480px";
-                if (s.zIndex) win.style.zIndex = s.zIndex;
+                if (s.left) win.style.left = s.left;
+                if (s.top) win.style.top = s.top;
+                if (s.width) win.style.width = s.width;
+                if (s.height) win.style.height = s.height;
             });
         }
     } catch (e) {}
@@ -121,19 +140,27 @@ function applySettings() {
     document.documentElement.style.setProperty("--nexus-accent-2", NEXUS.settings.accent2);
 }
 
+function setTheme(name) {
+    NEXUS.settings.theme = name;
+    document.body.classList.remove("theme-cyber", "theme-glass");
+    if (name === "cyber") document.body.classList.add("theme-cyber");
+    if (name === "glass") document.body.classList.add("theme-glass");
+    var sel = document.getElementById("themeSelect");
+    if (sel) sel.value = name;
+    saveState();
+}
+
 function createParticles() {
     var desktop = document.getElementById("desktop");
     if (!desktop) return;
     desktop.querySelectorAll(".particle").forEach(function (p) { p.remove(); });
-    for (var i = 0; i < 24; i++) {
+    for (var i = 0; i < 18; i++) {
         var p = document.createElement("div");
         p.className = "particle";
         p.style.left = Math.random() * 100 + "%";
         p.style.top = Math.random() * 100 + "%";
-        p.style.animationDuration = (10 + Math.random() * 20) + "s";
-        p.style.animationDelay = (Math.random() * 12) + "s";
-        p.style.width = (2 + Math.random() * 3) + "px";
-        p.style.height = p.style.width;
+        p.style.animationDuration = (12 + Math.random() * 18) + "s";
+        p.style.animationDelay = Math.random() * 10 + "s";
         desktop.appendChild(p);
     }
 }
@@ -142,130 +169,135 @@ function initParallax() {
     var desktop = document.getElementById("desktop");
     if (!desktop) return;
     desktop.addEventListener("mousemove", function (e) {
-        var x = (e.clientX / window.innerWidth - 0.5) * 12;
-        var y = (e.clientY / window.innerHeight - 0.5) * 12;
+        var x = (e.clientX / window.innerWidth - 0.5) * 10;
+        var y = (e.clientY / window.innerHeight - 0.5) * 10;
         desktop.style.setProperty("--parallax-x", x + "px");
         desktop.style.setProperty("--parallax-y", y + "px");
     });
 }
 
-function hideBootScreen() {
-    var boot = document.getElementById("bootScreen");
-    if (!boot) return;
-    boot.classList.add("boot-hidden");
-    // MUSI być !important — CSS ma display:flex !important
-    boot.style.setProperty("display", "none", "important");
-    boot.style.setProperty("opacity", "0", "important");
-    boot.style.setProperty("visibility", "hidden", "important");
-    boot.style.setProperty("pointer-events", "none", "important");
+function lockScreen() {
+    var lock = document.getElementById("lockScreen");
+    if (lock) lock.classList.add("show");
+    playBeep(320, 0.1);
 }
 
-function spawnBootSparks() {
-    var boot = document.getElementById("bootScreen");
-    if (!boot) return;
-    for (var i = 0; i < 12; i++) {
-        var s = document.createElement("div");
-        s.className = "boot-spark";
-        s.style.left = "50%";
-        s.style.top = "42%";
-        var angle = Math.random() * Math.PI * 2;
-        var dist = 60 + Math.random() * 160;
-        s.style.setProperty("--sx", Math.cos(angle) * dist + "px");
-        s.style.setProperty("--sy", Math.sin(angle) * dist + "px");
-        s.style.animationDelay = (Math.random() * 0.4) + "s";
-        boot.appendChild(s);
-        (function (el) {
-            setTimeout(function () { if (el && el.parentNode) el.remove(); }, 1400);
-        })(s);
-    }
-}
-
-function runBootSequence() {
-    var boot = document.getElementById("bootScreen");
-    var statusEl = document.getElementById("bootStatus");
-    var bar = document.getElementById("bootBar");
-
-    // awaryjny timeout — ZAWSZE schowa boot max po 5s
-    var safety = setTimeout(function () {
-        hideBootScreen();
-        finishBoot();
-    }, 5000);
-
-    if (!boot) {
-        clearTimeout(safety);
-        finishBoot();
+function unlockScreen() {
+    var pass = (document.getElementById("lockPass") || {}).value || "";
+    var need = NEXUS.settings.lockPass || localStorage.getItem("nexus-lock-pass") || "";
+    if (need && pass !== need) {
+        showNotification("Blokada", "Złe hasło");
         return;
     }
-
-    boot.classList.remove("boot-hidden");
-    boot.style.setProperty("display", "flex", "important");
-    boot.style.setProperty("opacity", "1", "important");
-    boot.style.setProperty("visibility", "visible", "important");
-
-    var steps = [
-        { text: "Inicjalizacja rdzenia...", pct: 15 },
-        { text: "Ładowanie modułów systemu...", pct: 35 },
-        { text: "Uruchamianie NEXUS AI...", pct: 55 },
-        { text: "Montowanie wirtualnego dysku...", pct: 75 },
-        { text: "Przygotowanie interfejsu...", pct: 90 },
-        { text: "System gotowy.", pct: 100 }
-    ];
-
-    var i = 0;
-    try { spawnBootSparks(); } catch (e) {}
-
-    var tick = setInterval(function () {
-        try {
-            if (i >= steps.length) {
-                clearInterval(tick);
-                try { spawnBootSparks(); } catch (e2) {}
-                setTimeout(function () {
-                    hideBootScreen();
-                    clearTimeout(safety);
-                    finishBoot();
-                }, 450);
-                return;
-            }
-            var step = steps[i];
-            if (statusEl) statusEl.textContent = step.text;
-            if (bar) bar.style.width = step.pct + "%";
-            if (i === 2 || i === 4) {
-                try { spawnBootSparks(); } catch (e3) {}
-            }
-            i++;
-        } catch (err) {
-            clearInterval(tick);
-            clearTimeout(safety);
-            hideBootScreen();
-            finishBoot();
-        }
-    }, 400);
+    var lock = document.getElementById("lockScreen");
+    if (lock) lock.classList.remove("show");
+    var inp = document.getElementById("lockPass");
+    if (inp) inp.value = "";
+    playBeep(660, 0.1);
 }
 
-function finishBoot() {
-    if (NEXUS.systemReady) return;
+function saveLockPass() {
+    var v = (document.getElementById("lockPassSet") || {}).value || "";
+    NEXUS.settings.lockPass = v;
+    localStorage.setItem("nexus-lock-pass", v);
+    saveState();
+    showNotification("Blokada", v ? "Hasło ustawione" : "Hasło usunięte");
+}
+
+function saveWidgetNote() {
+    saveState();
+}
+
+function loadWeather() {
+    var el = document.getElementById("widgetWeather");
+    if (!el) return;
+    // Open-Meteo — bez klucza, Warszawa
+    fetch("https://api.open-meteo.com/v1/forecast?latitude=52.23&longitude=21.01&current=temperature_2m,weather_code")
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            if (data.current) {
+                el.textContent = Math.round(data.current.temperature_2m) + "°C · Warszawa";
+            } else el.textContent = "Brak danych";
+        })
+        .catch(function () { el.textContent = "Offline"; });
+}
+
+function renderDesktopIcons() {
+    var box = document.getElementById("desktopIcons");
+    if (!box) return;
+    var icons = [
+        { ico: "📁", name: "Pliki", fn: "openWindow('filesWindow')" },
+        { ico: "✦", name: "AI", fn: "openWindow('aiWindow')" },
+        { ico: "📝", name: "Notatnik", fn: "openWindow('notepadWindow')" },
+        { ico: "🗑", name: "Kosz", fn: "openTrash()" }
+    ];
+    box.innerHTML = icons.map(function (i) {
+        return '<div class="desk-icon" ondblclick="' + i.fn + '"><div class="ico">' + i.ico + "</div>" + i.name + "</div>";
+    }).join("");
+}
+
+function logAIAction(text) {
+    var el = document.getElementById("aiLog");
+    if (!el) return;
+    var line = document.createElement("div");
+    line.textContent = "• " + text;
+    el.appendChild(line);
+    while (el.children.length > 8) el.removeChild(el.firstChild);
+}
+
+function finishOnboard() {
+    localStorage.setItem("nexus-onboarded", "1");
+    var o = document.getElementById("onboard");
+    if (o) o.classList.remove("show");
+    playBeep(700, 0.12);
+}
+
+window.afterBoot = function () {
     NEXUS.systemReady = true;
     setSystemStatus("online");
-    try { showNotification("NEXUS OS", "System gotowy. Wersja " + NEXUS.version); } catch (e) {}
+    try { loadState(); } catch (e) {}
+    try { applySettings(); } catch (e) {}
+    try { initParallax(); } catch (e) {}
     try { createParticles(); } catch (e) {}
-}
-
-function initializeNexus() {
-    console.log("NEXUS OS — boot");
-    setSystemStatus("booting");
-    updateClock();
-    runBootSequence();
-    setTimeout(function () {
-        try { loadState(); } catch (e) {}
-        try { applySettings(); } catch (e) {}
-        try { initParallax(); } catch (e) {}
-    }, 300);
-    setInterval(saveState, 5000);
-    window.addEventListener("beforeunload", saveState);
-}
+    try { renderDesktopIcons(); } catch (e) {}
+    try { loadWeather(); } catch (e) {}
+    playBeep(520, 0.15);
+    if (!localStorage.getItem("nexus-onboarded")) {
+        var o = document.getElementById("onboard");
+        if (o) o.classList.add("show");
+    }
+    showNotification("NEXUS OS", "v" + NEXUS.version + " gotowy");
+};
 
 document.addEventListener("DOMContentLoaded", function () {
     updateClock();
     setInterval(updateClock, 1000);
-    initializeNexus();
+    setInterval(saveState, 5000);
+    window.addEventListener("beforeunload", saveState);
+
+    // skróty globalne
+    document.addEventListener("keydown", function (e) {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+            e.preventDefault();
+            if (typeof openPalette === "function") openPalette();
+        }
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "l") {
+            e.preventDefault();
+            lockScreen();
+        }
+        if (e.key === "Escape") {
+            var p = document.getElementById("commandPalette");
+            if (p && p.classList.contains("show")) closePalette();
+        }
+    });
+
+    // drag & drop na desktop
+    var desktop = document.getElementById("desktop");
+    if (desktop) {
+        desktop.addEventListener("dragover", function (e) { e.preventDefault(); });
+        desktop.addEventListener("drop", function (e) {
+            e.preventDefault();
+            if (typeof handleExternalDrop === "function") handleExternalDrop(e);
+        });
+    }
 });
