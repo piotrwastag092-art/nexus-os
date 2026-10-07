@@ -1,9 +1,5 @@
 "use strict";
 
-/* =========================================
-   NEXUS OS — WINDOW MANAGER v0.4
-   ========================================= */
-
 window.NEXUS_WINDOWS = {
     dragging: false, resizing: false, active: null,
     dragOffsetX: 0, dragOffsetY: 0, resizeDir: null,
@@ -12,96 +8,78 @@ window.NEXUS_WINDOWS = {
     resizeStartLeft: 0, resizeStartTop: 0
 };
 
-function openWindow(id) {
-    const win = document.getElementById(id);
-    if (!win) return;
+var altTabIndex = 0;
+var altTabActive = false;
 
+function openWindow(id) {
+    var win = document.getElementById(id);
+    if (!win) return;
     win.classList.remove("window-closing");
     win.style.display = "flex";
     win.classList.add("window-opening");
-
-    const rect = win.getBoundingClientRect();
-    if (rect.left < 0 || rect.top < 0 || rect.left > window.innerWidth - 100 || rect.top > window.innerHeight - 100) {
-        win.style.left = "120px";
-        win.style.top = "100px";
-    }
-
+    if (!win.style.left) win.style.left = 80 + Math.random() * 80 + "px";
+    if (!win.style.top) win.style.top = 70 + Math.random() * 40 + "px";
     focusWindow(id);
     if (typeof closeLauncher === "function") closeLauncher();
-    updateDock();
+    if (typeof updateDock === "function") updateDock();
+    if (typeof playBeep === "function") playBeep(600, 0.06);
 
-    setTimeout(() => {
+    setTimeout(function () {
         win.classList.remove("window-opening");
         if (id === "terminalWindow") {
-            const input = document.getElementById("terminalInput");
-            if (input) input.focus();
+            var t = document.getElementById("terminalInput");
+            if (t) t.focus();
         }
         if (id === "aiWindow") {
-            const input = document.getElementById("aiChatInput");
-            if (input) input.focus();
+            var a = document.getElementById("aiChatInput");
+            if (a) a.focus();
         }
+        if (id === "filesWindow" && typeof renderFiles === "function") renderFiles();
         if (id === "notepadWindow") {
-            const input = document.getElementById("notepadContent");
-            if (input) input.focus();
+            var n = document.getElementById("notepadContent");
+            if (n) n.focus();
         }
-        if (id === "filesWindow") {
-            if (typeof renderFiles === "function") renderFiles();
-        }
-    }, 280);
-
+    }, 250);
     if (typeof saveState === "function") saveState();
 }
 
 function closeWindow(id) {
-    const win = document.getElementById(id);
+    var win = document.getElementById(id);
     if (!win) return;
-
     win.classList.add("window-closing");
-    setTimeout(() => {
+    setTimeout(function () {
         win.style.display = "none";
         win.classList.remove("window-closing");
         if (NEXUS.activeWindow === id) NEXUS.activeWindow = null;
-        updateDock();
+        if (typeof updateDock === "function") updateDock();
         if (typeof saveState === "function") saveState();
-    }, 220);
+    }, 180);
 }
 
 function minimizeWindow(id) {
-    const win = document.getElementById(id);
-    if (!win) return;
-    win.classList.add("window-closing");
-    setTimeout(() => {
-        win.style.display = "none";
-        win.classList.remove("window-closing");
-        win.dataset.minimized = "true";
-        if (NEXUS.activeWindow === id) NEXUS.activeWindow = null;
-        updateDock();
-        if (typeof saveState === "function") saveState();
-    }, 220);
+    closeWindow(id);
 }
 
 function maximizeWindow(id) {
-    const win = document.getElementById(id);
+    var win = document.getElementById(id);
     if (!win) return;
-
     if (!NEXUS.maximizedWindows[id]) {
-        win.dataset.previousLeft = win.style.left;
-        win.dataset.previousTop = win.style.top;
-        win.dataset.previousWidth = win.style.width;
-        win.dataset.previousHeight = win.style.height;
-        win.dataset.previousRadius = win.style.borderRadius;
+        win.dataset.prevL = win.style.left;
+        win.dataset.prevT = win.style.top;
+        win.dataset.prevW = win.style.width;
+        win.dataset.prevH = win.style.height;
         win.style.left = "0";
         win.style.top = "58px";
         win.style.width = "100%";
-        win.style.height = "calc(100% - 148px)";
+        win.style.height = "calc(100% - 140px)";
         win.style.borderRadius = "0";
         NEXUS.maximizedWindows[id] = true;
     } else {
-        win.style.left = win.dataset.previousLeft || "120px";
-        win.style.top = win.dataset.previousTop || "100px";
-        win.style.width = win.dataset.previousWidth || "720px";
-        win.style.height = win.dataset.previousHeight || "480px";
-        win.style.borderRadius = win.dataset.previousRadius || "16px";
+        win.style.left = win.dataset.prevL || "120px";
+        win.style.top = win.dataset.prevT || "100px";
+        win.style.width = win.dataset.prevW || "720px";
+        win.style.height = win.dataset.prevH || "480px";
+        win.style.borderRadius = "16px";
         NEXUS.maximizedWindows[id] = false;
     }
     focusWindow(id);
@@ -109,40 +87,70 @@ function maximizeWindow(id) {
 }
 
 function focusWindow(id) {
-    const win = document.getElementById(id);
+    var win = document.getElementById(id);
     if (!win) return;
     NEXUS.highestZIndex++;
     win.style.zIndex = NEXUS.highestZIndex;
     NEXUS.activeWindow = id;
-    NEXUS_WINDOWS.active = id;
-    updateDock();
+    document.querySelectorAll(".window").forEach(function (w) {
+        w.classList.toggle("window-focused", w.id === id);
+    });
+    if (typeof updateDock === "function") updateDock();
 }
 
 function updateDock() {
-    document.querySelectorAll(".dock-item").forEach(btn => {
-        const target = btn.getAttribute("onclick") || "";
-        const match = target.match(/'([^']+)'/);
-        if (!match) return;
-        const id = match[1];
-        const win = document.getElementById(id);
-        if (win && win.style.display !== "none" && !win.classList.contains("window-closing")) {
-            btn.classList.add("dock-active");
-        } else {
-            btn.classList.remove("dock-active");
-        }
+    document.querySelectorAll(".dock-item").forEach(function (btn) {
+        var oc = btn.getAttribute("onclick") || "";
+        var m = oc.match(/'([^']+)'/);
+        if (!m) return;
+        var win = document.getElementById(m[1]);
+        if (win && win.style.display !== "none") btn.classList.add("dock-active");
+        else btn.classList.remove("dock-active");
     });
 }
 
-function startWindowDrag(event) {
-    const header = event.target.closest(".window-header");
-    if (!header) return;
-    const win = header.closest(".window");
-    if (!win) return;
-    if (event.target.closest(".window-controls")) return;
-    if (NEXUS.maximizedWindows[win.id]) return;
+function getOpenWindows() {
+    var list = [];
+    document.querySelectorAll(".window").forEach(function (w) {
+        if (w.style.display !== "none") list.push(w.id);
+    });
+    return list;
+}
 
+function showAltTab() {
+    var list = getOpenWindows();
+    if (!list.length) return;
+    altTabActive = true;
+    var wrap = document.getElementById("altTab");
+    var inner = document.getElementById("altTabInner");
+    if (!wrap || !inner) return;
+    if (altTabIndex >= list.length) altTabIndex = 0;
+    inner.innerHTML = list.map(function (id, i) {
+        var title = (document.querySelector("#" + id + " .window-title") || {}).textContent || id;
+        return '<div class="alt-card' + (i === altTabIndex ? " active" : "") + '"><div>' + title + "</div></div>";
+    }).join("");
+    wrap.classList.add("show");
+}
+
+function hideAltTab() {
+    if (!altTabActive) return;
+    altTabActive = false;
+    var wrap = document.getElementById("altTab");
+    if (wrap) wrap.classList.remove("show");
+    var list = getOpenWindows();
+    if (list[altTabIndex]) {
+        openWindow(list[altTabIndex]);
+        focusWindow(list[altTabIndex]);
+    }
+}
+
+function startWindowDrag(event) {
+    var header = event.target.closest(".window-header");
+    if (!header || event.target.closest(".window-controls")) return;
+    var win = header.closest(".window");
+    if (!win || NEXUS.maximizedWindows[win.id]) return;
     focusWindow(win.id);
-    const rect = win.getBoundingClientRect();
+    var rect = win.getBoundingClientRect();
     NEXUS_WINDOWS.dragging = true;
     NEXUS_WINDOWS.active = win.id;
     NEXUS_WINDOWS.dragOffsetX = event.clientX - rect.left;
@@ -152,58 +160,80 @@ function startWindowDrag(event) {
 
 function handleWindowMouseMove(event) {
     if (NEXUS_WINDOWS.dragging) {
-        const win = document.getElementById(NEXUS_WINDOWS.active);
+        var win = document.getElementById(NEXUS_WINDOWS.active);
         if (!win) return;
-        let x = event.clientX - NEXUS_WINDOWS.dragOffsetX;
-        let y = event.clientY - NEXUS_WINDOWS.dragOffsetY;
-        const maxX = window.innerWidth - win.offsetWidth;
-        const maxY = window.innerHeight - win.offsetHeight - 80;
-        x = Math.max(0, Math.min(x, maxX));
-        y = Math.max(0, Math.min(y, maxY));
+        var x = event.clientX - NEXUS_WINDOWS.dragOffsetX;
+        var y = event.clientY - NEXUS_WINDOWS.dragOffsetY;
+        x = Math.max(0, Math.min(x, window.innerWidth - 100));
+        y = Math.max(0, Math.min(y, window.innerHeight - 80));
         win.style.left = x + "px";
         win.style.top = y + "px";
+        // snap preview edges
+        win.classList.toggle("snap-left", event.clientX < 30);
+        win.classList.toggle("snap-right", event.clientX > window.innerWidth - 30);
         return;
     }
     if (NEXUS_WINDOWS.resizing) {
-        const win = document.getElementById(NEXUS_WINDOWS.active);
-        if (!win) return;
-        const dir = NEXUS_WINDOWS.resizeDir;
-        const dx = event.clientX - NEXUS_WINDOWS.resizeStartX;
-        const dy = event.clientY - NEXUS_WINDOWS.resizeStartY;
-        let newWidth = NEXUS_WINDOWS.resizeStartWidth;
-        let newHeight = NEXUS_WINDOWS.resizeStartHeight;
-        let newLeft = NEXUS_WINDOWS.resizeStartLeft;
-        let newTop = NEXUS_WINDOWS.resizeStartTop;
-        if (dir.includes("e")) newWidth = Math.max(320, NEXUS_WINDOWS.resizeStartWidth + dx);
-        if (dir.includes("s")) newHeight = Math.max(220, NEXUS_WINDOWS.resizeStartHeight + dy);
-        if (dir.includes("w")) {
-            newWidth = Math.max(320, NEXUS_WINDOWS.resizeStartWidth - dx);
-            newLeft = NEXUS_WINDOWS.resizeStartLeft + dx;
+        var win2 = document.getElementById(NEXUS_WINDOWS.active);
+        if (!win2) return;
+        var dir = NEXUS_WINDOWS.resizeDir;
+        var dx = event.clientX - NEXUS_WINDOWS.resizeStartX;
+        var dy = event.clientY - NEXUS_WINDOWS.resizeStartY;
+        var newW = NEXUS_WINDOWS.resizeStartWidth;
+        var newH = NEXUS_WINDOWS.resizeStartHeight;
+        var newL = NEXUS_WINDOWS.resizeStartLeft;
+        var newT = NEXUS_WINDOWS.resizeStartTop;
+        if (dir.indexOf("e") >= 0) newW = Math.max(320, NEXUS_WINDOWS.resizeStartWidth + dx);
+        if (dir.indexOf("s") >= 0) newH = Math.max(220, NEXUS_WINDOWS.resizeStartHeight + dy);
+        if (dir.indexOf("w") >= 0) {
+            newW = Math.max(320, NEXUS_WINDOWS.resizeStartWidth - dx);
+            newL = NEXUS_WINDOWS.resizeStartLeft + dx;
         }
-        if (dir.includes("n")) {
-            newHeight = Math.max(220, NEXUS_WINDOWS.resizeStartHeight - dy);
-            newTop = NEXUS_WINDOWS.resizeStartTop + dy;
+        if (dir.indexOf("n") >= 0) {
+            newH = Math.max(220, NEXUS_WINDOWS.resizeStartHeight - dy);
+            newT = NEXUS_WINDOWS.resizeStartTop + dy;
         }
-        win.style.width = newWidth + "px";
-        win.style.height = newHeight + "px";
-        win.style.left = newLeft + "px";
-        win.style.top = newTop + "px";
+        win2.style.width = newW + "px";
+        win2.style.height = newH + "px";
+        win2.style.left = newL + "px";
+        win2.style.top = newT + "px";
     }
 }
 
-function stopWindowDrag() {
+function stopWindowDrag(event) {
+    if (NEXUS_WINDOWS.dragging && event) {
+        var win = document.getElementById(NEXUS_WINDOWS.active);
+        if (win) {
+            win.classList.remove("snap-left", "snap-right");
+            // SNAP
+            if (event.clientX < 30) {
+                win.style.left = "0";
+                win.style.top = "58px";
+                win.style.width = "50%";
+                win.style.height = "calc(100% - 140px)";
+                NEXUS.maximizedWindows[win.id] = false;
+            } else if (event.clientX > window.innerWidth - 30) {
+                win.style.left = "50%";
+                win.style.top = "58px";
+                win.style.width = "50%";
+                win.style.height = "calc(100% - 140px)";
+                NEXUS.maximizedWindows[win.id] = false;
+            } else if (event.clientY < 40) {
+                maximizeWindow(win.id);
+            }
+        }
+    }
     NEXUS_WINDOWS.dragging = false;
     NEXUS_WINDOWS.resizing = false;
     NEXUS_WINDOWS.active = null;
-    NEXUS_WINDOWS.resizeDir = null;
     if (typeof saveState === "function") saveState();
 }
 
 function startResize(event, dir) {
-    const win = event.target.closest(".window");
+    var win = event.target.closest(".window");
     if (!win || NEXUS.maximizedWindows[win.id]) return;
     focusWindow(win.id);
-    const rect = win.getBoundingClientRect();
+    var rect = win.getBoundingClientRect();
     NEXUS_WINDOWS.resizing = true;
     NEXUS_WINDOWS.active = win.id;
     NEXUS_WINDOWS.resizeDir = dir;
@@ -217,21 +247,40 @@ function startResize(event, dir) {
     event.stopPropagation();
 }
 
-function handleWindowDoubleClick(event) {
-    const header = event.target.closest(".window-header");
-    if (!header || event.target.closest(".window-controls")) return;
-    const win = header.closest(".window");
-    if (win) maximizeWindow(win.id);
-}
-
-document.addEventListener("mousedown", e => {
-    const win = e.target.closest(".window");
+document.addEventListener("mousedown", function (e) {
+    var win = e.target.closest(".window");
     if (win) focusWindow(win.id);
 });
 document.addEventListener("mousedown", startWindowDrag);
 document.addEventListener("mousemove", handleWindowMouseMove);
 document.addEventListener("mouseup", stopWindowDrag);
-document.addEventListener("dblclick", handleWindowDoubleClick);
-document.addEventListener("keydown", e => {
-    if (e.key === "Escape" && NEXUS.activeWindow) closeWindow(NEXUS.activeWindow);
+document.addEventListener("dblclick", function (e) {
+    var header = e.target.closest(".window-header");
+    if (!header || e.target.closest(".window-controls")) return;
+    var win = header.closest(".window");
+    if (win) maximizeWindow(win.id);
+});
+
+document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && NEXUS.activeWindow) {
+        var p = document.getElementById("commandPalette");
+        if (p && p.classList.contains("show")) return;
+        closeWindow(NEXUS.activeWindow);
+    }
+    // Alt+Tab
+    if (e.altKey && e.key === "Tab") {
+        e.preventDefault();
+        var list = getOpenWindows();
+        if (!list.length) return;
+        if (!altTabActive) {
+            altTabIndex = 0;
+            showAltTab();
+        } else {
+            altTabIndex = (altTabIndex + 1) % list.length;
+            showAltTab();
+        }
+    }
+});
+document.addEventListener("keyup", function (e) {
+    if (e.key === "Alt" && altTabActive) hideAltTab();
 });
