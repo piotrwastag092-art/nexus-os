@@ -6,8 +6,15 @@
     <title>NEXUS OS</title>
     <link rel="stylesheet" href="css/nexus.css">
     <style>
-        #bootScreen{position:fixed!important;inset:0!important;background:#02040a!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;z-index:999999!important;overflow:hidden!important;transition:opacity .9s ease,visibility .9s ease!important}
-        #bootScreen.boot-hidden{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+        #bootScreen{
+            position:fixed!important;inset:0!important;background:#02040a!important;
+            display:flex!important;flex-direction:column!important;
+            align-items:center!important;justify-content:center!important;
+            z-index:999999!important;overflow:hidden!important;
+        }
+        #bootScreen.is-done{
+            display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;
+        }
         .boot-bg-glow{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(124,92,255,.25) 0%,transparent 70%);animation:bootGlow 2.5s ease-in-out infinite alternate;pointer-events:none}
         @keyframes bootGlow{from{transform:scale(.8);opacity:.5}to{transform:scale(1.3);opacity:1}}
         .boot-ring{position:absolute;border-radius:50%;border:2px solid transparent;border-top-color:#7c5cff;border-right-color:#00d9ff;animation:bootSpin 1.8s linear infinite}
@@ -18,23 +25,18 @@
         .boot-logo-wrap{position:relative;z-index:5;width:100px;height:100px;display:grid;place-items:center}
         .boot-logo{width:84px;height:84px;border-radius:22px;background:linear-gradient(135deg,#7c5cff,#00d9ff);display:grid;place-items:center;font-size:42px;font-weight:800;color:#fff;box-shadow:0 0 60px rgba(124,92,255,.7),0 0 120px rgba(0,217,255,.3);animation:bootLogoPulse 1.4s ease-in-out infinite}
         @keyframes bootLogoPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
-        .boot-title{margin-top:32px;font-size:15px;letter-spacing:8px;color:#c8cdd8;text-transform:uppercase;z-index:5;animation:bootFadeIn .8s ease .3s both}
-        .boot-status{margin-top:16px;font-size:13px;color:#00d9ff;z-index:5;min-height:20px;animation:bootFadeIn .6s ease .5s both}
-        @keyframes bootFadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .boot-title{margin-top:32px;font-size:15px;letter-spacing:8px;color:#c8cdd8;text-transform:uppercase;z-index:5}
+        .boot-status{margin-top:16px;font-size:13px;color:#00d9ff;z-index:5;min-height:20px}
         .boot-bar-wrap{margin-top:28px;width:240px;height:4px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;z-index:5}
-        .boot-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,#7c5cff,#00d9ff);border-radius:4px;transition:width .35s ease}
-        .boot-scanline{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(0,217,255,.4),transparent);animation:bootScan 2.2s linear infinite;pointer-events:none}
-        @keyframes bootScan{0%{top:0;opacity:0}10%{opacity:1}90%{opacity:1}100%{top:100%;opacity:0}}
-        .boot-spark{position:absolute;width:4px;height:4px;background:#7c5cff;border-radius:50%;pointer-events:none;animation:bootSpark 1.2s ease-out forwards}
-        @keyframes bootSpark{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--sx),var(--sy)) scale(0);opacity:0}}
+        .boot-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,#7c5cff,#00d9ff);border-radius:4px;transition:width .3s ease}
     </style>
 </head>
 <body>
 <div id="desktop">
 
+<!-- BOOT — znika przez skrypt INLINE poniżej -->
 <div id="bootScreen">
     <div class="boot-bg-glow"></div>
-    <div class="boot-scanline"></div>
     <div class="boot-ring boot-ring-1"></div>
     <div class="boot-ring boot-ring-2"></div>
     <div class="boot-ring boot-ring-3"></div>
@@ -44,10 +46,54 @@
     <div class="boot-bar-wrap"><div class="boot-bar-fill" id="bootBar"></div></div>
 </div>
 
+<script>
+(function () {
+    var boot = document.getElementById("bootScreen");
+    var statusEl = document.getElementById("bootStatus");
+    var bar = document.getElementById("bootBar");
+    var steps = [
+        { t: "Inicjalizacja rdzenia...", p: 15 },
+        { t: "Ładowanie modułów...", p: 35 },
+        { t: "Uruchamianie NEXUS AI...", p: 55 },
+        { t: "Montowanie dysku...", p: 75 },
+        { t: "Przygotowanie interfejsu...", p: 90 },
+        { t: "System gotowy.", p: 100 }
+    ];
+    var i = 0;
+
+    function done() {
+        if (!boot) return;
+        boot.className = "is-done";
+        boot.setAttribute("style", "display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important");
+        try {
+            if (window.NEXUS) {
+                NEXUS.systemReady = true;
+            }
+            var st = document.getElementById("systemStatus");
+            if (st) st.innerHTML = '<span class="status-dot"></span> SYSTEM GOTOWY';
+        } catch (e) {}
+    }
+
+    // ZAWSZE schowaj po max 3.5s
+    setTimeout(done, 3500);
+
+    var tick = setInterval(function () {
+        if (i >= steps.length) {
+            clearInterval(tick);
+            setTimeout(done, 300);
+            return;
+        }
+        if (statusEl) statusEl.textContent = steps[i].t;
+        if (bar) bar.style.width = steps[i].p + "%";
+        i++;
+    }, 450);
+})();
+</script>
+
 <header class="topbar">
     <div class="brand"><div class="nexus-logo">N</div><span>NEXUS OS</span></div>
     <div class="status">
-        <span id="systemStatus" class="status-item"><span class="status-dot"></span> SYSTEM GOTOWY</span>
+        <span id="systemStatus" class="status-item"><span class="status-dot"></span> URUCHAMIANIE</span>
         <span id="systemTime" class="status-item">00:00</span>
     </div>
 </header>
@@ -79,7 +125,6 @@
     <button type="button" class="dock-item" onclick="toggleLauncher()" title="Menu">◈</button>
 </nav>
 
-<!-- PLIKI -->
 <section id="filesWindow" class="window" style="display:none">
     <div class="window-header">
         <div class="window-title">📁 Pliki</div>
@@ -118,7 +163,6 @@
     <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
 </section>
 
-<!-- AI -->
 <section id="aiWindow" class="window" style="display:none">
     <div class="window-header">
         <div class="window-title">✦ NEXUS AI</div>
@@ -135,7 +179,7 @@
                     <div class="message-avatar">N</div>
                     <div class="message-bubble">
                         <strong>NEXUS AI</strong>
-                        <p>Witaj. Mogę tworzyć pliki, foldery, usuwać je i otwierać aplikacje. Napisz np. „utwórz plik test.txt”.</p>
+                        <p>Witaj. Napisz np. „utwórz plik test.txt” albo „otwórz pliki”.</p>
                     </div>
                 </div>
             </div>
@@ -155,7 +199,6 @@
     <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
 </section>
 
-<!-- USTAWIENIA -->
 <section id="settingsWindow" class="window" style="display:none">
     <div class="window-header">
         <div class="window-title">⚙ Ustawienia</div>
@@ -209,4 +252,125 @@
     <div class="resize-handle s" onmousedown="startResize(event,'s')"></div>
     <div class="resize-handle e" onmousedown="startResize(event,'e')"></div>
     <div class="resize-handle w" onmousedown="startResize(event,'w')"></div>
-    <div class="resize-handle ne" onmousedown="startResize(ev
+    <div class="resize-handle ne" onmousedown="startResize(event,'ne')"></div>
+    <div class="resize-handle nw" onmousedown="startResize(event,'nw')"></div>
+    <div class="resize-handle se" onmousedown="startResize(event,'se')"></div>
+    <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
+</section>
+
+<section id="browserWindow" class="window" style="display:none">
+    <div class="window-header">
+        <div class="window-title">◉ NEXUS Browser</div>
+        <div class="window-controls">
+            <button type="button" onclick="minimizeWindow('browserWindow')">−</button>
+            <button type="button" onclick="maximizeWindow('browserWindow')">□</button>
+            <button type="button" class="close" onclick="closeWindow('browserWindow')">×</button>
+        </div>
+    </div>
+    <div class="window-body">
+        <div class="browser-toolbar">
+            <button type="button" onclick="browserBack()">←</button>
+            <button type="button" onclick="browserForward()">→</button>
+            <button type="button" onclick="browserReload()">↻</button>
+            <input id="browserAddress" type="text" placeholder="Adres lub szukaj..." onkeydown="handleBrowserKey(event)">
+            <button type="button" onclick="navigateBrowser()">→</button>
+        </div>
+        <div id="browserContent" class="browser-content">
+            <div class="browser-start">
+                <div class="browser-logo">N</div>
+                <h1>NEXUS Browser</h1>
+                <p>Internet w świecie NEXUS.</p>
+            </div>
+        </div>
+    </div>
+    <div class="resize-handle n" onmousedown="startResize(event,'n')"></div>
+    <div class="resize-handle s" onmousedown="startResize(event,'s')"></div>
+    <div class="resize-handle e" onmousedown="startResize(event,'e')"></div>
+    <div class="resize-handle w" onmousedown="startResize(event,'w')"></div>
+    <div class="resize-handle ne" onmousedown="startResize(event,'ne')"></div>
+    <div class="resize-handle nw" onmousedown="startResize(event,'nw')"></div>
+    <div class="resize-handle se" onmousedown="startResize(event,'se')"></div>
+    <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
+</section>
+
+<section id="terminalWindow" class="window" style="display:none">
+    <div class="window-header">
+        <div class="window-title">&gt;_ Terminal NEXUS</div>
+        <div class="window-controls">
+            <button type="button" onclick="minimizeWindow('terminalWindow')">−</button>
+            <button type="button" onclick="maximizeWindow('terminalWindow')">□</button>
+            <button type="button" class="close" onclick="closeWindow('terminalWindow')">×</button>
+        </div>
+    </div>
+    <div class="window-body">
+        <div class="terminal">
+            <div id="terminalOutput" class="terminal-output">
+                <div>NEXUS Terminal [v0.6]</div>
+                <div>Wpisz <strong>help</strong></div><br>
+            </div>
+            <div class="terminal-input-line">
+                <span style="color:var(--nexus-accent)">nexus@system:~$</span>
+                <input id="terminalInput" type="text" autocomplete="off" onkeydown="handleTerminalKey(event)">
+            </div>
+        </div>
+    </div>
+    <div class="resize-handle n" onmousedown="startResize(event,'n')"></div>
+    <div class="resize-handle s" onmousedown="startResize(event,'s')"></div>
+    <div class="resize-handle e" onmousedown="startResize(event,'e')"></div>
+    <div class="resize-handle w" onmousedown="startResize(event,'w')"></div>
+    <div class="resize-handle ne" onmousedown="startResize(event,'ne')"></div>
+    <div class="resize-handle nw" onmousedown="startResize(event,'nw')"></div>
+    <div class="resize-handle se" onmousedown="startResize(event,'se')"></div>
+    <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
+</section>
+
+<section id="notepadWindow" class="window" style="display:none">
+    <div class="window-header">
+        <div class="window-title">📝 Notatnik</div>
+        <div class="window-controls">
+            <button type="button" onclick="minimizeWindow('notepadWindow')">−</button>
+            <button type="button" onclick="maximizeWindow('notepadWindow')">□</button>
+            <button type="button" class="close" onclick="closeWindow('notepadWindow')">×</button>
+        </div>
+    </div>
+    <div class="window-body">
+        <div class="notepad-area">
+            <div class="notepad-toolbar">
+                <button type="button" onclick="saveNotepad()">Zapisz</button>
+                <button type="button" onclick="newNotepad()">Nowy</button>
+                <span id="notepadFilename" style="margin-left:auto;font-size:12px;opacity:.6">bez tytułu</span>
+            </div>
+            <textarea id="notepadContent" placeholder="Pisz tutaj..."></textarea>
+        </div>
+    </div>
+    <div class="resize-handle n" onmousedown="startResize(event,'n')"></div>
+    <div class="resize-handle s" onmousedown="startResize(event,'s')"></div>
+    <div class="resize-handle e" onmousedown="startResize(event,'e')"></div>
+    <div class="resize-handle w" onmousedown="startResize(event,'w')"></div>
+    <div class="resize-handle ne" onmousedown="startResize(event,'ne')"></div>
+    <div class="resize-handle nw" onmousedown="startResize(event,'nw')"></div>
+    <div class="resize-handle se" onmousedown="startResize(event,'se')"></div>
+    <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
+</section>
+
+<div id="launcher" style="display:none">
+    <input id="launcherSearch" class="launcher-search" type="text" placeholder="Szukaj aplikacji..." oninput="filterLauncher()">
+    <div class="apps">
+        <button type="button" class="app launcher-app" data-name="pliki" onclick="launchApp('filesWindow')"><div class="app-icon">📁</div>Pliki</button>
+        <button type="button" class="app launcher-app" data-name="internet browser" onclick="launchApp('browserWindow')"><div class="app-icon">◉</div>Internet</button>
+        <button type="button" class="app launcher-app" data-name="ai" onclick="launchApp('aiWindow')"><div class="app-icon">✦</div>NEXUS AI</button>
+        <button type="button" class="app launcher-app" data-name="terminal" onclick="launchApp('terminalWindow')"><div class="app-icon">&gt;_</div>Terminal</button>
+        <button type="button" class="app launcher-app" data-name="notatnik" onclick="launchApp('notepadWindow')"><div class="app-icon">📝</div>Notatnik</button>
+        <button type="button" class="app launcher-app" data-name="ustawienia" onclick="launchApp('settingsWindow')"><div class="app-icon">⚙</div>Ustawienia</button>
+    </div>
+</div>
+
+<div id="notifications"></div>
+</div>
+
+<script src="js/js/nexus.js"></script>
+<script src="js/js/windows.js"></script>
+<script src="js/js/launcher.js"></script>
+<script src="js/js/apps.js"></script>
+</body>
+</html>
