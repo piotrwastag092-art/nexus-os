@@ -75,6 +75,8 @@
 </head>
 <body>
 <div id="desktop">
+<canvas id="neuralPulse" aria-hidden="true"></canvas>
+
 
 <div id="bootScreen">
   <div class="boot-grid"></div>
@@ -267,6 +269,7 @@
   <button type="button" class="dock-item" onclick="openWindow('terminalWindow')" title="Terminal">&gt;_</button>
   <button type="button" class="dock-item" onclick="openWindow('notepadWindow')" title="Notatnik">📝</button>
   <button type="button" class="dock-item" onclick="openWindow('musicWindow')" title="Muzyka">♫</button>
+  <button type="button" class="dock-item" onclick="openWindow('labWindow');startLab()" title="NEXUS Lab">◈</button>
   <button type="button" class="dock-item" onclick="openWindow('settingsWindow')" title="Ustawienia">⚙</button>
   <button type="button" class="dock-item" onclick="toggleLauncher()" title="Menu">◈</button>
 </nav>
@@ -480,6 +483,40 @@
   <div class="resize-handle se" onmousedown="startResize(event,'se')"></div>
 </section>
 
+
+<section id="labWindow" class="window" style="display:none;width:640px;height:480px">
+  <div class="window-header">
+    <div class="window-title">◈ NEXUS Lab</div>
+    <div class="window-controls">
+      <button type="button" onclick="minimizeWindow('labWindow')">−</button>
+      <button type="button" onclick="maximizeWindow('labWindow')">□</button>
+      <button type="button" class="close" onclick="closeWindow('labWindow')">×</button>
+    </div>
+  </div>
+  <div class="window-body lab-body">
+    <div class="lab-toolbar">
+      <button type="button" class="lab-mode active" data-mode="orbit" onclick="setLabMode('orbit')">Orbit</button>
+      <button type="button" class="lab-mode" data-mode="wave" onclick="setLabMode('wave')">Wave</button>
+      <button type="button" class="lab-mode" data-mode="burst" onclick="setLabMode('burst')">Burst</button>
+      <button type="button" class="lab-mode" data-mode="chaos" onclick="setLabMode('chaos')">Chaos</button>
+      <button type="button" class="lab-shock" onclick="labShock()">⚡ Impuls</button>
+      <button type="button" class="lab-shock" onclick="toggleVoice()">🎙 Voice</button>
+    </div>
+    <div class="lab-canvas-wrap">
+      <canvas id="labCanvas"></canvas>
+    </div>
+    <p class="lab-hint">Neural Pulse Lab — generatywny układ reaguje na głos, mysz i aktywność systemu. Powiedz: „otwórz lab”.</p>
+  </div>
+  <div class="resize-handle n" onmousedown="startResize(event,'n')"></div>
+  <div class="resize-handle s" onmousedown="startResize(event,'s')"></div>
+  <div class="resize-handle e" onmousedown="startResize(event,'e')"></div>
+  <div class="resize-handle w" onmousedown="startResize(event,'w')"></div>
+  <div class="resize-handle ne" onmousedown="startResize(event,'ne')"></div>
+  <div class="resize-handle nw" onmousedown="startResize(event,'nw')"></div>
+  <div class="resize-handle se" onmousedown="startResize(event,'se')"></div>
+  <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
+</section>
+
 <div id="launcher" style="display:none">
   <input id="launcherSearch" class="launcher-search" type="text" placeholder="Szukaj…" oninput="filterLauncher()">
   <div class="apps">
@@ -489,11 +526,24 @@
     <button type="button" class="app launcher-app" data-name="terminal" onclick="launchApp('terminalWindow')"><div class="app-icon">&gt;_</div>Terminal</button>
     <button type="button" class="app launcher-app" data-name="notatnik" onclick="launchApp('notepadWindow')"><div class="app-icon">📝</div>Notatnik</button>
     <button type="button" class="app launcher-app" data-name="muzyka" onclick="launchApp('musicWindow')"><div class="app-icon">♫</div>Muzyka</button>
+        <button type="button" class="app launcher-app" data-name="lab laboratorium pulse neural" onclick="launchApp('labWindow');setTimeout(startLab,200)"><div class="app-icon">◈</div>Lab</button>
     <button type="button" class="app launcher-app" data-name="ustawienia" onclick="launchApp('settingsWindow')"><div class="app-icon">⚙</div>Ustawienia</button>
   </div>
 </div>
 
 <div id="aiLog"></div>
+
+<!-- NEXUS VOICE HUD -->
+<div id="voiceHUD">
+  <div id="voiceRing"></div>
+  <button type="button" id="voiceBtn" onclick="toggleVoice()" title="NEXUS Voice (mikrofon)">
+    <span class="mic-ico">🎙</span>
+    <span id="voiceBadge">GŁOS</span>
+  </button>
+  <button type="button" id="voiceContBtn" class="voice-cont" onclick="toggleVoiceContinuous()" title="Tryb ciągły">∞</button>
+  <div id="voiceLive"></div>
+</div>
+
 <div id="notifications"></div>
 </div>
 
@@ -501,5 +551,7 @@
 <script src="js/js/windows.js"></script>
 <script src="js/js/launcher.js"></script>
 <script src="js/js/apps.js"></script>
+<script src="js/js/voice.js"></script>
+<script src="js/js/pulse.js"></script>
 </body>
 </html>
