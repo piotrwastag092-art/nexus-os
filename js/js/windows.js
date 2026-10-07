@@ -1,7 +1,7 @@
 "use strict";
 
 /* =========================================
-   NEXUS OS — WINDOW MANAGER (naprawiony)
+   NEXUS OS — WINDOW MANAGER (v0.2)
    ========================================= */
 
 window.NEXUS_WINDOWS = {
@@ -18,6 +18,7 @@ window.NEXUS_WINDOWS = {
     resizeStartLeft: 0,
     resizeStartTop: 0
 };
+
 
 function openWindow(id) {
     const win = document.getElementById(id);
@@ -50,22 +51,39 @@ function openWindow(id) {
             if (input) input.focus();
         }
     }, 80);
+
+    if (typeof saveState === "function") saveState();
 }
+
 
 function closeWindow(id) {
     const win = document.getElementById(id);
     if (!win) return;
+
     win.style.display = "none";
-    if (NEXUS.activeWindow === id) NEXUS.activeWindow = null;
+
+    if (NEXUS.activeWindow === id) {
+        NEXUS.activeWindow = null;
+    }
+
+    if (typeof saveState === "function") saveState();
 }
+
 
 function minimizeWindow(id) {
     const win = document.getElementById(id);
     if (!win) return;
+
     win.style.display = "none";
     win.dataset.minimized = "true";
-    if (NEXUS.activeWindow === id) NEXUS.activeWindow = null;
+
+    if (NEXUS.activeWindow === id) {
+        NEXUS.activeWindow = null;
+    }
+
+    if (typeof saveState === "function") saveState();
 }
+
 
 function maximizeWindow(id) {
     const win = document.getElementById(id);
@@ -96,7 +114,9 @@ function maximizeWindow(id) {
     }
 
     focusWindow(id);
+    if (typeof saveState === "function") saveState();
 }
+
 
 function focusWindow(id) {
     const win = document.getElementById(id);
@@ -108,8 +128,8 @@ function focusWindow(id) {
     NEXUS_WINDOWS.active = id;
 }
 
-/* ===== DRAG ===== */
 
+/* ===== DRAG ===== */
 function startWindowDrag(event) {
     const header = event.target.closest(".window-header");
     if (!header) return;
@@ -131,8 +151,8 @@ function startWindowDrag(event) {
     event.preventDefault();
 }
 
+
 function handleWindowMouseMove(event) {
-    // drag
     if (NEXUS_WINDOWS.dragging) {
         const win = document.getElementById(NEXUS_WINDOWS.active);
         if (!win) return;
@@ -151,7 +171,6 @@ function handleWindowMouseMove(event) {
         return;
     }
 
-    // resize
     if (NEXUS_WINDOWS.resizing) {
         const win = document.getElementById(NEXUS_WINDOWS.active);
         if (!win) return;
@@ -183,15 +202,18 @@ function handleWindowMouseMove(event) {
     }
 }
 
+
 function stopWindowDrag() {
     NEXUS_WINDOWS.dragging = false;
     NEXUS_WINDOWS.resizing = false;
     NEXUS_WINDOWS.active = null;
     NEXUS_WINDOWS.resizeDir = null;
+
+    if (typeof saveState === "function") saveState();
 }
 
-/* ===== RESIZE ===== */
 
+/* ===== RESIZE ===== */
 function startResize(event, dir) {
     const win = event.target.closest(".window");
     if (!win || NEXUS.maximizedWindows[win.id]) return;
@@ -214,8 +236,8 @@ function startResize(event, dir) {
     event.stopPropagation();
 }
 
-/* ===== DOUBLE CLICK + FOCUS ===== */
 
+/* ===== DOUBLE CLICK + FOCUS ===== */
 function handleWindowDoubleClick(event) {
     const header = event.target.closest(".window-header");
     if (!header) return;
@@ -224,6 +246,7 @@ function handleWindowDoubleClick(event) {
     const win = header.closest(".window");
     if (win) maximizeWindow(win.id);
 }
+
 
 document.addEventListener("mousedown", function (event) {
     const win = event.target.closest(".window");
