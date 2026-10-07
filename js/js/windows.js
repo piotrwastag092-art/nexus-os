@@ -1,7 +1,7 @@
 "use strict";
 
 /* =========================================
-   NEXUS OS — WINDOW MANAGER (v0.2)
+   NEXUS OS — WINDOW MANAGER v0.3
    ========================================= */
 
 window.NEXUS_WINDOWS = {
@@ -129,7 +129,6 @@ function focusWindow(id) {
 }
 
 
-/* ===== DRAG ===== */
 function startWindowDrag(event) {
     const header = event.target.closest(".window-header");
     if (!header) return;
@@ -213,7 +212,6 @@ function stopWindowDrag() {
 }
 
 
-/* ===== RESIZE ===== */
 function startResize(event, dir) {
     const win = event.target.closest(".window");
     if (!win || NEXUS.maximizedWindows[win.id]) return;
@@ -237,7 +235,6 @@ function startResize(event, dir) {
 }
 
 
-/* ===== DOUBLE CLICK + FOCUS ===== */
 function handleWindowDoubleClick(event) {
     const header = event.target.closest(".window-header");
     if (!header) return;
