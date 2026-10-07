@@ -1,8 +1,11 @@
 "use strict";
 
 /* =========================================
-   NEXUS OS — APPS (v0.2)
-   ========================================= */
+   NEXUS OS — APPS v0.3
+   Lepsze AI + przeglądarka
+========================================= */
+
+let aiMemory = JSON.parse(localStorage.getItem("nexus-ai-memory") || "[]");
 
 function setAICommand(text) {
     const input = document.getElementById("aiCommand");
@@ -10,7 +13,6 @@ function setAICommand(text) {
     input.value = text;
     input.focus();
 }
-
 
 function runAICommand() {
     const input = document.getElementById("aiCommand");
@@ -32,7 +34,6 @@ function runAICommand() {
     } else if (cmd.includes("ai") || cmd.includes("asystent")) {
         openWindow("aiWindow");
     } else {
-        showNotification("NEXUS AI", `Odebrałem: „${original}”.`);
         openWindow("aiWindow");
         setTimeout(() => {
             const chatInput = document.getElementById("aiChatInput");
@@ -40,24 +41,23 @@ function runAICommand() {
                 chatInput.value = original;
                 sendAIMessage();
             }
-        }, 200);
+        }, 180);
     }
 
     input.value = "";
 }
 
-
 document.addEventListener("DOMContentLoaded", () => {
     const input = document.getElementById("aiCommand");
-    if (!input) return;
-    input.addEventListener("keydown", e => {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            runAICommand();
-        }
-    });
+    if (input) {
+        input.addEventListener("keydown", e => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                runAICommand();
+            }
+        });
+    }
 });
-
 
 /* ===== AI CZAT ===== */
 function handleAIKey(event) {
@@ -67,7 +67,6 @@ function handleAIKey(event) {
     }
 }
 
-
 function sendAIMessage() {
     const input = document.getElementById("aiChatInput");
     const messages = document.getElementById("aiMessages");
@@ -75,6 +74,11 @@ function sendAIMessage() {
 
     const text = input.value.trim();
     if (!text) return;
+
+    // zapamiętujemy
+    aiMemory.push({ role: "user", text, time: Date.now() });
+    if (aiMemory.length > 40) aiMemory.shift();
+    localStorage.setItem("nexus-ai-memory", JSON.stringify(aiMemory));
 
     const userMsg = document.createElement("div");
     userMsg.className = "message user";
@@ -88,8 +92,25 @@ function sendAIMessage() {
     input.value = "";
     messages.scrollTop = messages.scrollHeight;
 
+    // "myślenie"
+    const thinking = document.createElement("div");
+    thinking.className = "message nexus";
+    thinking.id = "thinkingMsg";
+    thinking.innerHTML = `
+        <div class="message-avatar">N</div>
+        <div class="message-bubble">
+            <strong>NEXUS AI</strong>
+            <p>Myślę...</p>
+        </div>
+    `;
+    messages.appendChild(thinking);
+    messages.scrollTop = messages.scrollHeight;
+
     setTimeout(() => {
         const reply = generateAIReply(text);
+        const thinkingEl = document.getElementById("thinkingMsg");
+        if (thinkingEl) thinkingEl.remove();
+
         const bot = document.createElement("div");
         bot.className = "message nexus";
         bot.innerHTML = `
@@ -101,32 +122,72 @@ function sendAIMessage() {
         `;
         messages.appendChild(bot);
         messages.scrollTop = messages.scrollHeight;
-    }, 450);
-}
 
+        aiMemory.push({ role: "ai", text: reply, time: Date.now() });
+        localStorage.setItem("nexus-ai-memory", JSON.stringify(aiMemory));
+    }, 600 + Math.random() * 500);
+}
 
 function generateAIReply(text) {
-    const t = text.toLowerCase();
+    const t = text.toLowerCase().trim();
 
-    if (t.includes("cześć") || t.includes("hej") || t.includes("siema")) {
-        return "Siema. Jestem NEXUS AI. Co chcesz zrobić?";
+    // komendy systemowe
+    if (t.includes("otwórz pliki") || t === "pliki") {
+        openWindow("filesWindow");
+        return "Otworzyłem menedżer plików.";
     }
-    if (t.includes("pomoc") || t.includes("help")) {
-        return "Mogę otworzyć okna, odpalać terminal, pliki, przeglądarkę. Napisz co potrzebujesz.";
+    if (t.includes("otwórz terminal") || t === "terminal") {
+        openWindow("terminalWindow");
+        return "Terminal gotowy.";
     }
-    if (t.includes("wersja") || t.includes("system")) {
-        return `Aktualnie działam na NEXUS OS ${NEXUS.version}. Web Shell.`;
+    if (t.includes("otwórz przeglądark") || t.includes("internet")) {
+        openWindow("browserWindow");
+        return "Przeglądarka otwarta.";
     }
-    if (t.includes("kurwa") || t.includes("chuj") || t.includes("jebać")) {
-        return "Spokojnie, też lubię ostre słownictwo. Co konkretnie mam zrobić?";
-    }
-    if (t.includes("otwórz") || t.includes("odpal")) {
-        return "Dobra, sprawdzam... Jeśli napiszesz konkretną aplikację, to ją otworzę.";
+    if (t.includes("ustawienia")) {
+        openWindow("settingsWindow");
+        return "Ustawienia systemu.";
     }
 
-    return "Zrozumiałem. Rdzeń AI jeszcze się uczy, ale już działam. Napisz konkretniej albo otwórz terminal i wpisz help.";
+    // rozmowa
+    if (/(cześć|hej|siema|witaj|dzień dobry)/.test(t)) {
+        return "Siema. Jestem NEXUS AI. Co robimy?";
+    }
+    if (/(jak się masz|co u ciebie|jak leci)/.test(t)) {
+        return "Działam, uczę się na Twoich komendach i pamiętam ostatnie rozmowy. Gotowy do roboty.";
+    }
+    if (/(pomoc|help|co potrafisz)/.test(t)) {
+        return "Mogę otwierać aplikacje, odpalać terminal, odpowiadać na pytania i zapamiętywać nasze rozmowy. Napisz konkretnie czego potrzebujesz.";
+    }
+    if (/(wersja|jaki system|co to za system)/.test(t)) {
+        return `To NEXUS OS ${NEXUS.version}. Webowy shell, który się rozwija.`;
+    }
+    if (/(kurwa|chuj|jebać|pierdol|huj)/.test(t)) {
+        return "Rozumiem frustrację. Mów wprost co mam zrobić – załatwimy.";
+    }
+    if (/(dzięki|thx|dziękuję)/.test(t)) {
+        return "Nie ma sprawy. Jestem tu po to.";
+    }
+    if (/(kim jesteś|co jesteś)/.test(t)) {
+        return "NEXUS AI – lokalny asystent systemu. Póki co działam offline, ale pamiętam co do mnie piszesz.";
+    }
+
+    // proste "uczenie się"
+    const lastUser = aiMemory.filter(m => m.role === "user").slice(-3);
+    if (lastUser.length >= 2 && lastUser.every(m => m.text.toLowerCase().includes("otwórz"))) {
+        return "Widzę, że dużo otwierasz okna. Chcesz, żebym coś automatycznie odpalał przy starcie?";
+    }
+
+    // domyślna
+    const answers = [
+        "Zrozumiałem. Co dalej?",
+        "Jasne. Mogę w tym pomóc – daj więcej szczegółów.",
+        "Notuję. Jak chcesz coś konkretnego zrobić w systemie, to mów.",
+        "Dobra, jestem z Tobą. Co robimy?",
+        "Przetworzyłem. Napisz dokładniej albo otwórz terminal i wpisz help."
+    ];
+    return answers[Math.floor(Math.random() * answers.length)];
 }
-
 
 /* ===== PRZEGLĄDARKA ===== */
 function handleBrowserKey(event) {
@@ -136,7 +197,6 @@ function handleBrowserKey(event) {
     }
 }
 
-
 function navigateBrowser() {
     const input = document.getElementById("browserAddress");
     const content = document.getElementById("browserContent");
@@ -145,47 +205,71 @@ function navigateBrowser() {
     let address = input.value.trim();
     if (!address) return;
 
+    // dodaj https jeśli brakuje
     if (!address.startsWith("http://") && !address.startsWith("https://")) {
-        address = `https://www.google.com/search?q=${encodeURIComponent(address)}`;
+        if (address.includes(".") && !address.includes(" ")) {
+            address = "https://" + address;
+        } else {
+            address = `https://www.google.com/search?q=${encodeURIComponent(address)}`;
+        }
     }
 
     content.innerHTML = `
         <div class="browser-start">
             <div class="browser-logo">N</div>
             <h1>Ładowanie...</h1>
-            <p>NEXUS Browser łączy się.</p>
+            <p>${escapeHTML(address)}</p>
+            <p style="margin-top:12px;font-size:13px;opacity:0.7">
+                Jeśli strona się nie załaduje – wiele serwisów blokuje iframe.<br>
+                Użyj przycisku „Otwórz na zewnątrz”.
+            </p>
         </div>
     `;
 
     setTimeout(() => {
         content.innerHTML = `
-            <iframe
-                src="${escapeHTML(address)}"
-                title="NEXUS Browser"
-                style="width:100%;height:100%;border:0;background:#fff;"
-            ></iframe>
+            <div style="display:flex;flex-direction:column;height:100%;">
+                <div style="padding:8px 12px;background:rgba(0,0,0,0.3);display:flex;gap:8px;align-items:center;">
+                    <button onclick="openExternal('${escapeHTML(address)}')" style="padding:6px 12px;border-radius:8px;background:var(--nexus-accent);cursor:pointer;">
+                        Otwórz na zewnątrz
+                    </button>
+                    <span style="font-size:12px;opacity:0.7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                        ${escapeHTML(address)}
+                    </span>
+                </div>
+                <iframe
+                    src="${escapeHTML(address)}"
+                    title="NEXUS Browser"
+                    style="flex:1;width:100%;border:0;background:#fff;"
+                    sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                ></iframe>
+            </div>
         `;
-    }, 280);
+    }, 400);
 }
 
+function openExternal(url) {
+    window.open(url, "_blank", "noopener,noreferrer");
+    showNotification("Przeglądarka", "Otworzono w nowej karcie");
+}
 
 function browserBack() {
-    showNotification("Przeglądarka", "Historia wstecz jeszcze nie zaimplementowana.");
+    showNotification("Przeglądarka", "Historia wstecz – w przygotowaniu");
 }
 
 function browserForward() {
-    showNotification("Przeglądarka", "Historia w przód jeszcze nie zaimplementowana.");
+    showNotification("Przeglądarka", "Historia w przód – w przygotowaniu");
 }
 
 function browserReload() {
     const iframe = document.querySelector("#browserContent iframe");
     if (iframe) {
         iframe.src = iframe.src;
+        showNotification("Przeglądarka", "Odświeżono");
     } else {
-        showNotification("Przeglądarka", "Nic nie jest załadowane.");
+        showNotification("Przeglądarka", "Nic nie jest załadowane");
     }
 }
-
 
 /* ===== PLIKI ===== */
 function openFile(name) {
@@ -195,7 +279,6 @@ function openFile(name) {
 function openFolder(name) {
     showNotification("Pliki", `Folder: ${name}`);
 }
-
 
 /* ===== TERMINAL ===== */
 function handleTerminalKey(event) {
@@ -219,56 +302,39 @@ function handleTerminalKey(event) {
         const help = document.createElement("div");
         help.innerHTML = `
             <strong>Dostępne komendy:</strong><br>
-            help &nbsp;&nbsp;&nbsp;&nbsp; — lista komend<br>
-            clear &nbsp;&nbsp;&nbsp; — czyści terminal<br>
-            time &nbsp;&nbsp;&nbsp;&nbsp; — aktualny czas<br>
-            system &nbsp;&nbsp; — info o systemie<br>
-            open [app] — otwiera aplikację (pliki, browser, ai, terminal, ustawienia)<br>
-            neofetch &nbsp; — info o systemie (ładniejsze)<br>
-            echo [tekst] — wypisuje tekst
+            help, clear, time, system, neofetch<br>
+            open [app], echo [tekst]
         `;
         output.appendChild(help);
-    }
-    else if (lower === "clear") {
+    } else if (lower === "clear") {
         output.innerHTML = "";
         input.value = "";
         return;
-    }
-    else if (lower === "time") {
-        const now = new Date();
+    } else if (lower === "time") {
         const time = new Intl.DateTimeFormat("pl-PL", {
             timeZone: "Europe/Warsaw",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-            hour12: false
-        }).format(now);
+            hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
+        }).format(new Date());
         const res = document.createElement("div");
         res.textContent = time;
         output.appendChild(res);
-    }
-    else if (lower === "system" || lower === "neofetch") {
+    } else if (lower === "system" || lower === "neofetch") {
         const res = document.createElement("div");
         res.innerHTML = `
             <pre style="margin:0;line-height:1.4">
-NEXUS OS
-Wersja:    ${NEXUS.version}
+NEXUS OS ${NEXUS.version}
 Platforma: NEXUS Web Shell
-Język:     polski
 Status:    ${NEXUS.systemReady ? "gotowy" : "uruchamianie"}
-Uptime:    od załadowania strony
+AI:        aktywne (pamięć lokalna)
             </pre>
         `;
         output.appendChild(res);
-    }
-    else if (lower.startsWith("echo ")) {
+    } else if (lower.startsWith("echo ")) {
         const res = document.createElement("div");
         res.textContent = command.slice(5);
         output.appendChild(res);
-    }
-    else if (lower.startsWith("open ")) {
+    } else if (lower.startsWith("open ")) {
         const app = lower.replace("open ", "").trim();
-
         if (app.includes("plik")) openWindow("filesWindow");
         else if (app.includes("browser") || app.includes("przeglądark") || app.includes("internet")) openWindow("browserWindow");
         else if (app.includes("ai")) openWindow("aiWindow");
@@ -279,17 +345,15 @@ Uptime:    od załadowania strony
             res.textContent = "Nie znaleziono aplikacji.";
             output.appendChild(res);
         }
-    }
-    else {
+    } else {
         const res = document.createElement("div");
-        res.textContent = `Polecenie „${command}” nieznane. Wpisz help.`;
+        res.textContent = `Nieznane polecenie. Wpisz help.`;
         output.appendChild(res);
     }
 
     input.value = "";
     output.scrollTop = output.scrollHeight;
 }
-
 
 /* ===== USTAWIENIA ===== */
 function changeAccent(color) {
