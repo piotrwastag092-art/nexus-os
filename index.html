@@ -6,416 +6,318 @@
     <title>NEXUS OS</title>
     <link rel="stylesheet" href="css/nexus.css">
     <style>
-        #bootScreen {
-            position: fixed !important;
-            inset: 0 !important;
-            background: #02040a !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: center !important;
-            z-index: 999999 !important;
-            overflow: hidden !important;
-            transition: opacity 0.9s ease, visibility 0.9s ease !important;
-        }
-        #bootScreen.boot-hidden {
-            opacity: 0 !important;
-            visibility: hidden !important;
-            pointer-events: none !important;
-        }
-        .boot-bg-glow {
-            position: absolute;
-            width: 600px; height: 600px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(124,92,255,0.25) 0%, transparent 70%);
-            animation: bootGlow 2.5s ease-in-out infinite alternate;
-            pointer-events: none;
-        }
-        @keyframes bootGlow {
-            from { transform: scale(0.8); opacity: 0.5; }
-            to   { transform: scale(1.3); opacity: 1; }
-        }
-        .boot-ring {
-            position: absolute;
-            border-radius: 50%;
-            border: 2px solid transparent;
-            border-top-color: #7c5cff;
-            border-right-color: #00d9ff;
-            animation: bootSpin 1.8s linear infinite;
-        }
-        .boot-ring-1 { width: 140px; height: 140px; }
-        .boot-ring-2 { width: 190px; height: 190px; animation-duration: 2.6s; animation-direction: reverse; border-top-color: #00d9ff; border-right-color: #7c5cff; }
-        .boot-ring-3 { width: 240px; height: 240px; animation-duration: 3.4s; opacity: 0.5; }
-        @keyframes bootSpin { to { transform: rotate(360deg); } }
-        .boot-logo-wrap {
-            position: relative;
-            z-index: 5;
-            width: 100px; height: 100px;
-            display: grid; place-items: center;
-        }
-        .boot-logo {
-            width: 84px; height: 84px;
-            border-radius: 22px;
-            background: linear-gradient(135deg, #7c5cff, #00d9ff);
-            display: grid; place-items: center;
-            font-size: 42px; font-weight: 800; color: #fff;
-            box-shadow: 0 0 60px rgba(124,92,255,0.7), 0 0 120px rgba(0,217,255,0.3);
-            animation: bootLogoPulse 1.4s ease-in-out infinite;
-        }
-        @keyframes bootLogoPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.12); }
-        }
-        .boot-title {
-            margin-top: 32px;
-            font-size: 15px;
-            letter-spacing: 8px;
-            color: #c8cdd8;
-            text-transform: uppercase;
-            z-index: 5;
-            animation: bootFadeIn 0.8s ease 0.3s both;
-        }
-        .boot-status {
-            margin-top: 16px;
-            font-size: 13px;
-            color: #00d9ff;
-            z-index: 5;
-            min-height: 20px;
-            animation: bootFadeIn 0.6s ease 0.5s both;
-        }
-        @keyframes bootFadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        .boot-bar-wrap {
-            margin-top: 28px;
-            width: 240px; height: 4px;
-            background: rgba(255,255,255,0.08);
-            border-radius: 4px;
-            overflow: hidden;
-            z-index: 5;
-        }
-        .boot-bar-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #7c5cff, #00d9ff);
-            border-radius: 4px;
-            transition: width 0.35s ease;
-        }
-        .boot-scanline {
-            position: absolute;
-            left: 0; right: 0; height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(0,217,255,0.4), transparent);
-            animation: bootScan 2.2s linear infinite;
-            pointer-events: none;
-        }
-        @keyframes bootScan {
-            0%   { top: 0; opacity: 0; }
-            10%  { opacity: 1; }
-            90%  { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
-        }
-        .boot-spark {
-            position: absolute;
-            width: 4px; height: 4px;
-            background: #7c5cff;
-            border-radius: 50%;
-            pointer-events: none;
-            animation: bootSpark 1.2s ease-out forwards;
-        }
-        @keyframes bootSpark {
-            0%   { transform: translate(0,0) scale(1); opacity: 1; }
-            100% { transform: translate(var(--sx), var(--sy)) scale(0); opacity: 0; }
-        }
+        #bootScreen{position:fixed!important;inset:0!important;background:#02040a!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;z-index:999999!important;overflow:hidden!important;transition:opacity .9s ease,visibility .9s ease!important}
+        #bootScreen.boot-hidden{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+        .boot-bg-glow{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(124,92,255,.25) 0%,transparent 70%);animation:bootGlow 2.5s ease-in-out infinite alternate;pointer-events:none}
+        @keyframes bootGlow{from{transform:scale(.8);opacity:.5}to{transform:scale(1.3);opacity:1}}
+        .boot-ring{position:absolute;border-radius:50%;border:2px solid transparent;border-top-color:#7c5cff;border-right-color:#00d9ff;animation:bootSpin 1.8s linear infinite}
+        .boot-ring-1{width:140px;height:140px}
+        .boot-ring-2{width:190px;height:190px;animation-duration:2.6s;animation-direction:reverse;border-top-color:#00d9ff;border-right-color:#7c5cff}
+        .boot-ring-3{width:240px;height:240px;animation-duration:3.4s;opacity:.5}
+        @keyframes bootSpin{to{transform:rotate(360deg)}}
+        .boot-logo-wrap{position:relative;z-index:5;width:100px;height:100px;display:grid;place-items:center}
+        .boot-logo{width:84px;height:84px;border-radius:22px;background:linear-gradient(135deg,#7c5cff,#00d9ff);display:grid;place-items:center;font-size:42px;font-weight:800;color:#fff;box-shadow:0 0 60px rgba(124,92,255,.7),0 0 120px rgba(0,217,255,.3);animation:bootLogoPulse 1.4s ease-in-out infinite}
+        @keyframes bootLogoPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+        .boot-title{margin-top:32px;font-size:15px;letter-spacing:8px;color:#c8cdd8;text-transform:uppercase;z-index:5;animation:bootFadeIn .8s ease .3s both}
+        .boot-status{margin-top:16px;font-size:13px;color:#00d9ff;z-index:5;min-height:20px;animation:bootFadeIn .6s ease .5s both}
+        @keyframes bootFadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .boot-bar-wrap{margin-top:28px;width:240px;height:4px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;z-index:5}
+        .boot-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,#7c5cff,#00d9ff);border-radius:4px;transition:width .35s ease}
+        .boot-scanline{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(0,217,255,.4),transparent);animation:bootScan 2.2s linear infinite;pointer-events:none}
+        @keyframes bootScan{0%{top:0;opacity:0}10%{opacity:1}90%{opacity:1}100%{top:100%;opacity:0}}
+        .boot-spark{position:absolute;width:4px;height:4px;background:#7c5cff;border-radius:50%;pointer-events:none;animation:bootSpark 1.2s ease-out forwards}
+        @keyframes bootSpark{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--sx),var(--sy)) scale(0);opacity:0}}
     </style>
 </head>
 <body>
-
 <div id="desktop">
 
-    <div id="bootScreen">
-        <div class="boot-bg-glow"></div>
-        <div class="boot-scanline"></div>
-        <div class="boot-ring boot-ring-1"></div>
-        <div class="boot-ring boot-ring-2"></div>
-        <div class="boot-ring boot-ring-3"></div>
-        <div class="boot-logo-wrap">
-            <div class="boot-logo">N</div>
-        </div>
-        <div class="boot-title">NEXUS OS</div>
-        <div class="boot-status" id="bootStatus">Uruchamianie systemu...</div>
-        <div class="boot-bar-wrap">
-            <div class="boot-bar-fill" id="bootBar"></div>
+<div id="bootScreen">
+    <div class="boot-bg-glow"></div>
+    <div class="boot-scanline"></div>
+    <div class="boot-ring boot-ring-1"></div>
+    <div class="boot-ring boot-ring-2"></div>
+    <div class="boot-ring boot-ring-3"></div>
+    <div class="boot-logo-wrap"><div class="boot-logo">N</div></div>
+    <div class="boot-title">NEXUS OS</div>
+    <div class="boot-status" id="bootStatus">Uruchamianie systemu...</div>
+    <div class="boot-bar-wrap"><div class="boot-bar-fill" id="bootBar"></div></div>
+</div>
+
+<header class="topbar">
+    <div class="brand"><div class="nexus-logo">N</div><span>NEXUS OS</span></div>
+    <div class="status">
+        <span id="systemStatus" class="status-item"><span class="status-dot"></span> SYSTEM GOTOWY</span>
+        <span id="systemTime" class="status-item">00:00</span>
+    </div>
+</header>
+
+<main class="center">
+    <div class="ai-orb" onclick="openWindow('aiWindow')" title="NEXUS AI"></div>
+    <h1>NEXUS</h1>
+    <p class="subtitle">Twój system. Twoja przestrzeń.</p>
+    <div class="ai-search">
+        <span class="search-icon">✦</span>
+        <input id="aiCommand" type="text" placeholder="Zapytaj NEXUS AI..." autocomplete="off">
+        <button type="button" onclick="runAICommand()">→</button>
+    </div>
+    <div class="suggestions">
+        <button class="suggestion" onclick="setAICommand('Otwórz pliki')">Otwórz pliki</button>
+        <button class="suggestion" onclick="setAICommand('utwórz plik notatka.txt')">Nowy plik</button>
+        <button class="suggestion" onclick="setAICommand('Otwórz terminal')">Terminal</button>
+        <button class="suggestion" onclick="setAICommand('Otwórz notatnik')">Notatnik</button>
+    </div>
+</main>
+
+<nav class="dock">
+    <button type="button" class="dock-item" onclick="openWindow('filesWindow')" title="Pliki">📁</button>
+    <button type="button" class="dock-item" onclick="openWindow('browserWindow')" title="Internet">◉</button>
+    <button type="button" class="dock-item" onclick="openWindow('aiWindow')" title="NEXUS AI">✦</button>
+    <button type="button" class="dock-item" onclick="openWindow('terminalWindow')" title="Terminal">&gt;_</button>
+    <button type="button" class="dock-item" onclick="openWindow('notepadWindow')" title="Notatnik">📝</button>
+    <button type="button" class="dock-item" onclick="openWindow('settingsWindow')" title="Ustawienia">⚙</button>
+    <button type="button" class="dock-item" onclick="toggleLauncher()" title="Menu">◈</button>
+</nav>
+
+<!-- PLIKI -->
+<section id="filesWindow" class="window" style="display:none">
+    <div class="window-header">
+        <div class="window-title">📁 Pliki</div>
+        <div class="window-controls">
+            <button type="button" onclick="minimizeWindow('filesWindow')">−</button>
+            <button type="button" onclick="maximizeWindow('filesWindow')">□</button>
+            <button type="button" class="close" onclick="closeWindow('filesWindow')">×</button>
         </div>
     </div>
-
-    <header class="topbar">
-        <div class="brand">
-            <div class="nexus-logo">N</div>
-            <span>NEXUS OS</span>
-        </div>
-        <div class="status">
-            <span id="systemStatus" class="status-item">
-                <span class="status-dot"></span> SYSTEM GOTOWY
-            </span>
-            <span id="systemTime" class="status-item">00:00</span>
-        </div>
-    </header>
-
-    <main class="center">
-        <div class="ai-orb" onclick="openWindow('aiWindow')" title="NEXUS AI"></div>
-        <h1>NEXUS</h1>
-        <p class="subtitle">Twój system. Twoja przestrzeń.</p>
-        <div class="ai-search">
-            <span class="search-icon">✦</span>
-            <input id="aiCommand" type="text" placeholder="Zapytaj NEXUS AI..." autocomplete="off">
-            <button type="button" onclick="runAICommand()">→</button>
-        </div>
-        <div class="suggestions">
-            <button class="suggestion" onclick="setAICommand('Otwórz pliki')">Otwórz pliki</button>
-            <button class="suggestion" onclick="setAICommand('Otwórz przeglądarkę')">Przeglądarka</button>
-            <button class="suggestion" onclick="setAICommand('Otwórz terminal')">Terminal</button>
-            <button class="suggestion" onclick="setAICommand('Otwórz notatnik')">Notatnik</button>
-        </div>
-    </main>
-
-    <nav class="dock">
-        <button type="button" class="dock-item" onclick="openWindow('filesWindow')" title="Pliki">📁</button>
-        <button type="button" class="dock-item" onclick="openWindow('browserWindow')" title="Internet">◉</button>
-        <button type="button" class="dock-item" onclick="openWindow('aiWindow')" title="NEXUS AI">✦</button>
-        <button type="button" class="dock-item" onclick="openWindow('terminalWindow')" title="Terminal">&gt;_</button>
-        <button type="button" class="dock-item" onclick="openWindow('notepadWindow')" title="Notatnik">📝</button>
-        <button type="button" class="dock-item" onclick="openWindow('settingsWindow')" title="Ustawienia">⚙</button>
-        <button type="button" class="dock-item" onclick="toggleLauncher()" title="Menu">◈</button>
-    </nav>
-
-    <section id="filesWindow" class="window" style="display:none">
-        <div class="window-header">
-            <div class="window-title">📁 Pliki</div>
-            <div class="window-controls">
-                <button type="button" onclick="minimizeWindow('filesWindow')">−</button>
-                <button type="button" onclick="maximizeWindow('filesWindow')">□</button>
-                <button type="button" class="close" onclick="closeWindow('filesWindow')">×</button>
-            </div>
-        </div>
-        <div class="window-body">
-            <div class="files-layout">
-                <aside class="sidebar">
-                    <div class="side-item selected" onclick="navigateToRoot()">🏠 Główny</div>
-                    <div class="side-item" onclick="openFolderFromSidebar('Dokumenty')">📄 Dokumenty</div>
-                    <div class="side-item" onclick="openFolderFromSidebar('Obrazy')">🖼 Obrazy</div>
-                    <div class="side-item" onclick="openFolderFromSidebar('Muzyka')">🎵 Muzyka</div>
-                    <div class="side-item" onclick="openFolderFromSidebar('Pobrane')">📥 Pobrane</div>
-                </aside>
-                <div class="file-area">
-                    <div id="filesPath" style="font-size:12px;opacity:0.6;margin-bottom:12px">/</div>
-                    <div id="fileGrid" class="file-grid"></div>
+    <div class="window-body">
+        <div class="files-layout">
+            <aside class="sidebar">
+                <div class="side-item selected" onclick="navigateToRoot()">🏠 Główny</div>
+                <div class="side-item" onclick="openFolderFromSidebar('Dokumenty')">📄 Dokumenty</div>
+                <div class="side-item" onclick="openFolderFromSidebar('Obrazy')">🖼 Obrazy</div>
+                <div class="side-item" onclick="openFolderFromSidebar('Muzyka')">🎵 Muzyka</div>
+                <div class="side-item" onclick="openFolderFromSidebar('Pobrane')">📥 Pobrane</div>
+            </aside>
+            <div class="file-area">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+                    <div id="filesPath" style="font-size:12px;opacity:.6;flex:1">/</div>
+                    <button type="button" class="files-btn" onclick="uiNewFile()">+ Plik</button>
+                    <button type="button" class="files-btn files-btn-2" onclick="uiNewFolder()">+ Folder</button>
                 </div>
+                <div id="fileGrid" class="file-grid"></div>
             </div>
-        </div>
-        <div class="resize-handle n" onmousedown="startResize(event,'n')"></div>
-        <div class="resize-handle s" onmousedown="startResize(event,'s')"></div>
-        <div class="resize-handle e" onmousedown="startResize(event,'e')"></div>
-        <div class="resize-handle w" onmousedown="startResize(event,'w')"></div>
-        <div class="resize-handle ne" onmousedown="startResize(event,'ne')"></div>
-        <div class="resize-handle nw" onmousedown="startResize(event,'nw')"></div>
-        <div class="resize-handle se" onmousedown="startResize(event,'se')"></div>
-        <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
-    </section>
-
-    <section id="aiWindow" class="window" style="display:none">
-        <div class="window-header">
-            <div class="window-title">✦ NEXUS AI</div>
-            <div class="window-controls">
-                <button type="button" onclick="minimizeWindow('aiWindow')">−</button>
-                <button type="button" onclick="maximizeWindow('aiWindow')">□</button>
-                <button type="button" class="close" onclick="closeWindow('aiWindow')">×</button>
-            </div>
-        </div>
-        <div class="window-body">
-            <div class="ai-chat">
-                <div id="aiMessages" class="chat-messages">
-                    <div class="message nexus">
-                        <div class="message-avatar">N</div>
-                        <div class="message-bubble">
-                            <strong>NEXUS AI</strong>
-                            <p>Witaj. Jestem NEXUS AI. Jak mogę Ci pomóc?</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="chat-input">
-                    <input id="aiChatInput" type="text" placeholder="Napisz do NEXUS AI..." autocomplete="off" onkeydown="handleAIKey(event)">
-                    <button type="button" onclick="sendAIMessage()">↑</button>
-                </div>
-            </div>
-        </div>
-        <div class="resize-handle n" onmousedown="startResize(event,'n')"></div>
-        <div class="resize-handle s" onmousedown="startResize(event,'s')"></div>
-        <div class="resize-handle e" onmousedown="startResize(event,'e')"></div>
-        <div class="resize-handle w" onmousedown="startResize(event,'w')"></div>
-        <div class="resize-handle ne" onmousedown="startResize(event,'ne')"></div>
-        <div class="resize-handle nw" onmousedown="startResize(event,'nw')"></div>
-        <div class="resize-handle se" onmousedown="startResize(event,'se')"></div>
-        <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
-    </section>
-
-    <section id="settingsWindow" class="window" style="display:none">
-        <div class="window-header">
-            <div class="window-title">⚙ Ustawienia</div>
-            <div class="window-controls">
-                <button type="button" onclick="minimizeWindow('settingsWindow')">−</button>
-                <button type="button" onclick="maximizeWindow('settingsWindow')">□</button>
-                <button type="button" class="close" onclick="closeWindow('settingsWindow')">×</button>
-            </div>
-        </div>
-        <div class="window-body">
-            <div class="settings">
-                <div class="setting-section">
-                    <h3>Wygląd</h3>
-                    <div class="setting">
-                        <div class="setting-info">
-                            <strong>Kolor akcentu</strong>
-                            <small>Główny kolor systemu</small>
-                        </div>
-                        <input type="color" value="#7c5cff" onchange="changeAccent(this.value)">
-                    </div>
-                    <div class="setting">
-                        <div class="setting-info">
-                            <strong>Drugi akcent</strong>
-                            <small>Kolor pomocniczy</small>
-                        </div>
-                        <input type="color" value="#00d9ff" onchange="changeAccent2(this.value)">
-                    </div>
-                </div>
-                <div class="setting-section">
-                    <h3>System</h3>
-                    <div class="setting">
-                        <div class="setting-info">
-                            <strong>Informacje o systemie</strong>
-                            <small>NEXUS OS 0.4</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="resize-handle n" onmousedown="startResize(event,'n')"></div>
-        <div class="resize-handle s" onmousedown="startResize(event,'s')"></div>
-        <div class="resize-handle e" onmousedown="startResize(event,'e')"></div>
-        <div class="resize-handle w" onmousedown="startResize(event,'w')"></div>
-        <div class="resize-handle ne" onmousedown="startResize(event,'ne')"></div>
-        <div class="resize-handle nw" onmousedown="startResize(event,'nw')"></div>
-        <div class="resize-handle se" onmousedown="startResize(event,'se')"></div>
-        <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
-    </section>
-
-    <section id="browserWindow" class="window" style="display:none">
-        <div class="window-header">
-            <div class="window-title">◉ NEXUS Browser</div>
-            <div class="window-controls">
-                <button type="button" onclick="minimizeWindow('browserWindow')">−</button>
-                <button type="button" onclick="maximizeWindow('browserWindow')">□</button>
-                <button type="button" class="close" onclick="closeWindow('browserWindow')">×</button>
-            </div>
-        </div>
-        <div class="window-body">
-            <div class="browser-toolbar">
-                <button type="button" onclick="browserBack()">←</button>
-                <button type="button" onclick="browserForward()">→</button>
-                <button type="button" onclick="browserReload()">↻</button>
-                <input id="browserAddress" type="text" placeholder="Adres lub szukaj..." onkeydown="handleBrowserKey(event)">
-                <button type="button" onclick="navigateBrowser()">→</button>
-            </div>
-            <div id="browserContent" class="browser-content">
-                <div class="browser-start">
-                    <div class="browser-logo">N</div>
-                    <h1>NEXUS Browser</h1>
-                    <p>Internet w świecie NEXUS.</p>
-                </div>
-            </div>
-        </div>
-        <div class="resize-handle n" onmousedown="startResize(event,'n')"></div>
-        <div class="resize-handle s" onmousedown="startResize(event,'s')"></div>
-        <div class="resize-handle e" onmousedown="startResize(event,'e')"></div>
-        <div class="resize-handle w" onmousedown="startResize(event,'w')"></div>
-        <div class="resize-handle ne" onmousedown="startResize(event,'ne')"></div>
-        <div class="resize-handle nw" onmousedown="startResize(event,'nw')"></div>
-        <div class="resize-handle se" onmousedown="startResize(event,'se')"></div>
-        <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
-    </section>
-
-    <section id="terminalWindow" class="window" style="display:none">
-        <div class="window-header">
-            <div class="window-title">&gt;_ Terminal NEXUS</div>
-            <div class="window-controls">
-                <button type="button" onclick="minimizeWindow('terminalWindow')">−</button>
-                <button type="button" onclick="maximizeWindow('terminalWindow')">□</button>
-                <button type="button" class="close" onclick="closeWindow('terminalWindow')">×</button>
-            </div>
-        </div>
-        <div class="window-body">
-            <div class="terminal">
-                <div id="terminalOutput" class="terminal-output">
-                    <div>NEXUS Terminal [v0.4]</div>
-                    <div>Wpisz <strong>help</strong> aby zobaczyć komendy.</div><br>
-                </div>
-                <div class="terminal-input-line">
-                    <span style="color:var(--nexus-accent)">nexus@system:~$</span>
-                    <input id="terminalInput" type="text" autocomplete="off" onkeydown="handleTerminalKey(event)">
-                </div>
-            </div>
-        </div>
-        <div class="resize-handle n" onmousedown="startResize(event,'n')"></div>
-        <div class="resize-handle s" onmousedown="startResize(event,'s')"></div>
-        <div class="resize-handle e" onmousedown="startResize(event,'e')"></div>
-        <div class="resize-handle w" onmousedown="startResize(event,'w')"></div>
-        <div class="resize-handle ne" onmousedown="startResize(event,'ne')"></div>
-        <div class="resize-handle nw" onmousedown="startResize(event,'nw')"></div>
-        <div class="resize-handle se" onmousedown="startResize(event,'se')"></div>
-        <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
-    </section>
-
-    <section id="notepadWindow" class="window" style="display:none">
-        <div class="window-header">
-            <div class="window-title">📝 Notatnik</div>
-            <div class="window-controls">
-                <button type="button" onclick="minimizeWindow('notepadWindow')">−</button>
-                <button type="button" onclick="maximizeWindow('notepadWindow')">□</button>
-                <button type="button" class="close" onclick="closeWindow('notepadWindow')">×</button>
-            </div>
-        </div>
-        <div class="window-body">
-            <div class="notepad-area">
-                <div class="notepad-toolbar">
-                    <button type="button" onclick="saveNotepad()">Zapisz</button>
-                    <button type="button" onclick="newNotepad()">Nowy</button>
-                    <span id="notepadFilename" style="margin-left:auto;font-size:12px;opacity:0.6">bez tytułu</span>
-                </div>
-                <textarea id="notepadContent" placeholder="Pisz tutaj..."></textarea>
-            </div>
-        </div>
-        <div class="resize-handle n" onmousedown="startResize(event,'n')"></div>
-        <div class="resize-handle s" onmousedown="startResize(event,'s')"></div>
-        <div class="resize-handle e" onmousedown="startResize(event,'e')"></div>
-        <div class="resize-handle w" onmousedown="startResize(event,'w')"></div>
-        <div class="resize-handle ne" onmousedown="startResize(event,'ne')"></div>
-        <div class="resize-handle nw" onmousedown="startResize(event,'nw')"></div>
-        <div class="resize-handle se" onmousedown="startResize(event,'se')"></div>
-        <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
-    </section>
-
-    <div id="launcher" style="display:none">
-        <input id="launcherSearch" class="launcher-search" type="text" placeholder="Szukaj aplikacji..." oninput="filterLauncher()">
-        <div class="apps">
-            <button type="button" class="app launcher-app" data-name="pliki" onclick="launchApp('filesWindow')"><div class="app-icon">📁</div>Pliki</button>
-            <button type="button" class="app launcher-app" data-name="internet browser" onclick="launchApp('browserWindow')"><div class="app-icon">◉</div>Internet</button>
-            <button type="button" class="app launcher-app" data-name="ai" onclick="launchApp('aiWindow')"><div class="app-icon">✦</div>NEXUS AI</button>
-            <button type="button" class="app launcher-app" data-name="terminal" onclick="launchApp('terminalWindow')"><div class="app-icon">&gt;_</div>Terminal</button>
-            <button type="button" class="app launcher-app" data-name="notatnik" onclick="launchApp('notepadWindow')"><div class="app-icon">📝</div>Notatnik</button>
-            <button type="button" class="app launcher-app" data-name="ustawienia" onclick="launchApp('settingsWindow')"><div class="app-icon">⚙</div>Ustawienia</button>
         </div>
     </div>
+    <div class="resize-handle n" onmousedown="startResize(event,'n')"></div>
+    <div class="resize-handle s" onmousedown="startResize(event,'s')"></div>
+    <div class="resize-handle e" onmousedown="startResize(event,'e')"></div>
+    <div class="resize-handle w" onmousedown="startResize(event,'w')"></div>
+    <div class="resize-handle ne" onmousedown="startResize(event,'ne')"></div>
+    <div class="resize-handle nw" onmousedown="startResize(event,'nw')"></div>
+    <div class="resize-handle se" onmousedown="startResize(event,'se')"></div>
+    <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
+</section>
 
-    <div id="notifications"></div>
+<!-- AI -->
+<section id="aiWindow" class="window" style="display:none">
+    <div class="window-header">
+        <div class="window-title">✦ NEXUS AI</div>
+        <div class="window-controls">
+            <button type="button" onclick="minimizeWindow('aiWindow')">−</button>
+            <button type="button" onclick="maximizeWindow('aiWindow')">□</button>
+            <button type="button" class="close" onclick="closeWindow('aiWindow')">×</button>
+        </div>
+    </div>
+    <div class="window-body">
+        <div class="ai-chat">
+            <div id="aiMessages" class="chat-messages">
+                <div class="message nexus">
+                    <div class="message-avatar">N</div>
+                    <div class="message-bubble">
+                        <strong>NEXUS AI</strong>
+                        <p>Witaj. Mogę tworzyć pliki, foldery, usuwać je i otwierać aplikacje. Napisz np. „utwórz plik test.txt”.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-input">
+                <input id="aiChatInput" type="text" placeholder="Napisz do NEXUS AI..." autocomplete="off" onkeydown="handleAIKey(event)">
+                <button type="button" onclick="sendAIMessage()">↑</button>
+            </div>
+        </div>
+    </div>
+    <div class="resize-handle n" onmousedown="startResize(event,'n')"></div>
+    <div class="resize-handle s" onmousedown="startResize(event,'s')"></div>
+    <div class="resize-handle e" onmousedown="startResize(event,'e')"></div>
+    <div class="resize-handle w" onmousedown="startResize(event,'w')"></div>
+    <div class="resize-handle ne" onmousedown="startResize(event,'ne')"></div>
+    <div class="resize-handle nw" onmousedown="startResize(event,'nw')"></div>
+    <div class="resize-handle se" onmousedown="startResize(event,'se')"></div>
+    <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
+</section>
+
+<!-- USTAWIENIA -->
+<section id="settingsWindow" class="window" style="display:none">
+    <div class="window-header">
+        <div class="window-title">⚙ Ustawienia</div>
+        <div class="window-controls">
+            <button type="button" onclick="minimizeWindow('settingsWindow')">−</button>
+            <button type="button" onclick="maximizeWindow('settingsWindow')">□</button>
+            <button type="button" class="close" onclick="closeWindow('settingsWindow')">×</button>
+        </div>
+    </div>
+    <div class="window-body">
+        <div class="settings">
+            <div class="setting-section">
+                <h3>Wygląd</h3>
+                <div class="setting">
+                    <div class="setting-info"><strong>Kolor akcentu</strong><small>Główny kolor systemu</small></div>
+                    <input type="color" value="#7c5cff" onchange="changeAccent(this.value)">
+                </div>
+                <div class="setting">
+                    <div class="setting-info"><strong>Drugi akcent</strong><small>Kolor pomocniczy</small></div>
+                    <input type="color" value="#00d9ff" onchange="changeAccent2(this.value)">
+                </div>
+            </div>
+            <div class="setting-section">
+                <h3>System</h3>
+                <div class="setting">
+                    <div class="setting-info"><strong>Informacje</strong><small>NEXUS OS 0.5</small></div>
+                </div>
+            </div>
+            <div class="setting-section">
+                <h3>NEXUS AI (opcjonalnie)</h3>
+                <div class="setting" style="flex-direction:column;align-items:stretch;gap:10px">
+                    <div class="setting-info">
+                        <strong>Klucz OpenAI API</strong>
+                        <small>Bez klucza = tryb lokalny (i tak steruje plikami). Z kluczem = prawdziwe AI.</small>
+                    </div>
+                    <input id="apiKeyInput" type="password" placeholder="sk-..." style="width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.3);color:#fff;outline:none">
+                    <button type="button" onclick="saveApiKey()" style="padding:10px;border-radius:10px;background:var(--nexus-accent);color:#fff;border:0;cursor:pointer">Zapisz klucz</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="resize-handle n" onmousedown="startResize(event,'n')"></div>
+    <div class="resize-handle s" onmousedown="startResize(event,'s')"></div>
+    <div class="resize-handle e" onmousedown="startResize(event,'e')"></div>
+    <div class="resize-handle w" onmousedown="startResize(event,'w')"></div>
+    <div class="resize-handle ne" onmousedown="startResize(event,'ne')"></div>
+    <div class="resize-handle nw" onmousedown="startResize(event,'nw')"></div>
+    <div class="resize-handle se" onmousedown="startResize(event,'se')"></div>
+    <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
+</section>
+
+<!-- PRZEGLĄDARKA -->
+<section id="browserWindow" class="window" style="display:none">
+    <div class="window-header">
+        <div class="window-title">◉ NEXUS Browser</div>
+        <div class="window-controls">
+            <button type="button" onclick="minimizeWindow('browserWindow')">−</button>
+            <button type="button" onclick="maximizeWindow('browserWindow')">□</button>
+            <button type="button" class="close" onclick="closeWindow('browserWindow')">×</button>
+        </div>
+    </div>
+    <div class="window-body">
+        <div class="browser-toolbar">
+            <button type="button" onclick="browserBack()">←</button>
+            <button type="button" onclick="browserForward()">→</button>
+            <button type="button" onclick="browserReload()">↻</button>
+            <input id="browserAddress" type="text" placeholder="Adres lub szukaj..." onkeydown="handleBrowserKey(event)">
+            <button type="button" onclick="navigateBrowser()">→</button>
+        </div>
+        <div id="browserContent" class="browser-content">
+            <div class="browser-start">
+                <div class="browser-logo">N</div>
+                <h1>NEXUS Browser</h1>
+                <p>Internet w świecie NEXUS.</p>
+            </div>
+        </div>
+    </div>
+    <div class="resize-handle n" onmousedown="startResize(event,'n')"></div>
+    <div class="resize-handle s" onmousedown="startResize(event,'s')"></div>
+    <div class="resize-handle e" onmousedown="startResize(event,'e')"></div>
+    <div class="resize-handle w" onmousedown="startResize(event,'w')"></div>
+    <div class="resize-handle ne" onmousedown="startResize(event,'ne')"></div>
+    <div class="resize-handle nw" onmousedown="startResize(event,'nw')"></div>
+    <div class="resize-handle se" onmousedown="startResize(event,'se')"></div>
+    <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
+</section>
+
+<!-- TERMINAL -->
+<section id="terminalWindow" class="window" style="display:none">
+    <div class="window-header">
+        <div class="window-title">&gt;_ Terminal NEXUS</div>
+        <div class="window-controls">
+            <button type="button" onclick="minimizeWindow('terminalWindow')">−</button>
+            <button type="button" onclick="maximizeWindow('terminalWindow')">□</button>
+            <button type="button" class="close" onclick="closeWindow('terminalWindow')">×</button>
+        </div>
+    </div>
+    <div class="window-body">
+        <div class="terminal">
+            <div id="terminalOutput" class="terminal-output">
+                <div>NEXUS Terminal [v0.5]</div>
+                <div>Wpisz <strong>help</strong> — ls, cd, mkdir, touch, rm, cat, write...</div><br>
+            </div>
+            <div class="terminal-input-line">
+                <span style="color:var(--nexus-accent)">nexus@system:~$</span>
+                <input id="terminalInput" type="text" autocomplete="off" onkeydown="handleTerminalKey(event)">
+            </div>
+        </div>
+    </div>
+    <div class="resize-handle n" onmousedown="startResize(event,'n')"></div>
+    <div class="resize-handle s" onmousedown="startResize(event,'s')"></div>
+    <div class="resize-handle e" onmousedown="startResize(event,'e')"></div>
+    <div class="resize-handle w" onmousedown="startResize(event,'w')"></div>
+    <div class="resize-handle ne" onmousedown="startResize(event,'ne')"></div>
+    <div class="resize-handle nw" onmousedown="startResize(event,'nw')"></div>
+    <div class="resize-handle se" onmousedown="startResize(event,'se')"></div>
+    <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
+</section>
+
+<!-- NOTATNIK -->
+<section id="notepadWindow" class="window" style="display:none">
+    <div class="window-header">
+        <div class="window-title">📝 Notatnik</div>
+        <div class="window-controls">
+            <button type="button" onclick="minimizeWindow('notepadWindow')">−</button>
+            <button type="button" onclick="maximizeWindow('notepadWindow')">□</button>
+            <button type="button" class="close" onclick="closeWindow('notepadWindow')">×</button>
+        </div>
+    </div>
+    <div class="window-body">
+        <div class="notepad-area">
+            <div class="notepad-toolbar">
+                <button type="button" onclick="saveNotepad()">Zapisz</button>
+                <button type="button" onclick="newNotepad()">Nowy</button>
+                <span id="notepadFilename" style="margin-left:auto;font-size:12px;opacity:.6">bez tytułu</span>
+            </div>
+            <textarea id="notepadContent" placeholder="Pisz tutaj..."></textarea>
+        </div>
+    </div>
+    <div class="resize-handle n" onmousedown="startResize(event,'n')"></div>
+    <div class="resize-handle s" onmousedown="startResize(event,'s')"></div>
+    <div class="resize-handle e" onmousedown="startResize(event,'e')"></div>
+    <div class="resize-handle w" onmousedown="startResize(event,'w')"></div>
+    <div class="resize-handle ne" onmousedown="startResize(event,'ne')"></div>
+    <div class="resize-handle nw" onmousedown="startResize(event,'nw')"></div>
+    <div class="resize-handle se" onmousedown="startResize(event,'se')"></div>
+    <div class="resize-handle sw" onmousedown="startResize(event,'sw')"></div>
+</section>
+
+<div id="launcher" style="display:none">
+    <input id="launcherSearch" class="launcher-search" type="text" placeholder="Szukaj aplikacji..." oninput="filterLauncher()">
+    <div class="apps">
+        <button type="button" class="app launcher-app" data-name="pliki" onclick="launchApp('filesWindow')"><div class="app-icon">📁</div>Pliki</button>
+        <button type="button" class="app launcher-app" data-name="internet browser" onclick="launchApp('browserWindow')"><div class="app-icon">◉</div>Internet</button>
+        <button type="button" class="app launcher-app" data-name="ai" onclick="launchApp('aiWindow')"><div class="app-icon">✦</div>NEXUS AI</button>
+        <button type="button" class="app launcher-app" data-name="terminal" onclick="launchApp('terminalWindow')"><div class="app-icon">&gt;_</div>Terminal</button>
+        <button type="button" class="app launcher-app" data-name="notatnik" onclick="launchApp('notepadWindow')"><div class="app-icon">📝</div>Notatnik</button>
+        <button type="button" class="app launcher-app" data-name="ustawienia" onclick="launchApp('settingsWindow')"><div class="app-icon">⚙</div>Ustawienia</button>
+    </div>
+</div>
+
+<div id="notifications"></div>
 </div>
 
 <script src="js/js/nexus.js"></script>
