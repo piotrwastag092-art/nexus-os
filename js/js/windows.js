@@ -1,50 +1,31 @@
 "use strict";
 
 /* =========================================
-   NEXUS OS
-   WINDOW MANAGER
+   NEXUS OS — WINDOW MANAGER (naprawiony)
    ========================================= */
 
 window.NEXUS_WINDOWS = {
     dragging: false,
     resizing: false,
     active: null,
-
     dragOffsetX: 0,
     dragOffsetY: 0,
-
+    resizeDir: null,
     resizeStartX: 0,
     resizeStartY: 0,
     resizeStartWidth: 0,
     resizeStartHeight: 0,
-
-    currentResizeWindow: null
+    resizeStartLeft: 0,
+    resizeStartTop: 0
 };
 
-
-/* =========================================
-   OTWIERANIE OKNA
-   ========================================= */
-
 function openWindow(id) {
-
-    const win =
-        document.getElementById(id);
-
+    const win = document.getElementById(id);
     if (!win) return;
-
-
-    /* Pokaż */
 
     win.style.display = "flex";
 
-
-    /* Jeżeli okno było poza ekranem,
-       przywróć bezpieczną pozycję */
-
-    const rect =
-        win.getBoundingClientRect();
-
+    const rect = win.getBoundingClientRect();
     if (
         rect.left < 0 ||
         rect.top < 0 ||
@@ -55,459 +36,207 @@ function openWindow(id) {
         win.style.top = "100px";
     }
 
-
-    /* Pierwszy plan */
-
     focusWindow(id);
 
-
-    /* Zamknij launcher */
-
-    if (typeof closeLauncher === "function") {
-        closeLauncher();
-    }
-
-
-    /* Fokus pól */
+    if (typeof closeLauncher === "function") closeLauncher();
 
     setTimeout(() => {
-
         if (id === "terminalWindow") {
-
-            const input =
-                document.getElementById(
-                    "terminalInput"
-                );
-
+            const input = document.getElementById("terminalInput");
             if (input) input.focus();
         }
-
-
         if (id === "aiWindow") {
-
-            const input =
-                document.getElementById(
-                    "aiChatInput"
-                );
-
+            const input = document.getElementById("aiChatInput");
             if (input) input.focus();
         }
-
-    }, 100);
+    }, 80);
 }
-
-
-/* =========================================
-   ZAMYKANIE
-   ========================================= */
 
 function closeWindow(id) {
-
-    const win =
-        document.getElementById(id);
-
+    const win = document.getElementById(id);
     if (!win) return;
-
-
     win.style.display = "none";
-
-
-    if (
-        NEXUS.activeWindow === id
-    ) {
-        NEXUS.activeWindow = null;
-    }
+    if (NEXUS.activeWindow === id) NEXUS.activeWindow = null;
 }
-
-
-/* =========================================
-   MINIMALIZOWANIE
-   ========================================= */
 
 function minimizeWindow(id) {
-
-    const win =
-        document.getElementById(id);
-
+    const win = document.getElementById(id);
     if (!win) return;
-
-
     win.style.display = "none";
-
-
     win.dataset.minimized = "true";
-
-
-    if (
-        NEXUS.activeWindow === id
-    ) {
-        NEXUS.activeWindow = null;
-    }
+    if (NEXUS.activeWindow === id) NEXUS.activeWindow = null;
 }
 
-
-/* =========================================
-   MAKSYMALIZOWANIE
-   ========================================= */
-
 function maximizeWindow(id) {
-
-    const win =
-        document.getElementById(id);
-
+    const win = document.getElementById(id);
     if (!win) return;
 
-
-    if (
-        !NEXUS.maximizedWindows[id]
-    ) {
-
-        /* Zapamiętaj poprzedni stan */
-
-        win.dataset.previousLeft =
-            win.style.left;
-
-        win.dataset.previousTop =
-            win.style.top;
-
-        win.dataset.previousWidth =
-            win.style.width;
-
-        win.dataset.previousHeight =
-            win.style.height;
-
-        win.dataset.previousRadius =
-            win.style.borderRadius;
-
-
-        /* Maksymalizacja */
+    if (!NEXUS.maximizedWindows[id]) {
+        win.dataset.previousLeft = win.style.left;
+        win.dataset.previousTop = win.style.top;
+        win.dataset.previousWidth = win.style.width;
+        win.dataset.previousHeight = win.style.height;
+        win.dataset.previousRadius = win.style.borderRadius;
 
         win.style.left = "0";
-        win.style.top = "0";
+        win.style.top = "58px";
         win.style.width = "100%";
-        win.style.height =
-            "calc(100% - 90px)";
+        win.style.height = "calc(100% - 148px)";
         win.style.borderRadius = "0";
 
-
-        NEXUS.maximizedWindows[id] =
-            true;
-
+        NEXUS.maximizedWindows[id] = true;
     } else {
+        win.style.left = win.dataset.previousLeft || "120px";
+        win.style.top = win.dataset.previousTop || "100px";
+        win.style.width = win.dataset.previousWidth || "720px";
+        win.style.height = win.dataset.previousHeight || "480px";
+        win.style.borderRadius = win.dataset.previousRadius || "16px";
 
-        /* Przywrócenie */
-
-        win.style.left =
-            win.dataset.previousLeft ||
-            "";
-
-        win.style.top =
-            win.dataset.previousTop ||
-            "";
-
-        win.style.width =
-            win.dataset.previousWidth ||
-            "";
-
-        win.style.height =
-            win.dataset.previousHeight ||
-            "";
-
-        win.style.borderRadius =
-            win.dataset.previousRadius ||
-            "";
-
-
-        NEXUS.maximizedWindows[id] =
-            false;
+        NEXUS.maximizedWindows[id] = false;
     }
-
 
     focusWindow(id);
 }
 
-
-/* =========================================
-   FOCUS
-   ========================================= */
-
 function focusWindow(id) {
-
-    const win =
-        document.getElementById(id);
-
+    const win = document.getElementById(id);
     if (!win) return;
-
 
     NEXUS.highestZIndex++;
-
-
-    win.style.zIndex =
-        NEXUS.highestZIndex;
-
-
-    NEXUS.activeWindow =
-        id;
-
-
-    NEXUS_WINDOWS.active =
-        id;
+    win.style.zIndex = NEXUS.highestZIndex;
+    NEXUS.activeWindow = id;
+    NEXUS_WINDOWS.active = id;
 }
 
-
-/* =========================================
-   DRAGOWANIE OKIEN
-   ========================================= */
+/* ===== DRAG ===== */
 
 function startWindowDrag(event) {
-
-    const header =
-        event.target.closest(
-            ".window-header"
-        );
-
+    const header = event.target.closest(".window-header");
     if (!header) return;
 
-
-    const win =
-        header.closest(".window");
-
+    const win = header.closest(".window");
     if (!win) return;
 
-
-    /* Nie przeciągaj po przyciskach */
-
-    if (
-        event.target.closest(
-            ".window-controls"
-        )
-    ) {
-        return;
-    }
-
-
-    /* Nie przeciągaj zmaksymalizowanego */
-
-    if (
-        NEXUS.maximizedWindows[
-            win.id
-        ]
-    ) {
-        return;
-    }
-
+    if (event.target.closest(".window-controls")) return;
+    if (NEXUS.maximizedWindows[win.id]) return;
 
     focusWindow(win.id);
 
-
-    const rect =
-        win.getBoundingClientRect();
-
-
-    NEXUS_WINDOWS.dragging =
-        true;
-
-
-    NEXUS_WINDOWS.active =
-        win.id;
-
-
-    NEXUS_WINDOWS.dragOffsetX =
-        event.clientX - rect.left;
-
-
-    NEXUS_WINDOWS.dragOffsetY =
-        event.clientY - rect.top;
-
+    const rect = win.getBoundingClientRect();
+    NEXUS_WINDOWS.dragging = true;
+    NEXUS_WINDOWS.active = win.id;
+    NEXUS_WINDOWS.dragOffsetX = event.clientX - rect.left;
+    NEXUS_WINDOWS.dragOffsetY = event.clientY - rect.top;
 
     event.preventDefault();
 }
 
-
-/* =========================================
-   RUCH MYSZY
-   ========================================= */
-
 function handleWindowMouseMove(event) {
-
-    if (
-        !NEXUS_WINDOWS.dragging
-    ) {
-        return;
-    }
-
-
-    const id =
-        NEXUS_WINDOWS.active;
-
-
-    const win =
-        document.getElementById(id);
-
-    if (!win) return;
-
-
-    let x =
-        event.clientX -
-        NEXUS_WINDOWS.dragOffsetX;
-
-
-    let y =
-        event.clientY -
-        NEXUS_WINDOWS.dragOffsetY;
-
-
-    /* Ograniczenie do ekranu */
-
-    const maxX =
-        window.innerWidth -
-        win.offsetWidth;
-
-
-    const maxY =
-        window.innerHeight -
-        win.offsetHeight -
-        80;
-
-
-    x =
-        Math.max(
-            0,
-            Math.min(x, maxX)
-        );
-
-
-    y =
-        Math.max(
-            0,
-            Math.min(y, maxY)
-        );
-
-
-    win.style.left =
-        `${x}px`;
-
-    win.style.top =
-        `${y}px`;
-}
-
-
-/* =========================================
-   KONIEC PRZECIĄGANIA
-   ========================================= */
-
-function stopWindowDrag() {
-
-    NEXUS_WINDOWS.dragging =
-        false;
-
-    NEXUS_WINDOWS.active =
-        null;
-}
-
-
-/* =========================================
-   PODWÓJNE KLIKNIĘCIE
-   ========================================= */
-
-function handleWindowDoubleClick(event) {
-
-    const header =
-        event.target.closest(
-            ".window-header"
-        );
-
-    if (!header) return;
-
-
-    if (
-        event.target.closest(
-            ".window-controls"
-        )
-    ) {
-        return;
-    }
-
-
-    const win =
-        header.closest(".window");
-
-    if (!win) return;
-
-
-    maximizeWindow(win.id);
-}
-
-
-/* =========================================
-   KLIKNIĘCIE W OKNO
-   ========================================= */
-
-document.addEventListener(
-    "mousedown",
-    function(event) {
-
-        const win =
-            event.target.closest(
-                ".window"
-            );
-
+    // drag
+    if (NEXUS_WINDOWS.dragging) {
+        const win = document.getElementById(NEXUS_WINDOWS.active);
         if (!win) return;
 
+        let x = event.clientX - NEXUS_WINDOWS.dragOffsetX;
+        let y = event.clientY - NEXUS_WINDOWS.dragOffsetY;
 
-        focusWindow(win.id);
+        const maxX = window.innerWidth - win.offsetWidth;
+        const maxY = window.innerHeight - win.offsetHeight - 80;
+
+        x = Math.max(0, Math.min(x, maxX));
+        y = Math.max(0, Math.min(y, maxY));
+
+        win.style.left = x + "px";
+        win.style.top = y + "px";
+        return;
     }
-);
 
+    // resize
+    if (NEXUS_WINDOWS.resizing) {
+        const win = document.getElementById(NEXUS_WINDOWS.active);
+        if (!win) return;
 
-/* =========================================
-   DRAG
-   ========================================= */
+        const dir = NEXUS_WINDOWS.resizeDir;
+        const dx = event.clientX - NEXUS_WINDOWS.resizeStartX;
+        const dy = event.clientY - NEXUS_WINDOWS.resizeStartY;
 
-document.addEventListener(
-    "mousedown",
-    startWindowDrag
-);
+        let newWidth = NEXUS_WINDOWS.resizeStartWidth;
+        let newHeight = NEXUS_WINDOWS.resizeStartHeight;
+        let newLeft = NEXUS_WINDOWS.resizeStartLeft;
+        let newTop = NEXUS_WINDOWS.resizeStartTop;
 
-
-document.addEventListener(
-    "mousemove",
-    handleWindowMouseMove
-);
-
-
-document.addEventListener(
-    "mouseup",
-    stopWindowDrag
-);
-
-
-/* =========================================
-   DOUBLE CLICK
-   ========================================= */
-
-document.addEventListener(
-    "dblclick",
-    handleWindowDoubleClick
-);
-
-
-/* =========================================
-   ESC
-   ========================================= */
-
-document.addEventListener(
-    "keydown",
-    function(event) {
-
-        if (
-            event.key === "Escape" &&
-            NEXUS.activeWindow
-        ) {
-
-            closeWindow(
-                NEXUS.activeWindow
-            );
+        if (dir.includes("e")) newWidth = Math.max(320, NEXUS_WINDOWS.resizeStartWidth + dx);
+        if (dir.includes("s")) newHeight = Math.max(220, NEXUS_WINDOWS.resizeStartHeight + dy);
+        if (dir.includes("w")) {
+            newWidth = Math.max(320, NEXUS_WINDOWS.resizeStartWidth - dx);
+            newLeft = NEXUS_WINDOWS.resizeStartLeft + dx;
         }
+        if (dir.includes("n")) {
+            newHeight = Math.max(220, NEXUS_WINDOWS.resizeStartHeight - dy);
+            newTop = NEXUS_WINDOWS.resizeStartTop + dy;
+        }
+
+        win.style.width = newWidth + "px";
+        win.style.height = newHeight + "px";
+        win.style.left = newLeft + "px";
+        win.style.top = newTop + "px";
     }
-);
+}
+
+function stopWindowDrag() {
+    NEXUS_WINDOWS.dragging = false;
+    NEXUS_WINDOWS.resizing = false;
+    NEXUS_WINDOWS.active = null;
+    NEXUS_WINDOWS.resizeDir = null;
+}
+
+/* ===== RESIZE ===== */
+
+function startResize(event, dir) {
+    const win = event.target.closest(".window");
+    if (!win || NEXUS.maximizedWindows[win.id]) return;
+
+    focusWindow(win.id);
+
+    const rect = win.getBoundingClientRect();
+
+    NEXUS_WINDOWS.resizing = true;
+    NEXUS_WINDOWS.active = win.id;
+    NEXUS_WINDOWS.resizeDir = dir;
+    NEXUS_WINDOWS.resizeStartX = event.clientX;
+    NEXUS_WINDOWS.resizeStartY = event.clientY;
+    NEXUS_WINDOWS.resizeStartWidth = rect.width;
+    NEXUS_WINDOWS.resizeStartHeight = rect.height;
+    NEXUS_WINDOWS.resizeStartLeft = rect.left;
+    NEXUS_WINDOWS.resizeStartTop = rect.top;
+
+    event.preventDefault();
+    event.stopPropagation();
+}
+
+/* ===== DOUBLE CLICK + FOCUS ===== */
+
+function handleWindowDoubleClick(event) {
+    const header = event.target.closest(".window-header");
+    if (!header) return;
+    if (event.target.closest(".window-controls")) return;
+
+    const win = header.closest(".window");
+    if (win) maximizeWindow(win.id);
+}
+
+document.addEventListener("mousedown", function (event) {
+    const win = event.target.closest(".window");
+    if (win) focusWindow(win.id);
+});
+
+document.addEventListener("mousedown", startWindowDrag);
+document.addEventListener("mousemove", handleWindowMouseMove);
+document.addEventListener("mouseup", stopWindowDrag);
+document.addEventListener("dblclick", handleWindowDoubleClick);
+
+document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && NEXUS.activeWindow) {
+        closeWindow(NEXUS.activeWindow);
+    }
+});
