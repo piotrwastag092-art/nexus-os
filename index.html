@@ -8,15 +8,36 @@
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="css/nexus.css">
 <style>
-#bootScreen{position:fixed!important;inset:0!important;background:#02040a!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;z-index:999999!important}
-#bootScreen.is-done{display:none!important}
-.boot-logo{width:84px;height:84px;border-radius:22px;background:linear-gradient(135deg,#7c5cff,#00d9ff);display:grid;place-items:center;font-size:42px;font-weight:800;color:#fff;animation:bp 1.2s ease-in-out infinite}
-@keyframes bp{50%{transform:scale(1.1)}}
-.boot-title{margin-top:28px;letter-spacing:8px;color:#c8cdd8;font-size:14px}
-.boot-status{margin-top:14px;color:#00d9ff;font-size:13px}
-.boot-bar{margin-top:24px;width:220px;height:3px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden}
-.boot-fill{height:100%;width:0;background:linear-gradient(90deg,#7c5cff,#00d9ff);transition:width .3s}
-#lockScreen{position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#05070b,#12152a 60%,#0a1020);display:none;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(20px)}
+#bootScreen{position:fixed!important;inset:0!important;z-index:999999!important;background:#03050c!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;overflow:hidden!important}
+#bootScreen.is-done{animation:bootFadeOut .9s ease forwards!important;pointer-events:none!important}
+@keyframes bootFadeOut{to{opacity:0;transform:scale(1.06);visibility:hidden}}
+.boot-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(124,92,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,217,255,.05) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(circle at center,black 20%,transparent 70%);animation:gridPulse 3s ease-in-out infinite}
+@keyframes gridPulse{50%{opacity:.55}}
+.boot-glow{position:absolute;width:min(90vw,520px);height:min(90vw,520px);border-radius:50%;background:radial-gradient(circle,rgba(124,92,255,.35) 0%,rgba(0,217,255,.12) 35%,transparent 70%);animation:glowBreath 2.4s ease-in-out infinite;filter:blur(8px)}
+@keyframes glowBreath{0%,100%{transform:scale(.85);opacity:.7}50%{transform:scale(1.15);opacity:1}}
+.boot-ring{position:absolute;border-radius:50%;border:1px solid transparent;border-top-color:rgba(124,92,255,.85);border-right-color:rgba(0,217,255,.5);animation:bootSpin linear infinite}
+.boot-r1{width:150px;height:150px;animation-duration:2.2s}
+.boot-r2{width:210px;height:210px;animation-duration:3.4s;animation-direction:reverse;opacity:.7}
+.boot-r3{width:280px;height:280px;animation-duration:5s;opacity:.35;border-top-color:rgba(0,217,255,.4)}
+@keyframes bootSpin{to{transform:rotate(360deg)}}
+.boot-hex{position:absolute;width:320px;height:320px;background:conic-gradient(from 0deg,transparent 0 20%,rgba(124,92,255,.08) 20% 25%,transparent 25% 45%,rgba(0,217,255,.07) 45% 50%,transparent 50%);border-radius:50%;animation:bootSpin 12s linear infinite;opacity:.5}
+.boot-core{position:relative;z-index:5;width:96px;height:96px;border-radius:28px;background:linear-gradient(135deg,#8b6bff,#00d9ff 55%,#5a3fd4);display:grid;place-items:center;font-size:46px;font-weight:800;color:#fff;box-shadow:0 0 40px rgba(124,92,255,.7),0 0 100px rgba(0,217,255,.35),inset 0 0 20px rgba(255,255,255,.25);animation:coreIn .8s cubic-bezier(.16,1,.3,1) both,corePulse 2s ease-in-out .8s infinite}
+@keyframes coreIn{from{transform:scale(.3) rotate(-20deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+@keyframes corePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.boot-scan{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(0,217,255,.7),transparent);animation:scanMove 2s linear infinite;z-index:4;pointer-events:none}
+@keyframes scanMove{0%{top:0;opacity:0}10%{opacity:1}90%{opacity:1}100%{top:100%;opacity:0}}
+.boot-title{position:relative;z-index:5;margin-top:36px;font-size:13px;letter-spacing:10px;text-transform:uppercase;color:#d0d6e4;animation:titleIn 1s ease .3s both}
+@keyframes titleIn{from{opacity:0;letter-spacing:20px;transform:translateY(12px)}to{opacity:1;letter-spacing:10px;transform:none}}
+.boot-status{position:relative;z-index:5;margin-top:14px;font-size:12px;color:#00d9ff;min-height:18px;font-family:ui-monospace,monospace}
+.boot-bar-wrap{position:relative;z-index:5;margin-top:28px;width:min(280px,70vw);height:4px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;box-shadow:0 0 20px rgba(124,92,255,.2)}
+.boot-bar-fill{height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,#7c5cff,#00d9ff,#7c5cff);background-size:200% 100%;animation:barShine 1.2s linear infinite;transition:width .35s cubic-bezier(.16,1,.3,1)}
+@keyframes barShine{to{background-position:200% 0}}
+.boot-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.boot-p{position:absolute;width:3px;height:3px;border-radius:50%;background:#7c5cff;left:50%;top:50%;animation:pFly 1.4s ease-out forwards}
+@keyframes pFly{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--x),var(--y)) scale(0);opacity:0}}
+.boot-hint{position:absolute;bottom:28px;z-index:6;font-size:11px;color:rgba(200,210,230,.45);letter-spacing:1px}
+
+#lockScreen{position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#05070b,#12152a 60%,#0a1020);display:none;flex-direction:column;align-items:center;justify-content:center}
 #lockScreen.show{display:flex}
 .lock-time{font-size:72px;font-weight:200;letter-spacing:-2px}
 .lock-date{opacity:.6;margin-bottom:40px}
@@ -56,21 +77,123 @@
 <div id="desktop">
 
 <div id="bootScreen">
-  <div class="boot-logo">N</div>
+  <div class="boot-grid"></div>
+  <div class="boot-glow"></div>
+  <div class="boot-hex"></div>
+  <div class="boot-ring boot-r1"></div>
+  <div class="boot-ring boot-r2"></div>
+  <div class="boot-ring boot-r3"></div>
+  <div class="boot-scan"></div>
+  <div class="boot-particles" id="bootParticles"></div>
+  <div class="boot-core">N</div>
   <div class="boot-title">NEXUS OS</div>
-  <div class="boot-status" id="bootStatus">Uruchamianie...</div>
-  <div class="boot-bar"><div class="boot-fill" id="bootBar"></div></div>
+  <div class="boot-status" id="bootStatus">Inicjalizacja rdzenia…</div>
+  <div class="boot-bar-wrap"><div class="boot-bar-fill" id="bootBar"></div></div>
+  <div class="boot-hint">kliknij, aby odblokować dźwięk systemu</div>
 </div>
 <script>
 (function(){
-  var boot=document.getElementById("bootScreen"),st=document.getElementById("bootStatus"),bar=document.getElementById("bootBar");
-  var steps=[{t:"Rdzeń...",p:20},{t:"Moduły...",p:40},{t:"AI...",p:60},{t:"Dysk...",p:80},{t:"Gotowe.",p:100}];
+  var boot=document.getElementById("bootScreen");
+  var st=document.getElementById("bootStatus");
+  var bar=document.getElementById("bootBar");
+  var parts=document.getElementById("bootParticles");
+  var audioCtx=null,soundPlayed=false,finished=false;
+
+  function unlockAudio(){
+    try{
+      if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+      if(audioCtx.state==="suspended") audioCtx.resume();
+    }catch(e){}
+  }
+  function burst(){
+    if(!parts) return;
+    for(var i=0;i<18;i++){
+      var p=document.createElement("div");
+      p.className="boot-p";
+      var ang=Math.random()*Math.PI*2, dist=60+Math.random()*180;
+      p.style.setProperty("--x",Math.cos(ang)*dist+"px");
+      p.style.setProperty("--y",Math.sin(ang)*dist+"px");
+      p.style.background=Math.random()>0.5?"#7c5cff":"#00d9ff";
+      parts.appendChild(p);
+      (function(el){setTimeout(function(){el.remove();},1400);})(p);
+    }
+  }
+  function playBootSoundNow(){
+    if(soundPlayed) return;
+    try{
+      unlockAudio();
+      if(!audioCtx) return;
+      var ctx=audioCtx, t0=ctx.currentTime;
+      var bufferSize=Math.floor(ctx.sampleRate*1.15);
+      var noiseBuf=ctx.createBuffer(1,bufferSize,ctx.sampleRate);
+      var data=noiseBuf.getChannelData(0);
+      for(var i=0;i<bufferSize;i++) data[i]=(Math.random()*2-1)*(1-i/bufferSize);
+      var noise=ctx.createBufferSource(); noise.buffer=noiseBuf;
+      var nf=ctx.createBiquadFilter(); nf.type="lowpass";
+      nf.frequency.setValueAtTime(350,t0);
+      nf.frequency.exponentialRampToValueAtTime(1400,t0+0.45);
+      nf.frequency.exponentialRampToValueAtTime(180,t0+1.1);
+      var ng=ctx.createGain();
+      ng.gain.setValueAtTime(0.001,t0);
+      ng.gain.exponentialRampToValueAtTime(0.14,t0+0.12);
+      ng.gain.exponentialRampToValueAtTime(0.001,t0+1.1);
+      noise.connect(nf); nf.connect(ng); ng.connect(ctx.destination);
+      noise.start(t0); noise.stop(t0+1.15);
+      function tone(freq,start,len,vol,type){
+        var o=ctx.createOscillator(), g=ctx.createGain();
+        o.type=type||"sine";
+        o.frequency.setValueAtTime(freq,t0+start);
+        g.gain.setValueAtTime(0.001,t0+start);
+        g.gain.exponentialRampToValueAtTime(vol,t0+start+0.05);
+        g.gain.exponentialRampToValueAtTime(0.001,t0+start+len);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(t0+start); o.stop(t0+start+len+0.02);
+      }
+      tone(110,0.08,0.85,0.09,"sine");
+      tone(220,0.28,0.55,0.05,"triangle");
+      tone(523.25,0.48,0.4,0.07,"sine");
+      tone(659.25,0.58,0.45,0.06,"sine");
+      tone(783.99,0.72,0.55,0.05,"sine");
+      tone(1046.5,0.9,0.4,0.04,"sine");
+      tone(880,1.1,0.09,0.035,"square");
+      soundPlayed=true;
+    }catch(e){}
+  }
+  function finish(){
+    if(finished) return;
+    finished=true;
+    playBootSoundNow();
+    if(boot){
+      boot.classList.add("is-done");
+      setTimeout(function(){
+        boot.style.display="none";
+        var s=document.getElementById("systemStatus");
+        if(s) s.innerHTML='<span class="status-dot"></span> SYSTEM GOTOWY';
+        if(window.afterBoot) window.afterBoot();
+      },850);
+    }
+  }
+  document.addEventListener("pointerdown",function(){unlockAudio();playBootSoundNow();});
+  document.addEventListener("keydown",function(){unlockAudio();playBootSoundNow();});
+
+  var steps=[
+    {t:"Inicjalizacja rdzenia…",p:12},
+    {t:"Ładowanie modułów graficznych…",p:28},
+    {t:"Uruchamianie NEXUS AI…",p:48},
+    {t:"Montowanie wirtualnego dysku…",p:68},
+    {t:"Kalibracja interfejsu…",p:88},
+    {t:"System online.",p:100}
+  ];
   var i=0;
-  function done(){if(boot){boot.className="is-done";boot.style.cssText="display:none!important";}
-    var s=document.getElementById("systemStatus");if(s)s.innerHTML='<span class="status-dot"></span> SYSTEM GOTOWY';
-    if(window.afterBoot)window.afterBoot();}
-  setTimeout(done,3200);
-  setInterval(function(){if(i>=steps.length)return;if(st)st.textContent=steps[i].t;if(bar)bar.style.width=steps[i].p+"%";i++;},500);
+  burst();
+  var tick=setInterval(function(){
+    if(i>=steps.length){clearInterval(tick);burst();setTimeout(finish,400);return;}
+    if(st) st.textContent=steps[i].t;
+    if(bar) bar.style.width=steps[i].p+"%";
+    if(i===2||i===4) burst();
+    i++;
+  },480);
+  setTimeout(finish,6000);
 })();
 </script>
 
@@ -81,20 +204,17 @@
     <input id="lockPass" type="password" placeholder="Hasło (puste = Enter)" onkeydown="if(event.key==='Enter')unlockScreen()">
     <button type="button" onclick="unlockScreen()">Odblokuj</button>
   </div>
-  <div style="margin-top:16px;opacity:.45;font-size:12px">Domyślnie bez hasła — Enter odblokuje. Ustaw w Ustawieniach.</div>
 </div>
 
 <div id="commandPalette">
-  <input id="paletteInput" type="text" placeholder="Szukaj aplikacji, plików, komend… (Esc zamknie)" onkeydown="paletteKey(event)" oninput="renderPalette()">
+  <input id="paletteInput" type="text" placeholder="Szukaj… (Esc)" onkeydown="paletteKey(event)" oninput="renderPalette()">
   <div id="paletteResults"></div>
 </div>
-
 <div id="altTab"><div id="altTabInner"></div></div>
-
 <div id="onboard">
   <div class="onboard-card">
     <h2>Witaj w NEXUS OS</h2>
-    <p>Skróty: <b>Ctrl+K</b> palette · <b>Alt+Tab</b> okna · <b>Win/Meta+L</b> blokada · przeciągnij pliki na pulpit · AI w ustawieniach z kluczem API.</p>
+    <p>Ctrl+K palette · Alt+Tab okna · Ctrl/Cmd+L blokada · kliknij w boot, by usłyszeć dźwięk startu.</p>
     <button type="button" onclick="finishOnboard()">Zaczynamy</button>
   </div>
 </div>
@@ -115,7 +235,7 @@
   </div>
   <div class="widget">
     <div style="font-size:12px;opacity:.6;margin-bottom:6px">Pogoda</div>
-    <div id="widgetWeather">Ładowanie…</div>
+    <div id="widgetWeather">…</div>
   </div>
   <div class="widget">
     <div style="font-size:12px;opacity:.6;margin-bottom:6px">Notatka</div>
@@ -129,12 +249,12 @@
   <p class="subtitle">Twój system. Twoja przestrzeń.</p>
   <div class="ai-search">
     <span class="search-icon">✦</span>
-    <input id="aiCommand" type="text" placeholder="Zapytaj NEXUS AI… (Ctrl+K = palette)" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();runAICommand();}">
+    <input id="aiCommand" type="text" placeholder="Zapytaj NEXUS AI…" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();runAICommand();}">
     <button type="button" onclick="runAICommand()">→</button>
   </div>
   <div class="suggestions">
     <button class="suggestion" onclick="setAICommand('Otwórz pliki');runAICommand();">Otwórz pliki</button>
-    <button class="suggestion" onclick="openPalette()">Ctrl+K</button>
+    <button class="suggestion" onclick="typeof openPalette==='function'&&openPalette()">Ctrl+K</button>
     <button class="suggestion" onclick="setAICommand('Otwórz terminal');runAICommand();">Terminal</button>
     <button class="suggestion" onclick="lockScreen()">Zablokuj</button>
   </div>
@@ -157,26 +277,24 @@
       <button type="button" onclick="minimizeWindow('filesWindow')">−</button>
       <button type="button" onclick="maximizeWindow('filesWindow')">□</button>
       <button type="button" class="close" onclick="closeWindow('filesWindow')">×</button>
-    </div>
-  </div>
+    </div></div>
   <div class="window-body">
     <div class="files-layout">
       <aside class="sidebar">
         <div class="side-item" onclick="navigateToRoot()">🏠 Główny</div>
         <div class="side-item" onclick="openFolderFromSidebar('Dokumenty')">📄 Dokumenty</div>
         <div class="side-item" onclick="openTrash()">🗑 Kosz</div>
-        <div class="side-item" onclick="exportDisk()">⬇ Eksport dysku</div>
-        <div class="side-item" onclick="document.getElementById('importDisk').click()">⬆ Import dysku</div>
+        <div class="side-item" onclick="exportDisk()">⬇ Eksport</div>
+        <div class="side-item" onclick="document.getElementById('importDisk').click()">⬆ Import</div>
         <input type="file" id="importDisk" accept="application/json" style="display:none" onchange="importDisk(event)">
       </aside>
       <div class="file-area">
-        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+        <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap">
           <div id="filesPath" style="flex:1;font-size:12px;opacity:.6">/</div>
           <button type="button" class="files-btn" onclick="uiNewFile()">+ Plik</button>
           <button type="button" class="files-btn files-btn-2" onclick="uiNewFolder()">+ Folder</button>
         </div>
         <div id="fileGrid" class="file-grid"></div>
-        <div style="margin-top:10px;font-size:11px;opacity:.45">Upuść pliki z komputera tutaj lub na pulpit</div>
       </div>
     </div>
   </div>
@@ -196,20 +314,17 @@
       <button type="button" onclick="minimizeWindow('aiWindow')">−</button>
       <button type="button" onclick="maximizeWindow('aiWindow')">□</button>
       <button type="button" class="close" onclick="closeWindow('aiWindow')">×</button>
-    </div>
-  </div>
+    </div></div>
   <div class="window-body">
     <div class="ai-chat">
       <div id="aiMessages" class="chat-messages">
         <div class="message nexus"><div class="message-avatar">N</div>
-          <div class="message-bubble"><strong>NEXUS AI</strong>
-            <p>Gotowy. Lokalnie steruję systemem. Z kluczem API w Ustawieniach — pełne AI. Możesz też użyć mikrofonu 🎤</p>
-          </div>
+          <div class="message-bubble"><strong>NEXUS AI</strong><p>Gotowy. Klucz API w Ustawieniach = pełne AI.</p></div>
         </div>
       </div>
       <div class="chat-input">
-        <button type="button" onclick="startVoice()" title="Głos" style="width:42px;border-radius:12px;background:rgba(255,255,255,.06)">🎤</button>
-        <input id="aiChatInput" type="text" placeholder="Napisz lub mów…" onkeydown="handleAIKey(event)">
+        <button type="button" onclick="startVoice()" style="width:42px;border-radius:12px;background:rgba(255,255,255,.06)">🎤</button>
+        <input id="aiChatInput" type="text" placeholder="Napisz…" onkeydown="handleAIKey(event)">
         <button type="button" onclick="sendAIMessage()">↑</button>
       </div>
     </div>
@@ -230,40 +345,31 @@
       <button type="button" onclick="minimizeWindow('settingsWindow')">−</button>
       <button type="button" onclick="maximizeWindow('settingsWindow')">□</button>
       <button type="button" class="close" onclick="closeWindow('settingsWindow')">×</button>
-    </div>
-  </div>
+    </div></div>
   <div class="window-body">
     <div class="settings">
       <div class="setting-section"><h3>Wygląd</h3>
-        <div class="setting"><div class="setting-info"><strong>Akcent</strong></div>
-          <input type="color" value="#7c5cff" onchange="changeAccent(this.value)"></div>
-        <div class="setting"><div class="setting-info"><strong>Drugi akcent</strong></div>
-          <input type="color" value="#00d9ff" onchange="changeAccent2(this.value)"></div>
+        <div class="setting"><div class="setting-info"><strong>Akcent</strong></div><input type="color" value="#7c5cff" onchange="changeAccent(this.value)"></div>
+        <div class="setting"><div class="setting-info"><strong>Drugi</strong></div><input type="color" value="#00d9ff" onchange="changeAccent2(this.value)"></div>
         <div class="setting"><div class="setting-info"><strong>Motyw</strong></div>
           <select id="themeSelect" onchange="setTheme(this.value)" style="padding:8px;border-radius:8px;background:#111;color:#fff;border:1px solid rgba(255,255,255,.1)">
-            <option value="default">Default</option>
-            <option value="cyber">Cyber</option>
-            <option value="glass">Glass</option>
+            <option value="default">Default</option><option value="cyber">Cyber</option><option value="glass">Glass</option>
           </select>
         </div>
       </div>
-      <div class="setting-section"><h3>Bezpieczeństwo</h3>
+      <div class="setting-section"><h3>Blokada</h3>
         <div class="setting" style="flex-direction:column;align-items:stretch;gap:8px">
-          <strong>Hasło blokady</strong>
-          <input id="lockPassSet" type="password" placeholder="Puste = bez hasła" style="padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.3);color:#fff">
+          <input id="lockPassSet" type="password" placeholder="Hasło (puste=brak)" style="padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.3);color:#fff">
           <button type="button" onclick="saveLockPass()" style="padding:10px;border-radius:10px;background:var(--nexus-accent);color:#fff;border:0">Zapisz hasło</button>
         </div>
       </div>
       <div class="setting-section"><h3>NEXUS AI</h3>
         <div class="setting" style="flex-direction:column;align-items:stretch;gap:10px">
           <select id="aiProvider" style="padding:10px;border-radius:10px;background:#111;color:#fff;border:1px solid rgba(255,255,255,.1)">
-            <option value="openai">OpenAI</option>
-            <option value="openrouter">OpenRouter</option>
-            <option value="xai">xAI (Grok)</option>
-            <option value="custom">Custom</option>
+            <option value="openai">OpenAI</option><option value="openrouter">OpenRouter</option><option value="xai">xAI</option><option value="custom">Custom</option>
           </select>
           <input id="aiModel" type="text" placeholder="model" style="padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.3);color:#fff">
-          <input id="aiBaseUrl" type="text" placeholder="custom base URL" style="padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.3);color:#fff">
+          <input id="aiBaseUrl" type="text" placeholder="custom URL" style="padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.3);color:#fff">
           <input id="apiKeyInput" type="password" placeholder="API key" style="padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.3);color:#fff">
           <button type="button" onclick="saveApiKey()" style="padding:10px;border-radius:10px;background:var(--nexus-accent);color:#fff;border:0">Zapisz AI</button>
         </div>
@@ -286,19 +392,16 @@
       <button type="button" onclick="minimizeWindow('browserWindow')">−</button>
       <button type="button" onclick="maximizeWindow('browserWindow')">□</button>
       <button type="button" class="close" onclick="closeWindow('browserWindow')">×</button>
-    </div>
-  </div>
+    </div></div>
   <div class="window-body">
     <div class="browser-toolbar">
       <button type="button" onclick="browserBack()">←</button>
       <button type="button" onclick="browserForward()">→</button>
       <button type="button" onclick="browserReload()">↻</button>
-      <input id="browserAddress" type="text" placeholder="URL lub szukaj…" onkeydown="handleBrowserKey(event)">
+      <input id="browserAddress" type="text" placeholder="URL…" onkeydown="handleBrowserKey(event)">
       <button type="button" onclick="navigateBrowser()">→</button>
     </div>
-    <div id="browserContent" class="browser-content">
-      <div class="browser-start"><div class="browser-logo">N</div><h1>NEXUS Browser</h1></div>
-    </div>
+    <div id="browserContent" class="browser-content"><div class="browser-start"><div class="browser-logo">N</div><h1>Browser</h1></div></div>
   </div>
   <div class="resize-handle n" onmousedown="startResize(event,'n')"></div>
   <div class="resize-handle s" onmousedown="startResize(event,'s')"></div>
@@ -316,11 +419,10 @@
       <button type="button" onclick="minimizeWindow('terminalWindow')">−</button>
       <button type="button" onclick="maximizeWindow('terminalWindow')">□</button>
       <button type="button" class="close" onclick="closeWindow('terminalWindow')">×</button>
-    </div>
-  </div>
+    </div></div>
   <div class="window-body">
     <div class="terminal">
-      <div id="terminalOutput" class="terminal-output"><div>NEXUS Terminal — help</div><br></div>
+      <div id="terminalOutput" class="terminal-output"><div>help — lista komend</div><br></div>
       <div class="terminal-input-line">
         <span style="color:var(--nexus-accent)">nexus@system:~$</span>
         <input id="terminalInput" type="text" onkeydown="handleTerminalKey(event)">
@@ -343,8 +445,7 @@
       <button type="button" onclick="minimizeWindow('notepadWindow')">−</button>
       <button type="button" onclick="maximizeWindow('notepadWindow')">□</button>
       <button type="button" class="close" onclick="closeWindow('notepadWindow')">×</button>
-    </div>
-  </div>
+    </div></div>
   <div class="window-body">
     <div class="notepad-area">
       <div class="notepad-toolbar">
@@ -371,10 +472,8 @@
       <button type="button" onclick="minimizeWindow('musicWindow')">−</button>
       <button type="button" onclick="maximizeWindow('musicWindow')">□</button>
       <button type="button" class="close" onclick="closeWindow('musicWindow')">×</button>
-    </div>
-  </div>
+    </div></div>
   <div class="window-body">
-    <p style="opacity:.7;margin-bottom:12px;font-size:13px">Wybierz plik audio z dysku lub upuść na pulpit.</p>
     <input type="file" id="musicFile" accept="audio/*" onchange="playMusicFile(event)">
     <audio id="musicPlayer" controls style="width:100%;margin-top:16px"></audio>
   </div>
