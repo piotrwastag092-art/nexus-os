@@ -2,7 +2,7 @@
 
 window.NEXUS = {
     name: "NEXUS OS",
-    version: "0.4",
+    version: "0.6",
     activeWindow: null,
     highestZIndex: 100,
     maximizedWindows: {},
@@ -33,16 +33,16 @@ window.NEXUS = {
 };
 
 function updateClock() {
-    const clock = document.getElementById("systemTime");
+    var clock = document.getElementById("systemTime");
     if (!clock) return;
-    const now = new Date();
-    const h = new Intl.DateTimeFormat("pl-PL", { timeZone: "Europe/Warsaw", hour: "2-digit", hour12: false }).format(now);
-    const m = new Intl.DateTimeFormat("pl-PL", { timeZone: "Europe/Warsaw", minute: "2-digit", hour: "2-digit", hour12: false }).format(now);
+    var now = new Date();
+    var h = new Intl.DateTimeFormat("pl-PL", { timeZone: "Europe/Warsaw", hour: "2-digit", hour12: false }).format(now);
+    var m = new Intl.DateTimeFormat("pl-PL", { timeZone: "Europe/Warsaw", minute: "2-digit", hour: "2-digit", hour12: false }).format(now);
     clock.textContent = h + ":" + m.split(":").pop();
 }
 
 function setSystemStatus(status) {
-    const el = document.getElementById("systemStatus");
+    var el = document.getElementById("systemStatus");
     if (!el) return;
     if (status === "booting") el.innerHTML = '<span class="status-dot"></span> URUCHAMIANIE';
     if (status === "online") el.innerHTML = '<span class="status-dot"></span> SYSTEM GOTOWY';
@@ -50,9 +50,9 @@ function setSystemStatus(status) {
 }
 
 function showNotification(title, message) {
-    const container = document.getElementById("notifications");
+    var container = document.getElementById("notifications");
     if (!container) return;
-    const n = document.createElement("div");
+    var n = document.createElement("div");
     n.className = "notification";
     n.innerHTML = "<strong>" + escapeHTML(title) + "</strong><span>" + escapeHTML(message) + "</span>";
     container.appendChild(n);
@@ -73,7 +73,7 @@ function saveState() {
         maximized: NEXUS.maximizedWindows,
         settings: NEXUS.settings,
         fs: NEXUS.fs,
-        terminalHistory: NEXUS.terminalHistory.slice(-50),
+        terminalHistory: (NEXUS.terminalHistory || []).slice(-50),
         windows: {}
     };
     document.querySelectorAll(".window").forEach(function (win) {
@@ -149,10 +149,21 @@ function initParallax() {
     });
 }
 
+function hideBootScreen() {
+    var boot = document.getElementById("bootScreen");
+    if (!boot) return;
+    boot.classList.add("boot-hidden");
+    // MUSI być !important — CSS ma display:flex !important
+    boot.style.setProperty("display", "none", "important");
+    boot.style.setProperty("opacity", "0", "important");
+    boot.style.setProperty("visibility", "hidden", "important");
+    boot.style.setProperty("pointer-events", "none", "important");
+}
+
 function spawnBootSparks() {
     var boot = document.getElementById("bootScreen");
     if (!boot) return;
-    for (var i = 0; i < 14; i++) {
+    for (var i = 0; i < 12; i++) {
         var s = document.createElement("div");
         s.className = "boot-spark";
         s.style.left = "50%";
@@ -164,7 +175,7 @@ function spawnBootSparks() {
         s.style.animationDelay = (Math.random() * 0.4) + "s";
         boot.appendChild(s);
         (function (el) {
-            setTimeout(function () { el.remove(); }, 1400);
+            setTimeout(function () { if (el && el.parentNode) el.remove(); }, 1400);
         })(s);
     }
 }
@@ -174,66 +185,81 @@ function runBootSequence() {
     var statusEl = document.getElementById("bootStatus");
     var bar = document.getElementById("bootBar");
 
+    // awaryjny timeout — ZAWSZE schowa boot max po 5s
+    var safety = setTimeout(function () {
+        hideBootScreen();
+        finishBoot();
+    }, 5000);
+
     if (!boot) {
+        clearTimeout(safety);
         finishBoot();
         return;
     }
 
     boot.classList.remove("boot-hidden");
-    boot.style.display = "flex";
-    boot.style.opacity = "1";
-    boot.style.visibility = "visible";
+    boot.style.setProperty("display", "flex", "important");
+    boot.style.setProperty("opacity", "1", "important");
+    boot.style.setProperty("visibility", "visible", "important");
 
     var steps = [
-        { text: "Inicjalizacja rdzenia...", pct: 12 },
-        { text: "Ładowanie modułów systemu...", pct: 28 },
-        { text: "Uruchamianie NEXUS AI...", pct: 48 },
-        { text: "Montowanie wirtualnego dysku...", pct: 68 },
-        { text: "Przygotowanie interfejsu...", pct: 88 },
+        { text: "Inicjalizacja rdzenia...", pct: 15 },
+        { text: "Ładowanie modułów systemu...", pct: 35 },
+        { text: "Uruchamianie NEXUS AI...", pct: 55 },
+        { text: "Montowanie wirtualnego dysku...", pct: 75 },
+        { text: "Przygotowanie interfejsu...", pct: 90 },
         { text: "System gotowy.", pct: 100 }
     ];
 
     var i = 0;
-    spawnBootSparks();
+    try { spawnBootSparks(); } catch (e) {}
 
     var tick = setInterval(function () {
-        if (i >= steps.length) {
-            clearInterval(tick);
-            spawnBootSparks();
-            setTimeout(function () {
-                boot.classList.add("boot-hidden");
+        try {
+            if (i >= steps.length) {
+                clearInterval(tick);
+                try { spawnBootSparks(); } catch (e2) {}
                 setTimeout(function () {
-                    boot.style.display = "none";
+                    hideBootScreen();
+                    clearTimeout(safety);
                     finishBoot();
-                }, 900);
-            }, 500);
-            return;
+                }, 450);
+                return;
+            }
+            var step = steps[i];
+            if (statusEl) statusEl.textContent = step.text;
+            if (bar) bar.style.width = step.pct + "%";
+            if (i === 2 || i === 4) {
+                try { spawnBootSparks(); } catch (e3) {}
+            }
+            i++;
+        } catch (err) {
+            clearInterval(tick);
+            clearTimeout(safety);
+            hideBootScreen();
+            finishBoot();
         }
-        var step = steps[i];
-        if (statusEl) statusEl.textContent = step.text;
-        if (bar) bar.style.width = step.pct + "%";
-        if (i === 2 || i === 4) spawnBootSparks();
-        i++;
-    }, 480);
+    }, 400);
 }
 
 function finishBoot() {
+    if (NEXUS.systemReady) return;
     NEXUS.systemReady = true;
     setSystemStatus("online");
-    showNotification("NEXUS OS", "System gotowy. Wersja " + NEXUS.version);
-    createParticles();
+    try { showNotification("NEXUS OS", "System gotowy. Wersja " + NEXUS.version); } catch (e) {}
+    try { createParticles(); } catch (e) {}
 }
 
 function initializeNexus() {
-    console.log("NEXUS OS — boot sequence");
+    console.log("NEXUS OS — boot");
     setSystemStatus("booting");
     updateClock();
     runBootSequence();
     setTimeout(function () {
-        loadState();
-        applySettings();
-        initParallax();
-    }, 200);
+        try { loadState(); } catch (e) {}
+        try { applySettings(); } catch (e) {}
+        try { initParallax(); } catch (e) {}
+    }, 300);
     setInterval(saveState, 5000);
     window.addEventListener("beforeunload", saveState);
 }
