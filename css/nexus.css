@@ -317,3 +317,88 @@ button { border: 0; color: inherit; cursor: pointer; }
 
 .particle {
     position: absolute; 
+
+
+/* ===== NEXUS NEURAL PULSE ===== */
+#neuralPulse {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0; opacity: 0.85;
+}
+
+/* ===== NEXUS VOICE HUD ===== */
+#voiceHUD {
+    position: absolute; bottom: 100px; right: 22px; z-index: 8500;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+#voiceBtn {
+    position: relative; width: 64px; height: 64px; border-radius: 50%;
+    background: linear-gradient(145deg, rgba(124,92,255,0.35), rgba(0,217,255,0.2));
+    border: 1px solid rgba(255,255,255,0.12);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 2px; box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+#voiceBtn:hover { transform: scale(1.06); }
+#voiceBtn.listening {
+    background: linear-gradient(145deg, rgba(255,85,119,0.45), rgba(124,92,255,0.4));
+    box-shadow: 0 0 0 3px rgba(255,85,119,0.35), 0 0 40px rgba(124,92,255,0.5);
+    animation: voicePulse 1.2s ease-in-out infinite;
+}
+@keyframes voicePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+}
+#voiceBtn .mic-ico { font-size: 22px; line-height: 1; }
+#voiceBadge {
+    font-size: 9px; letter-spacing: 1px; font-weight: 700; opacity: 0.85;
+}
+#voiceRing {
+    position: absolute; width: 78px; height: 78px; border-radius: 50%;
+    border: 2px solid transparent; pointer-events: none;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+}
+#voiceRing.active {
+    border-color: rgba(0,217,255,0.55);
+    animation: ringExpand 1.4s ease-out infinite;
+}
+@keyframes ringExpand {
+    0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.9; }
+    100% { transform: translate(-50%, -50%) scale(1.45); opacity: 0; }
+}
+.voice-cont {
+    width: 36px; height: 36px; border-radius: 12px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
+    font-size: 16px; display: grid; place-items: center;
+}
+.voice-cont.active {
+    background: rgba(0,217,255,0.25); border-color: rgba(0,217,255,0.4); color: #00d9ff;
+}
+#voiceLive {
+    max-width: 200px; min-height: 18px; font-size: 11px; color: var(--nexus-muted);
+    text-align: center; opacity: 0.9; user-select: text;
+}
+
+/* ===== NEXUS LAB ===== */
+.lab-body { display: flex; flex-direction: column; height: 100%; padding: 12px !important; gap: 10px; }
+.lab-toolbar { display: flex; flex-wrap: wrap; gap: 8px; }
+.lab-mode, .lab-shock {
+    padding: 8px 14px; border-radius: 10px; font-size: 12px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
+}
+.lab-mode:hover, .lab-shock:hover { background: rgba(124,92,255,0.2); }
+.lab-mode.active {
+    background: rgba(124,92,255,0.3); border-color: rgba(124,92,255,0.5); color: #fff;
+}
+.lab-shock { background: rgba(0,217,255,0.12); }
+.lab-canvas-wrap {
+    flex: 1; min-height: 200px; border-radius: 14px; overflow: hidden;
+    background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+}
+#labCanvas { display: block; width: 100%; height: 100%; }
+.lab-hint { font-size: 11px; color: var(--nexus-muted); opacity: 0.8; }
+
+/* ensure windows above pulse */
+.window { z-index: 100; }
+.topbar { z-index: 9000; }
+.dock { z-index: 8000; }
