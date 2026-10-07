@@ -1,206 +1,607 @@
-"use strict";
+:root {
+    --nexus-bg: #07090d;
+    --nexus-panel: rgba(18, 21, 28, 0.82);
+    --nexus-panel-solid: #12151c;
+    --nexus-border: rgba(255, 255, 255, 0.09);
+
+    --nexus-text: #f5f7fb;
+    --nexus-muted: #8f98a8;
+
+    --nexus-accent: #7c5cff;
+    --nexus-accent-2: #00d9ff;
+
+    --nexus-success: #42e88a;
+    --nexus-danger: #ff5577;
+
+    --nexus-shadow: 0 25px 80px rgba(0, 0, 0, 0.55);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    background: var(--nexus-bg);
+    color: var(--nexus-text);
+    overflow: hidden;
+}
+
+button, input {
+    font: inherit;
+}
+
+button {
+    border: 0;
+    color: inherit;
+    cursor: pointer;
+}
 
 /* =========================================
-   NEXUS OS — RDZEŃ SYSTEMU v0.3
-   ========================================= */
+   PULPIT
+========================================= */
 
-window.NEXUS = {
-    name: "NEXUS OS",
-    version: "0.3",
-    activeWindow: null,
-    highestZIndex: 100,
-    maximizedWindows: {},
-    systemReady: false,
-    settings: {
-        accent: "#7c5cff",
-        accent2: "#00d9ff",
-        wallpaper: "default"
+#desktop {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(124, 92, 255, 0.16), transparent 30%),
+        radial-gradient(circle at 80% 25%, rgba(0, 217, 255, 0.10), transparent 28%),
+        radial-gradient(circle at 50% 100%, rgba(124, 92, 255, 0.08), transparent 40%),
+        linear-gradient(135deg, #06080d, #0b0e15 50%, #05070b);
+    background-size: 200% 200%;
+    animation: bgShift 28s ease-in-out infinite;
+}
+
+@keyframes bgShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+#desktop::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: linear-gradient(to bottom, black, transparent);
+    pointer-events: none;
+}
+
+/* =========================================
+   GÓRNY PASEK
+========================================= */
+
+.topbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 22px;
+    background: rgba(5, 7, 11, 0.55);
+    backdrop-filter: blur(25px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    z-index: 9000;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+}
+
+.nexus-logo {
+    width: 29px;
+    height: 29px;
+    border-radius: 9px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, var(--nexus-accent), var(--nexus-accent-2));
+    box-shadow: 0 0 25px rgba(124, 92, 255, 0.4);
+    font-size: 14px;
+    animation: logoPulse 3.5s ease-in-out infinite;
+}
+
+@keyframes logoPulse {
+    0%, 100% { transform: scale(1); filter: brightness(1); }
+    50% { transform: scale(1.07); filter: brightness(1.15); }
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    font-size: 12px;
+    color: var(--nexus-muted);
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--nexus-success);
+    box-shadow: 0 0 10px var(--nexus-success);
+}
+
+/* =========================================
+   CENTRALNY PANEL
+========================================= */
+
+.center {
+    position: absolute;
+    left: 50%;
+    top: 45%;
+    transform: translate(-50%, -50%);
+    width: min(760px, 90%);
+    text-align: center;
+}
+
+.ai-orb {
+    width: 92px;
+    height: 92px;
+    margin: 0 auto 28px;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 35% 30%, #ffffff, transparent 7%),
+        radial-gradient(circle at 50% 50%, #9b8aff, #4e39d8 50%, #131021 72%);
+    box-shadow:
+        0 0 45px rgba(124, 92, 255, 0.35),
+        0 0 120px rgba(0, 217, 255, 0.12);
+    animation: nexusOrb 4.5s ease-in-out infinite, nexusGlow 6s ease-in-out infinite;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.ai-orb:hover {
+    box-shadow:
+        0 0 55px rgba(124, 92, 255, 0.5),
+        0 0 140px rgba(0, 217, 255, 0.18);
+}
+
+@keyframes nexusOrb {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.08) rotate(3deg); }
+}
+
+@keyframes nexusGlow {
+    0%, 100% {
+        box-shadow:
+            0 0 45px rgba(124, 92, 255, 0.35),
+            0 0 120px rgba(0, 217, 255, 0.12);
     }
-};
-
-
-function updateClock() {
-    const clock = document.getElementById("systemTime");
-    if (!clock) return;
-
-    const now = new Date();
-    const hours = new Intl.DateTimeFormat("pl-PL", {
-        timeZone: "Europe/Warsaw",
-        hour: "2-digit",
-        hour12: false
-    }).format(now);
-
-    const minutes = new Intl.DateTimeFormat("pl-PL", {
-        timeZone: "Europe/Warsaw",
-        minute: "2-digit",
-        hour: "2-digit",
-        hour12: false
-    }).format(now);
-
-    clock.textContent = `${hours}:${minutes.split(":").pop()}`;
-}
-
-
-function setSystemStatus(status) {
-    const element = document.getElementById("systemStatus");
-    if (!element) return;
-
-    if (status === "booting") {
-        element.innerHTML = '<span class="status-dot"></span> URUCHAMIANIE';
-    }
-    if (status === "online") {
-        element.innerHTML = '<span class="status-dot"></span> SYSTEM GOTOWY';
-    }
-    if (status === "offline") {
-        element.innerHTML = '<span class="status-dot"></span> OFFLINE';
-    }
-}
-
-
-function showNotification(title, message) {
-    const container = document.getElementById("notifications");
-    if (!container) return;
-
-    const notification = document.createElement("div");
-    notification.className = "notification";
-    notification.innerHTML = `
-        <strong>${escapeHTML(title)}</strong>
-        <span>${escapeHTML(message)}</span>
-    `;
-    container.appendChild(notification);
-
-    setTimeout(() => notification.remove(), 4200);
-}
-
-
-function escapeHTML(text) {
-    return String(text)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-
-function saveState() {
-    const state = {
-        maximized: NEXUS.maximizedWindows,
-        settings: NEXUS.settings,
-        windows: {}
-    };
-
-    document.querySelectorAll(".window").forEach(win => {
-        if (win.style.display === "none") return;
-        state.windows[win.id] = {
-            left: win.style.left,
-            top: win.style.top,
-            width: win.style.width,
-            height: win.style.height,
-            zIndex: win.style.zIndex
-        };
-    });
-
-    try {
-        localStorage.setItem("nexus-os-state", JSON.stringify(state));
-    } catch (e) {
-        console.warn("Nie udało się zapisać stanu", e);
-    }
-}
-
-
-function loadState() {
-    try {
-        const raw = localStorage.getItem("nexus-os-state");
-        if (!raw) return;
-
-        const state = JSON.parse(raw);
-
-        if (state.settings) {
-            NEXUS.settings = { ...NEXUS.settings, ...state.settings };
-            applySettings();
-        }
-
-        if (state.maximized) {
-            NEXUS.maximizedWindows = state.maximized;
-        }
-
-        if (state.windows) {
-            Object.keys(state.windows).forEach(id => {
-                const win = document.getElementById(id);
-                if (!win) return;
-                const s = state.windows[id];
-                win.style.left = s.left || "120px";
-                win.style.top = s.top || "100px";
-                win.style.width = s.width || "720px";
-                win.style.height = s.height || "480px";
-                if (s.zIndex) win.style.zIndex = s.zIndex;
-            });
-        }
-    } catch (e) {
-        console.warn("Nie udało się wczytać stanu", e);
-    }
-}
-
-
-function applySettings() {
-    document.documentElement.style.setProperty("--nexus-accent", NEXUS.settings.accent);
-    document.documentElement.style.setProperty("--nexus-accent-2", NEXUS.settings.accent2);
-}
-
-
-function createParticles() {
-    const desktop = document.getElementById("desktop");
-    if (!desktop) return;
-
-    // usuń stare jeśli są
-    desktop.querySelectorAll(".particle").forEach(p => p.remove());
-
-    for (let i = 0; i < 18; i++) {
-        const p = document.createElement("div");
-        p.className = "particle";
-        p.style.left = Math.random() * 100 + "%";
-        p.style.top = Math.random() * 100 + "%";
-        p.style.animationDuration = (12 + Math.random() * 18) + "s";
-        p.style.animationDelay = (Math.random() * 10) + "s";
-        desktop.appendChild(p);
+    50% {
+        box-shadow:
+            0 0 70px rgba(124, 92, 255, 0.55),
+            0 0 160px rgba(0, 217, 255, 0.22);
     }
 }
 
-
-function getSystemInfo() {
-    return {
-        name: NEXUS.name,
-        version: NEXUS.version,
-        platform: "NEXUS Web Shell",
-        language: "pl-PL",
-        status: NEXUS.systemReady ? "gotowy" : "uruchamianie"
-    };
+.center h1 {
+    font-size: clamp(32px, 5vw, 54px);
+    letter-spacing: -2px;
+    margin-bottom: 12px;
 }
 
-
-function initializeNexus() {
-    console.log("NEXUS OS — uruchamianie...");
-
-    setSystemStatus("booting");
-    updateClock();
-    loadState();
-    createParticles();
-
-    setTimeout(() => {
-        NEXUS.systemReady = true;
-        setSystemStatus("online");
-        console.log("NEXUS OS — system gotowy.");
-        showNotification("NEXUS OS", "System gotowy. Wersja " + NEXUS.version);
-    }, 600);
-
-    setInterval(saveState, 4000);
-    window.addEventListener("beforeunload", saveState);
+.subtitle {
+    color: var(--nexus-muted);
+    font-size: 15px;
+    margin-bottom: 30px;
 }
 
+/* =========================================
+   AI SEARCH
+========================================= */
 
-document.addEventListener("DOMContentLoaded", () => {
-    updateClock();
-    setInterval(updateClock, 1000);
-    initializeNexus();
-});
+.ai-search {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 6px;
+    border: 1px solid var(--nexus-border);
+    background: rgba(18, 21, 28, 0.7);
+    backdrop-filter: blur(25px);
+    border-radius: 19px;
+    box-shadow: var(--nexus-shadow);
+}
+
+.search-icon {
+    width: 48px;
+    display: grid;
+    place-items: center;
+    color: var(--nexus-accent-2);
+    font-size: 18px;
+}
+
+.ai-search input {
+    flex: 1;
+    background: none;
+    border: 0;
+    outline: none;
+    padding: 17px 8px;
+    color: white;
+    font-size: 15px;
+    user-select: text;
+}
+
+.ai-search input::placeholder {
+    color: #737c8c;
+}
+
+.ai-search button {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--nexus-accent), #5a3fd4);
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.ai-search button:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+.suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 22px;
+    animation: floatUp 0.8s ease-out;
+}
+
+@keyframes floatUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.suggestion {
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--nexus-muted);
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.suggestion:hover {
+    background: rgba(124, 92, 255, 0.15);
+    border-color: rgba(124, 92, 255, 0.3);
+    color: white;
+}
+
+/* =========================================
+   DOCK
+========================================= */
+
+.dock {
+    position: absolute;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    padding: 10px 14px;
+    background: rgba(12, 14, 20, 0.75);
+    backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 22px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+    z-index: 8000;
+}
+
+.dock-item {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    transition: all 0.2s ease;
+}
+
+.dock-item:hover {
+    background: rgba(124, 92, 255, 0.2);
+    transform: translateY(-6px) scale(1.08);
+}
+
+/* =========================================
+   OKNA
+========================================= */
+
+.window {
+    position: absolute;
+    top: 100px;
+    left: 120px;
+    width: 720px;
+    height: 480px;
+    min-width: 320px;
+    min-height: 220px;
+    display: none;
+    flex-direction: column;
+    background: var(--nexus-panel);
+    backdrop-filter: blur(30px);
+    border: 1px solid var(--nexus-border);
+    border-radius: 16px;
+    box-shadow: var(--nexus-shadow);
+    overflow: hidden;
+    z-index: 100;
+}
+
+.window-header {
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 14px;
+    background: rgba(0, 0, 0, 0.25);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    cursor: grab;
+}
+
+.window-header:active {
+    cursor: grabbing;
+}
+
+.window-title {
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.window-controls {
+    display: flex;
+    gap: 6px;
+}
+
+.window-controls button {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    transition: background 0.15s ease;
+}
+
+.window-controls button:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.window-controls button.close:hover {
+    background: var(--nexus-danger);
+}
+
+.window-body {
+    flex: 1;
+    overflow: auto;
+    padding: 16px;
+}
+
+/* =========================================
+   PLIKI
+========================================= */
+
+.files-layout {
+    display: flex;
+    height: 100%;
+    gap: 16px;
+}
+
+.sidebar {
+    width: 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.side-item {
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--nexus-muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.side-item:hover,
+.side-item.selected {
+    background: rgba(124, 92, 255, 0.15);
+    color: white;
+}
+
+.file-area {
+    flex: 1;
+}
+
+.file-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 14px;
+}
+
+.file {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 8px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.file:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.file-icon {
+    font-size: 32px;
+}
+
+.file-name {
+    font-size: 12px;
+    text-align: center;
+    color: var(--nexus-muted);
+}
+
+/* =========================================
+   AI CHAT
+========================================= */
+
+.ai-chat {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-bottom: 12px;
+}
+
+.message {
+    display: flex;
+    gap: 10px;
+    max-width: 85%;
+}
+
+.message.user {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.message-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--nexus-accent), var(--nexus-accent-2));
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.message-bubble {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 14px;
+    padding: 12px 14px;
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+.message.user .message-bubble {
+    background: rgba(124, 92, 255, 0.18);
+    border-color: rgba(124, 92, 255, 0.25);
+}
+
+.message-bubble strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+.chat-input {
+    display: flex;
+    gap: 10px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.chat-input input {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: white;
+    outline: none;
+    user-select: text;
+}
+
+.chat-input button {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: var(--nexus-accent);
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+}
+
+/* =========================================
+   USTAWIENIA
+========================================= */
+
+.settings {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.setting-section h3 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--nexus-muted);
+    margin-bottom: 12px;
+}
+
+.setting {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    margin-bottom: 8px;
+}
+
+.setting-info strong {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 3px;
+}
+
+.setting-info small {
+    font-size: 12px;
+    color: 
