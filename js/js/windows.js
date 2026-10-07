@@ -39,6 +39,7 @@ function openWindow(id) {
             var n = document.getElementById("notepadContent");
             if (n) n.focus();
         }
+        if (id === "labWindow" && typeof startLab === "function") startLab();
     }, 250);
     if (typeof saveState === "function") saveState();
 }
