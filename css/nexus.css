@@ -167,7 +167,8 @@ function getSystemInfo() {
 /* ===== START ===== */
 function initializeNexus() {
     console.log("NEXUS OS — uruchamianie...");
-
+    // cząsteczki na tle
+    createParticles();
     setSystemStatus("booting");
     updateClock();
     loadState();
