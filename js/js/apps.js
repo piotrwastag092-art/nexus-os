@@ -2,8 +2,7 @@
 
 /* =========================================
    NEXUS OS — APPS v0.3
-   Lepsze AI + przeglądarka
-========================================= */
+   ========================================= */
 
 let aiMemory = JSON.parse(localStorage.getItem("nexus-ai-memory") || "[]");
 
@@ -59,7 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-/* ===== AI CZAT ===== */
 function handleAIKey(event) {
     if (event.key === "Enter") {
         event.preventDefault();
@@ -75,7 +73,6 @@ function sendAIMessage() {
     const text = input.value.trim();
     if (!text) return;
 
-    // zapamiętujemy
     aiMemory.push({ role: "user", text, time: Date.now() });
     if (aiMemory.length > 40) aiMemory.shift();
     localStorage.setItem("nexus-ai-memory", JSON.stringify(aiMemory));
@@ -92,7 +89,6 @@ function sendAIMessage() {
     input.value = "";
     messages.scrollTop = messages.scrollHeight;
 
-    // "myślenie"
     const thinking = document.createElement("div");
     thinking.className = "message nexus";
     thinking.id = "thinkingMsg";
@@ -125,13 +121,12 @@ function sendAIMessage() {
 
         aiMemory.push({ role: "ai", text: reply, time: Date.now() });
         localStorage.setItem("nexus-ai-memory", JSON.stringify(aiMemory));
-    }, 600 + Math.random() * 500);
+    }, 600 + Math.random() * 400);
 }
 
 function generateAIReply(text) {
     const t = text.toLowerCase().trim();
 
-    // komendy systemowe
     if (t.includes("otwórz pliki") || t === "pliki") {
         openWindow("filesWindow");
         return "Otworzyłem menedżer plików.";
@@ -149,7 +144,6 @@ function generateAIReply(text) {
         return "Ustawienia systemu.";
     }
 
-    // rozmowa
     if (/(cześć|hej|siema|witaj|dzień dobry)/.test(t)) {
         return "Siema. Jestem NEXUS AI. Co robimy?";
     }
@@ -172,13 +166,6 @@ function generateAIReply(text) {
         return "NEXUS AI – lokalny asystent systemu. Póki co działam offline, ale pamiętam co do mnie piszesz.";
     }
 
-    // proste "uczenie się"
-    const lastUser = aiMemory.filter(m => m.role === "user").slice(-3);
-    if (lastUser.length >= 2 && lastUser.every(m => m.text.toLowerCase().includes("otwórz"))) {
-        return "Widzę, że dużo otwierasz okna. Chcesz, żebym coś automatycznie odpalał przy starcie?";
-    }
-
-    // domyślna
     const answers = [
         "Zrozumiałem. Co dalej?",
         "Jasne. Mogę w tym pomóc – daj więcej szczegółów.",
@@ -189,7 +176,6 @@ function generateAIReply(text) {
     return answers[Math.floor(Math.random() * answers.length)];
 }
 
-/* ===== PRZEGLĄDARKA ===== */
 function handleBrowserKey(event) {
     if (event.key === "Enter") {
         event.preventDefault();
@@ -205,7 +191,6 @@ function navigateBrowser() {
     let address = input.value.trim();
     if (!address) return;
 
-    // dodaj https jeśli brakuje
     if (!address.startsWith("http://") && !address.startsWith("https://")) {
         if (address.includes(".") && !address.includes(" ")) {
             address = "https://" + address;
@@ -230,7 +215,7 @@ function navigateBrowser() {
         content.innerHTML = `
             <div style="display:flex;flex-direction:column;height:100%;">
                 <div style="padding:8px 12px;background:rgba(0,0,0,0.3);display:flex;gap:8px;align-items:center;">
-                    <button onclick="openExternal('${escapeHTML(address)}')" style="padding:6px 12px;border-radius:8px;background:var(--nexus-accent);cursor:pointer;">
+                    <button onclick="openExternal('${escapeHTML(address)}')" style="padding:6px 12px;border-radius:8px;background:var(--nexus-accent);cursor:pointer;border:0;color:white;">
                         Otwórz na zewnątrz
                     </button>
                     <span style="font-size:12px;opacity:0.7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
@@ -271,7 +256,6 @@ function browserReload() {
     }
 }
 
-/* ===== PLIKI ===== */
 function openFile(name) {
     showNotification("Pliki", `Plik: ${name}`);
 }
@@ -280,7 +264,6 @@ function openFolder(name) {
     showNotification("Pliki", `Folder: ${name}`);
 }
 
-/* ===== TERMINAL ===== */
 function handleTerminalKey(event) {
     if (event.key !== "Enter") return;
     event.preventDefault();
@@ -355,8 +338,8 @@ AI:        aktywne (pamięć lokalna)
     output.scrollTop = output.scrollHeight;
 }
 
-/* ===== USTAWIENIA ===== */
 function changeAccent(color) {
+    if (!NEXUS.settings) return;
     NEXUS.settings.accent = color;
     applySettings();
     saveState();
@@ -364,6 +347,7 @@ function changeAccent(color) {
 }
 
 function changeAccent2(color) {
+    if (!NEXUS.settings) return;
     NEXUS.settings.accent2 = color;
     applySettings();
     saveState();
