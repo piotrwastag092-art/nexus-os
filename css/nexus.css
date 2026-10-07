@@ -1,7 +1,7 @@
 "use strict";
 
 /* =========================================
-   NEXUS OS — RDZEŃ (z trwałością stanu)
+   NEXUS OS — RDZEŃ SYSTEMU (v0.2)
    ========================================= */
 
 window.NEXUS = {
@@ -179,7 +179,6 @@ function initializeNexus() {
         showNotification("NEXUS OS", "System gotowy. Wersja " + NEXUS.version);
     }, 600);
 
-    // zapisujemy stan co chwilę i przy zamykaniu
     setInterval(saveState, 4000);
     window.addEventListener("beforeunload", saveState);
 }
