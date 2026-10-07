@@ -605,3 +605,127 @@ button {
 .setting-info small {
     font-size: 12px;
     color: 
+/* ===== BOOT ===== */
+#bootScreen {
+    position: fixed;
+    inset: 0;
+    background: #05070b;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    transition: opacity 0.7s ease, transform 0.7s ease;
+}
+#bootScreen.boot-out {
+    opacity: 0;
+    transform: scale(1.05);
+}
+.boot-logo {
+    width: 90px;
+    height: 90px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, var(--nexus-accent), var(--nexus-accent-2));
+    display: grid;
+    place-items: center;
+    font-size: 42px;
+    font-weight: 800;
+    box-shadow: 0 0 60px rgba(124, 92, 255, 0.5);
+    animation: bootPulse 1.4s ease-in-out infinite;
+}
+@keyframes bootPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+}
+.boot-text {
+    margin-top: 28px;
+    font-size: 14px;
+    letter-spacing: 4px;
+    color: var(--nexus-muted);
+    text-transform: uppercase;
+}
+
+/* ===== WINDOW ANIMATIONS ===== */
+.window-opening {
+    animation: winOpen 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.window-closing {
+    animation: winClose 0.22s ease forwards;
+}
+@keyframes winOpen {
+    from { opacity: 0; transform: scale(0.92) translateY(12px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes winClose {
+    from { opacity: 1; transform: scale(1); }
+    to   { opacity: 0; transform: scale(0.94) translateY(8px); }
+}
+
+/* ===== DOCK ACTIVE ===== */
+.dock-item.dock-active {
+    background: rgba(124, 92, 255, 0.28);
+    box-shadow: 0 0 0 2px rgba(124, 92, 255, 0.45);
+}
+.dock-item.dock-active::after {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--nexus-accent-2);
+}
+.dock-item {
+    position: relative;
+}
+
+/* ===== PARALLAX ===== */
+#desktop {
+    --parallax-x: 0px;
+    --parallax-y: 0px;
+}
+.center {
+    transform: translate(calc(-50% + var(--parallax-x) * 0.4), calc(-50% + var(--parallax-y) * 0.3));
+    transition: transform 0.15s ease-out;
+}
+.ai-orb {
+    transform: translate(calc(var(--parallax-x) * 0.15), calc(var(--parallax-y) * 0.15));
+}
+
+/* ===== NOTEPAD ===== */
+.notepad-area {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.notepad-toolbar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+.notepad-toolbar button {
+    padding: 8px 14px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.06);
+    font-size: 12px;
+}
+.notepad-toolbar button:hover {
+    background: rgba(124, 92, 255, 0.25);
+}
+#notepadContent {
+    flex: 1;
+    width: 100%;
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 14px;
+    color: white;
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: none;
+    outline: none;
+    user-select: text;
+}
