@@ -181,6 +181,11 @@ function smartAI(text) {
         openWindow("settingsWindow");
         return "Ustawienia.";
     }
+    if (/otw[oó]rz\s+(lab|laboratorium|pulse)/.test(t) || /^lab$/.test(t)) {
+        openWindow("labWindow");
+        if (typeof startLab === "function") setTimeout(startLab, 200);
+        return "NEXUS Lab — neural pulse online.";
+    }
 
     var m = t.match(/(?:utw[oó]rz|stw[oó]rz|zrób|nowy)\s+plik(?:\s+o nazwie)?\s+['"]?([a-z0-9_\-\.ąćęłńóśźż]+)['"]?/i);
     if (m) {
@@ -222,7 +227,7 @@ function smartAI(text) {
 
     if (/(cześć|hej|siema|witaj)/.test(t)) return "Siema! Mogę otwierać aplikacje, tworzyć/usuwać pliki. Z kluczem API w Ustawieniach działam jak pełne AI.";
     if (/(pomoc|help|co potrafisz)/.test(t)) {
-        return "Przykłady:<br>• otwórz pliki / terminal / notatnik<br>• utwórz plik lista.txt<br>• utwórz folder Projekty<br>• usuń lista.txt<br>• zapisz do notes.txt: treść<br><br>W <b>Ustawieniach</b> wklej klucz OpenAI/OpenRouter/xAI — wtedy odpowiadam jak prawdziwe AI.";
+        return "Przykłady:<br>• otwórz pliki / terminal / notatnik / <b>lab</b><br>• utwórz plik lista.txt<br>• utwórz folder Projekty<br>• usuń lista.txt<br>• zapisz do notes.txt: treść<br><br>W <b>Ustawieniach</b> wklej klucz OpenAI/OpenRouter/xAI — wtedy odpowiadam jak prawdziwe AI.";
     }
     if (/(wersja|system)/.test(t)) return "NEXUS OS <b>" + (NEXUS.version || "0.6") + "</b>";
 
@@ -239,6 +244,7 @@ function executeAICommand(cmd) {
         else if (a.indexOf("browser") >= 0) openWindow("browserWindow");
         else if (a.indexOf("notepad") >= 0) openWindow("notepadWindow");
         else if (a.indexOf("setting") >= 0) openWindow("settingsWindow");
+        else if (a.indexOf("lab") >= 0) { openWindow("labWindow"); if (typeof startLab === "function") setTimeout(startLab, 200); }
     } else if (low.indexOf("mkdir ") === 0) fsCreateFolder(cmd.slice(6).trim());
     else if (low.indexOf("touch ") === 0) {
         var n = cmd.slice(6).trim();
@@ -566,6 +572,7 @@ function runTerminalCommand(command, output) {
         else if (arg.indexOf("terminal") >= 0) openWindow("terminalWindow");
         else if (arg.indexOf("notat") >= 0) openWindow("notepadWindow");
         else if (arg.indexOf("ustaw") >= 0) openWindow("settingsWindow");
+        else if (arg.indexOf("lab") >= 0) { openWindow("labWindow"); if (typeof startLab === "function") setTimeout(startLab, 200); }
         else print("Nie znaleziono");
     }
     else print("Nieznane — help");
