@@ -17,7 +17,10 @@ window.NEXUS = {
         "Dokumenty": {
             type: "folder",
             children: {
-                "Witaj.txt": { type: "file", content: "Witaj w NEXUS OS 0.7!\nCtrl+K = palette\nAlt+Tab = okna\nMeta+L = blokada" }
+                "Witaj.txt": {
+                    type: "file",
+                    content: "Witaj w NEXUS OS 0.7!\nCtrl+K = palette\nAlt+Tab = okna\nMeta+L = blokada"
+                }
             }
         },
         "Obrazy": { type: "folder", children: {} },
@@ -33,16 +36,31 @@ window.NEXUS = {
 
 function updateClock() {
     var now = new Date();
-    var t = new Intl.DateTimeFormat("pl-PL", { timeZone: "Europe/Warsaw", hour: "2-digit", minute: "2-digit", hour12: false }).format(now);
-    var d = new Intl.DateTimeFormat("pl-PL", { timeZone: "Europe/Warsaw", weekday: "long", day: "numeric", month: "long" }).format(now);
+    var t = new Intl.DateTimeFormat("pl-PL", {
+        timeZone: "Europe/Warsaw",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+    }).format(now);
+    var d = new Intl.DateTimeFormat("pl-PL", {
+        timeZone: "Europe/Warsaw",
+        weekday: "long",
+        day: "numeric",
+        month: "long"
+    }).format(now);
+
     var clock = document.getElementById("systemTime");
     if (clock) clock.textContent = t;
+
     var wc = document.getElementById("widgetClock");
     if (wc) wc.textContent = t;
+
     var wd = document.getElementById("widgetDate");
     if (wd) wd.textContent = d;
+
     var lt = document.getElementById("lockTime");
     if (lt) lt.textContent = t;
+
     var ld = document.getElementById("lockDate");
     if (ld) ld.textContent = d;
 }
@@ -66,8 +84,11 @@ function showNotification(title, message) {
 
 function escapeHTML(text) {
     return String(text)
-        .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 function playBeep(freq, dur) {
@@ -75,13 +96,72 @@ function playBeep(freq, dur) {
         var ctx = new (window.AudioContext || window.webkitAudioContext)();
         var o = ctx.createOscillator();
         var g = ctx.createGain();
-        o.connect(g); g.connect(ctx.destination);
+        o.type = "sine";
+        o.connect(g);
+        g.connect(ctx.destination);
         o.frequency.value = freq || 520;
-        g.gain.value = 0.04;
+        g.gain.value = 0.03;
         o.start();
-        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (dur || 0.12));
-        o.stop(ctx.currentTime + (dur || 0.12));
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (dur || 0.1));
+        o.stop(ctx.currentTime + (dur || 0.1));
     } catch (e) {}
+}
+
+/* Dźwięk startu NEXUS — ciemny whoosh + jasne cyber chime */
+function playBootSound() {
+    try {
+        var ctx = new (window.AudioContext || window.webkitAudioContext)();
+        var t0 = ctx.currentTime;
+
+        // 1) głęboki whoosh (szum filtrowany)
+        var bufferSize = Math.floor(ctx.sampleRate * 1.2);
+        var noiseBuf = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        var data = noiseBuf.getChannelData(0);
+        for (var i = 0; i < bufferSize; i++) {
+            data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+        }
+        var noise = ctx.createBufferSource();
+        noise.buffer = noiseBuf;
+        var noiseFilter = ctx.createBiquadFilter();
+        noiseFilter.type = "lowpass";
+        noiseFilter.frequency.setValueAtTime(400, t0);
+        noiseFilter.frequency.exponentialRampToValueAtTime(1200, t0 + 0.5);
+        noiseFilter.frequency.exponentialRampToValueAtTime(200, t0 + 1.1);
+        var noiseGain = ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.001, t0);
+        noiseGain.gain.exponentialRampToValueAtTime(0.12, t0 + 0.15);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, t0 + 1.15);
+        noise.connect(noiseFilter);
+        noiseFilter.connect(noiseGain);
+        noiseGain.connect(ctx.destination);
+        noise.start(t0);
+        noise.stop(t0 + 1.2);
+
+        // 2) tony
+        function tone(freq, start, len, vol, type) {
+            var o = ctx.createOscillator();
+            var g = ctx.createGain();
+            o.type = type || "sine";
+            o.frequency.setValueAtTime(freq, t0 + start);
+            g.gain.setValueAtTime(0.001, t0 + start);
+            g.gain.exponentialRampToValueAtTime(vol, t0 + start + 0.04);
+            g.gain.exponentialRampToValueAtTime(0.001, t0 + start + len);
+            o.connect(g);
+            g.connect(ctx.destination);
+            o.start(t0 + start);
+            o.stop(t0 + start + len + 0.02);
+        }
+
+        tone(110, 0.05, 0.8, 0.08, "sine");
+        tone(220, 0.25, 0.5, 0.05, "triangle");
+        tone(523.25, 0.45, 0.35, 0.06, "sine");
+        tone(659.25, 0.55, 0.4, 0.055, "sine");
+        tone(783.99, 0.68, 0.55, 0.05, "sine");
+        tone(1046.5, 0.85, 0.45, 0.035, "sine");
+        tone(880, 1.05, 0.08, 0.03, "square");
+    } catch (e) {
+        playBeep(520, 0.15);
+    }
 }
 
 function saveState() {
@@ -97,8 +177,11 @@ function saveState() {
     document.querySelectorAll(".window").forEach(function (win) {
         if (win.style.display === "none") return;
         state.windows[win.id] = {
-            left: win.style.left, top: win.style.top,
-            width: win.style.width, height: win.style.height, zIndex: win.style.zIndex
+            left: win.style.left,
+            top: win.style.top,
+            width: win.style.width,
+            height: win.style.height,
+            zIndex: win.style.zIndex
         };
     });
     try { localStorage.setItem("nexus-os-state", JSON.stringify(state)); } catch (e) {}
@@ -211,15 +294,18 @@ function saveWidgetNote() {
 function loadWeather() {
     var el = document.getElementById("widgetWeather");
     if (!el) return;
-    // Open-Meteo — bez klucza, Warszawa
     fetch("https://api.open-meteo.com/v1/forecast?latitude=52.23&longitude=21.01&current=temperature_2m,weather_code")
         .then(function (r) { return r.json(); })
         .then(function (data) {
             if (data.current) {
                 el.textContent = Math.round(data.current.temperature_2m) + "°C · Warszawa";
-            } else el.textContent = "Brak danych";
+            } else {
+                el.textContent = "Brak danych";
+            }
         })
-        .catch(function () { el.textContent = "Offline"; });
+        .catch(function () {
+            el.textContent = "Offline";
+        });
 }
 
 function renderDesktopIcons() {
@@ -261,7 +347,7 @@ window.afterBoot = function () {
     try { createParticles(); } catch (e) {}
     try { renderDesktopIcons(); } catch (e) {}
     try { loadWeather(); } catch (e) {}
-    playBeep(520, 0.15);
+    playBootSound();
     if (!localStorage.getItem("nexus-onboarded")) {
         var o = document.getElementById("onboard");
         if (o) o.classList.add("show");
@@ -275,7 +361,6 @@ document.addEventListener("DOMContentLoaded", function () {
     setInterval(saveState, 5000);
     window.addEventListener("beforeunload", saveState);
 
-    // skróty globalne
     document.addEventListener("keydown", function (e) {
         if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
             e.preventDefault();
@@ -287,11 +372,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         if (e.key === "Escape") {
             var p = document.getElementById("commandPalette");
-            if (p && p.classList.contains("show")) closePalette();
+            if (p && p.classList.contains("show")) {
+                if (typeof closePalette === "function") closePalette();
+            }
         }
     });
 
-    // drag & drop na desktop
     var desktop = document.getElementById("desktop");
     if (desktop) {
         desktop.addEventListener("dragover", function (e) { e.preventDefault(); });
@@ -301,3 +387,5 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+// === END NEXUS.JS ===
