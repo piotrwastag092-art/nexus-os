@@ -1,9 +1,7 @@
 "use strict";
 
 /* =========================================
-   NEXUS OS — NEURAL PULSE + LAB v1.0
-   Generatywny układ cząstek reagujący na
-   aktywność systemu, mysz i głos.
+   NEXUS OS — NEURAL PULSE + LAB + WOW LOADER
 ========================================= */
 
 window.NEXUS_PULSE = {
@@ -20,7 +18,10 @@ window.NEXUS_PULSE = {
 };
 
 function pulseBoost(mult) {
-    NEXUS_PULSE.boost = Math.min(3.5, (NEXUS_PULSE.boost || 1) * (mult || 1.3));
+    NEXUS_PULSE.boost = Math.min(
+        3.5,
+        (NEXUS_PULSE.boost || 1) * (mult || 1.3)
+    );
 }
 
 function initNeuralPulse() {
@@ -39,11 +40,14 @@ function initNeuralPulse() {
     }
 
     resize();
+
     window.addEventListener("resize", resize);
 
     var count = Math.min(
         70,
-        Math.floor((window.innerWidth * window.innerHeight) / 18000)
+        Math.floor(
+            (window.innerWidth * window.innerHeight) / 18000
+        )
     );
 
     NEXUS_PULSE.particles = [];
@@ -65,8 +69,11 @@ function initNeuralPulse() {
         desktop.dataset.pulseMouseBound = "1";
 
         desktop.addEventListener("mousemove", function (e) {
-            NEXUS_PULSE.mouseX = e.clientX / window.innerWidth;
-            NEXUS_PULSE.mouseY = e.clientY / window.innerHeight;
+            NEXUS_PULSE.mouseX =
+                e.clientX / Math.max(1, window.innerWidth);
+
+            NEXUS_PULSE.mouseY =
+                e.clientY / Math.max(1, window.innerHeight);
         });
     }
 
@@ -97,6 +104,7 @@ function initNeuralPulse() {
 
         var mx = NEXUS_PULSE.mouseX * w;
         var my = NEXUS_PULSE.mouseY * h;
+
         var pts = NEXUS_PULSE.particles;
 
         for (var i = 0; i < pts.length; i++) {
@@ -109,14 +117,10 @@ function initNeuralPulse() {
                 Math.sqrt(dx * dx + dy * dy) + 0.01;
 
             p.vx +=
-                (dx / dist) *
-                0.008 *
-                boost;
+                (dx / dist) * 0.008 * boost;
 
             p.vy +=
-                (dy / dist) *
-                0.008 *
-                boost;
+                (dy / dist) * 0.008 * boost;
 
             p.vx *= 0.985;
             p.vy *= 0.985;
@@ -141,8 +145,7 @@ function initNeuralPulse() {
             ctx.arc(
                 p.x,
                 p.y,
-                p.r *
-                    (0.8 + boost * 0.25),
+                p.r * (0.8 + boost * 0.25),
                 0,
                 Math.PI * 2
             );
@@ -153,15 +156,17 @@ function initNeuralPulse() {
                     : accent;
 
             ctx.globalAlpha =
-                alpha *
-                Math.min(1, boost);
+                alpha * Math.min(1, boost);
 
             ctx.fill();
         }
 
-        /* połączenia */
-        ctx.globalAlpha = 0.08 * boost;
-        ctx.strokeStyle = accent;
+        ctx.globalAlpha =
+            0.08 * boost;
+
+        ctx.strokeStyle =
+            accent;
+
         ctx.lineWidth = 1;
 
         for (var a = 0; a < pts.length; a++) {
@@ -180,6 +185,7 @@ function initNeuralPulse() {
                     ddy * ddy;
 
                 if (dd < 120 * 120) {
+
                     ctx.beginPath();
 
                     ctx.moveTo(
@@ -271,9 +277,14 @@ function startLab() {
         !NEXUS_PULSE.labParticles.length
     ) {
 
-        for (var i = 0; i < 90; i++) {
+        for (
+            var i = 0;
+            i < 90;
+            i++
+        ) {
 
             NEXUS_PULSE.labParticles.push({
+
                 a:
                     Math.random() *
                     Math.PI *
@@ -300,9 +311,11 @@ function startLab() {
         }
     }
 
-    NEXUS_PULSE.labRunning = true;
+    NEXUS_PULSE.labRunning =
+        true;
 
     if (NEXUS_PULSE.labRaf) {
+
         cancelAnimationFrame(
             NEXUS_PULSE.labRaf
         );
@@ -313,7 +326,9 @@ function startLab() {
 
     function labFrame(now) {
 
-        if (!NEXUS_PULSE.labRunning) {
+        if (
+            !NEXUS_PULSE.labRunning
+        ) {
             return;
         }
 
@@ -367,29 +382,30 @@ function startLab() {
             getComputedStyle(
                 document.documentElement
             )
-                .getPropertyValue(
-                    "--nexus-accent"
-                )
-                .trim() ||
+            .getPropertyValue(
+                "--nexus-accent"
+            )
+            .trim() ||
             "#7c5cff";
 
         var accent2 =
             getComputedStyle(
                 document.documentElement
             )
-                .getPropertyValue(
-                    "--nexus-accent-2"
-                )
-                .trim() ||
+            .getPropertyValue(
+                "--nexus-accent-2"
+            )
+            .trim() ||
             "#00d9ff";
 
         var boost =
             NEXUS_PULSE.boost;
 
-        /* rdzeń */
         var coreR =
             18 +
-            Math.sin(time * 2) * 4 +
+            Math.sin(
+                time * 2
+            ) * 4 +
             boost * 6;
 
         var grd =
@@ -417,8 +433,11 @@ function startLab() {
             "transparent"
         );
 
-        ctx.fillStyle = grd;
-        ctx.globalAlpha = 0.55;
+        ctx.fillStyle =
+            grd;
+
+        ctx.globalAlpha =
+            0.55;
 
         ctx.beginPath();
 
@@ -432,7 +451,8 @@ function startLab() {
 
         ctx.fill();
 
-        ctx.globalAlpha = 1;
+        ctx.globalAlpha =
+            1;
 
         var pts =
             NEXUS_PULSE.labParticles;
@@ -443,7 +463,8 @@ function startLab() {
             i++
         ) {
 
-            var p = pts[i];
+            var p =
+                pts[i];
 
             p.a +=
                 0.008 *
@@ -453,7 +474,9 @@ function startLab() {
             var x;
             var y;
 
-            if (mode === "orbit") {
+            if (
+                mode === "orbit"
+            ) {
 
                 x =
                     cx +
@@ -480,10 +503,15 @@ function startLab() {
                     p.r *
                     0.55;
 
-            } else if (mode === "wave") {
+            } else if (
+                mode === "wave"
+            ) {
 
                 x =
-                    (i / pts.length) *
+                    (
+                        i /
+                        pts.length
+                    ) *
                     w;
 
                 y =
@@ -498,29 +526,32 @@ function startLab() {
                     ) *
                     boost;
 
-            } else if (mode === "burst") {
+            } else if (
+                mode === "burst"
+            ) {
 
                 var rr =
                     (
                         p.r +
-                        time *
-                        40 *
+                        time * 40 *
                         p.s
                     ) % 200;
 
                 x =
                     cx +
-                    Math.cos(p.a) *
+                    Math.cos(
+                        p.a
+                    ) *
                     rr;
 
                 y =
                     cy +
-                    Math.sin(p.a) *
+                    Math.sin(
+                        p.a
+                    ) *
                     rr;
 
             } else {
-
-                /* chaos */
 
                 x =
                     cx +
@@ -570,17 +601,28 @@ function startLab() {
             ctx.fill();
         }
 
-        ctx.globalAlpha = 1;
+        ctx.globalAlpha =
+            1;
 
-        /* linki */
-        ctx.strokeStyle = accent;
-        ctx.lineWidth = 1;
-        ctx.globalAlpha = 0.12;
+        ctx.strokeStyle =
+            accent;
 
-        for (var a = 0; a < 12; a++) {
+        ctx.lineWidth =
+            1;
+
+        ctx.globalAlpha =
+            0.12;
+
+        for (
+            var a = 0;
+            a < 12;
+            a++
+        ) {
 
             var ang =
-                (a / 12) *
+                (
+                    a / 12
+                ) *
                 Math.PI *
                 2 +
                 time * 0.4;
@@ -594,12 +636,16 @@ function startLab() {
 
             ctx.lineTo(
                 cx +
-                    Math.cos(ang) *
+                    Math.cos(
+                        ang
+                    ) *
                     90 *
                     boost,
 
                 cy +
-                    Math.sin(ang) *
+                    Math.sin(
+                        ang
+                    ) *
                     90 *
                     boost
             );
@@ -607,7 +653,8 @@ function startLab() {
             ctx.stroke();
         }
 
-        ctx.globalAlpha = 1;
+        ctx.globalAlpha =
+            1;
 
         NEXUS_PULSE.labRaf =
             requestAnimationFrame(
@@ -630,19 +677,23 @@ function setLabMode(mode) {
         .querySelectorAll(
             ".lab-mode"
         )
-        .forEach(function (b) {
+        .forEach(
+            function (b) {
 
-            b.classList.toggle(
-                "active",
-                b.dataset.mode === mode
-            );
-        });
+                b.classList.toggle(
+                    "active",
+                    b.dataset.mode === mode
+                );
+            }
+        );
 
     pulseBoost(1.5);
 
     if (
-        typeof playBeep === "function"
+        typeof playBeep ===
+        "function"
     ) {
+
         playBeep(
             620,
             0.05
@@ -666,7 +717,8 @@ function labShock() {
     pulseBoost(2.8);
 
     if (
-        typeof playBeep === "function"
+        typeof playBeep ===
+        "function"
     ) {
 
         playBeep(
@@ -699,7 +751,7 @@ function labShock() {
 
 
 /* =========================================
-   AUTO START PULSE
+   START PULSE PO BOOT
 ========================================= */
 
 var _oldAfterBoot =
@@ -717,8 +769,11 @@ window.afterBoot =
         }
 
         try {
+
             initNeuralPulse();
+
         } catch (e) {
+
             console.error(
                 "[NEXUS] Neural Pulse:",
                 e
@@ -728,50 +783,79 @@ window.afterBoot =
 
 
 /* =========================================
-   WOW MODULE LOADER
+   ŁADOWANIE WOW + WOW2
 ========================================= */
 
-(function () {
+(function loadWowModules() {
 
     if (
-        window.__nexusWowLoader
+        window.__nexusWowLoaderV2
     ) {
         return;
     }
 
-    window.__nexusWowLoader = true;
+    window.__nexusWowLoaderV2 =
+        true;
 
-    var s =
-        document.createElement(
-            "script"
-        );
+    function load(
+        src,
+        done
+    ) {
 
-    s.src =
-        "js/js/wow.js";
+        var s =
+            document.createElement(
+                "script"
+            );
 
-    s.async = false;
+        s.src =
+            src;
 
-    s.onload =
-        function () {
+        s.async =
+            false;
 
-            try {
-                console.info(
-                    "[NEXUS] WOW online"
-                );
-            } catch (e) {}
-        };
+        s.onload =
+            function () {
 
-    s.onerror =
-        function () {
+                if (
+                    typeof done ===
+                    "function"
+                ) {
 
-            try {
+                    done();
+                }
+            };
+
+        s.onerror =
+            function () {
+
                 console.warn(
-                    "[NEXUS] WOW module not found"
+                    "[NEXUS] Brak modułu:",
+                    src
                 );
-            } catch (e) {}
-        };
 
-    document.head.appendChild(s);
+                if (
+                    typeof done ===
+                    "function"
+                ) {
+
+                    done();
+                }
+            };
+
+        document.head.appendChild(
+            s
+        );
+    }
+
+    load(
+        "js/js/wow.js",
+        function () {
+
+            load(
+                "js/js/wow2.js"
+            );
+        }
+    );
 
 })();
 
