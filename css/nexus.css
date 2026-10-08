@@ -1,18 +1,311 @@
-/* =========================================================
-   NEXUS — FUTURISTIC TYPOGRAPHY
-   Nowy styl nazwy systemu
-========================================================= */
-
-/* Opcjonalna czcionka futurystyczna z Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&display=swap');
 
+:root {
+    --nexus-bg: #07090d;
+    --nexus-panel: rgba(18, 21, 28, 0.82);
+    --nexus-panel-solid: #12151c;
+    --nexus-border: rgba(255, 255, 255, 0.09);
+    --nexus-text: #f5f7fb;
+    --nexus-muted: #8f98a8;
+    --nexus-accent: #7c5cff;
+    --nexus-accent-2: #00d9ff;
+    --nexus-success: #42e88a;
+    --nexus-danger: #ff5577;
+    --nexus-shadow: 0 25px 80px rgba(0, 0, 0, 0.55);
+
+    --parallax-x: 0px;
+    --parallax-y: 0px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    font-family:
+        Inter,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    background:
+        var(--nexus-bg);
+
+    color:
+        var(--nexus-text);
+
+    overflow:
+        hidden;
+}
+
+button,
+input,
+textarea {
+    font: inherit;
+}
+
+button {
+    border: 0;
+    color: inherit;
+    cursor: pointer;
+}
+
 
 /* =========================================================
-   GÓRNY LEWY NAPIS — NEXUS OS
+   DESKTOP
 ========================================================= */
 
-.brand > span {
+#desktop {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
 
+    background:
+        radial-gradient(
+            circle at 20% 20%,
+            rgba(124, 92, 255, 0.16),
+            transparent 30%
+        ),
+
+        radial-gradient(
+            circle at 80% 25%,
+            rgba(0, 217, 255, 0.10),
+            transparent 28%
+        ),
+
+        radial-gradient(
+            circle at 50% 100%,
+            rgba(124, 92, 255, 0.08),
+            transparent 40%
+        ),
+
+        linear-gradient(
+            135deg,
+            #06080d,
+            #0b0e15 50%,
+            #05070b
+        );
+
+    background-size:
+        200% 200%;
+
+    animation:
+        bgShift
+        28s
+        ease-in-out
+        infinite;
+}
+
+@keyframes bgShift {
+
+    0% {
+        background-position:
+            0% 50%;
+    }
+
+    50% {
+        background-position:
+            100% 50%;
+    }
+
+    100% {
+        background-position:
+            0% 50%;
+    }
+}
+
+#desktop::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            rgba(255,255,255,0.015) 1px,
+            transparent 1px
+        ),
+
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,0.015) 1px,
+            transparent 1px
+        );
+
+    background-size:
+        60px 60px;
+
+    mask-image:
+        linear-gradient(
+            to bottom,
+            black,
+            transparent
+        );
+
+    pointer-events:
+        none;
+}
+
+
+/* =========================================================
+   TOPBAR
+========================================================= */
+
+.topbar {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 58px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    padding:
+        0 22px;
+
+    background:
+        rgba(
+            5,
+            7,
+            11,
+            0.55
+        );
+
+    backdrop-filter:
+        blur(25px);
+
+    border-bottom:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.06
+        );
+
+    z-index:
+        9000;
+}
+
+.brand {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        11px;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        0.4px;
+}
+
+
+/* =========================================================
+   NEXUS LOGO
+========================================================= */
+
+.nexus-logo {
+    width:
+        29px;
+
+    height:
+        29px;
+
+    border-radius:
+        9px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--nexus-accent),
+            var(--nexus-accent-2)
+        );
+
+    box-shadow:
+        0 0 25px
+        rgba(
+            124,
+            92,
+            255,
+            0.4
+        );
+
+    font-family:
+        "Orbitron",
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size:
+        13px;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        -1px;
+
+    animation:
+        logoPulse
+        3.5s
+        ease-in-out
+        infinite;
+
+    transition:
+        transform .22s ease,
+        box-shadow .22s ease;
+}
+
+@keyframes logoPulse {
+
+    0%,
+    100% {
+        transform:
+            scale(1);
+
+        filter:
+            brightness(1);
+    }
+
+    50% {
+        transform:
+            scale(1.07);
+
+        filter:
+            brightness(1.15);
+    }
+}
+
+.brand > span {
     font-family:
         "Orbitron",
         "Segoe UI",
@@ -39,10 +332,11 @@
 
     text-shadow:
         0 0 12px
-        color-mix(
-            in srgb,
-            var(--nexus-accent) 42%,
-            transparent
+        rgba(
+            124,
+            92,
+            255,
+            .35
         );
 
     transition:
@@ -51,11 +345,7 @@
         text-shadow .25s ease;
 }
 
-
-/* hover */
-
 .brand:hover > span {
-
     letter-spacing:
         3.5px;
 
@@ -64,19 +354,252 @@
 
     text-shadow:
         0 0 8px
-        var(--nexus-accent),
+        rgba(
+            124,
+            92,
+            255,
+            .7
+        ),
 
         0 0 22px
-        rgba(0,217,255,.35);
+        rgba(
+            0,
+            217,
+            255,
+            .35
+        );
+}
+
+.brand:hover .nexus-logo {
+    transform:
+        scale(1.08)
+        rotate(-2deg);
+
+    box-shadow:
+        0 0 18px
+        rgba(
+            124,
+            92,
+            255,
+            .55
+        ),
+
+        0 0 35px
+        rgba(
+            0,
+            217,
+            255,
+            .18
+        );
 }
 
 
 /* =========================================================
-   DUŻE "NEXUS" NA ŚRODKU PULPITU
+   SYSTEM STATUS
+========================================================= */
+
+.status {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        18px;
+
+    font-size:
+        12px;
+
+    color:
+        var(--nexus-muted);
+}
+
+.status-item {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        7px;
+}
+
+.status-dot {
+    width:
+        7px;
+
+    height:
+        7px;
+
+    border-radius:
+        50%;
+
+    background:
+        var(--nexus-success);
+
+    box-shadow:
+        0 0 10px
+        var(--nexus-success);
+}
+
+
+/* =========================================================
+   CENTER / HOME
+========================================================= */
+
+.center {
+    position:
+        absolute;
+
+    left:
+        50%;
+
+    top:
+        45%;
+
+    transform:
+        translate(
+            calc(
+                -50% +
+                var(--parallax-x) *
+                0.3
+            ),
+            calc(
+                -50% +
+                var(--parallax-y) *
+                0.25
+            )
+        );
+
+    width:
+        min(
+            760px,
+            90%
+        );
+
+    text-align:
+        center;
+
+    transition:
+        transform
+        0.15s
+        ease-out;
+}
+
+
+/* =========================================================
+   AI ORB
+========================================================= */
+
+.ai-orb {
+    width:
+        92px;
+
+    height:
+        92px;
+
+    margin:
+        0 auto
+        28px;
+
+    border-radius:
+        50%;
+
+    background:
+        radial-gradient(
+            circle at 35% 30%,
+            #fff,
+            transparent 7%
+        ),
+
+        radial-gradient(
+            circle at 50% 50%,
+            #9b8aff,
+            #4e39d8 50%,
+            #131021 72%
+        );
+
+    animation:
+        nexusOrb
+        4.5s
+        ease-in-out
+        infinite,
+
+        nexusGlow
+        6s
+        ease-in-out
+        infinite;
+
+    cursor:
+        pointer;
+}
+
+@keyframes nexusOrb {
+
+    0%,
+    100% {
+        transform:
+            scale(1)
+            rotate(0deg);
+    }
+
+    50% {
+        transform:
+            scale(1.08)
+            rotate(3deg);
+    }
+}
+
+@keyframes nexusGlow {
+
+    0%,
+    100% {
+        box-shadow:
+            0 0 45px
+            rgba(
+                124,
+                92,
+                255,
+                .35
+            ),
+
+            0 0 120px
+            rgba(
+                0,
+                217,
+                255,
+                .12
+            );
+    }
+
+    50% {
+        box-shadow:
+            0 0 70px
+            rgba(
+                124,
+                92,
+                255,
+                .55
+            ),
+
+            0 0 160px
+            rgba(
+                0,
+                217,
+                255,
+                .22
+            );
+    }
+}
+
+
+/* =========================================================
+   GŁÓWNY NAPIS NEXUS
 ========================================================= */
 
 .center h1 {
-
     font-family:
         "Orbitron",
         "Segoe UI",
@@ -99,8 +622,8 @@
     text-transform:
         uppercase;
 
-    margin-left:
-        7px;
+    margin:
+        0 0 12px 7px;
 
     line-height:
         1;
@@ -126,11 +649,13 @@
     filter:
         drop-shadow(
             0 0 10px
-            rgba(124,92,255,.18)
+            rgba(
+                124,
+                92,
+                255,
+                .18
+            )
         );
-
-    text-shadow:
-        none;
 
     position:
         relative;
@@ -142,12 +667,10 @@
         infinite;
 }
 
-
 @keyframes nexusTitleBreath {
 
     0%,
     100% {
-
         filter:
             drop-shadow(
                 0 0 8px
@@ -161,7 +684,6 @@
     }
 
     50% {
-
         filter:
             drop-shadow(
                 0 0 18px
@@ -171,21 +693,22 @@
                     255,
                     .22
                 )
+            )
+
+            drop-shadow(
+                0 0 32px
+                rgba(
+                    124,
+                    92,
+                    255,
+                    .16
                 )
-                drop-shadow(
-                    0 0 32px
-                    rgba(
-                        124,
-                        92,
-                        255,
-                        .16
-                    )
-                );
+            );
     }
 }
 
 
-/* cienka linia technologiczna pod napisem */
+/* technologiczna linia */
 
 .center h1::after {
 
@@ -221,15 +744,2405 @@
 
     box-shadow:
         0 0 10px
-        rgba(0,217,255,.35);
+        rgba(
+            0,
+            217,
+            255,
+            .35
+        );
 
     opacity:
         .65;
 }
 
+.subtitle {
+    color:
+        var(--nexus-muted);
+
+    font-size:
+        15px;
+
+    margin-bottom:
+        30px;
+}
+
 
 /* =========================================================
-   NEXUS OS NA EKRANIE STARTOWYM
+   AI SEARCH
+========================================================= */
+
+.ai-search {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    width:
+        100%;
+
+    padding:
+        6px;
+
+    border:
+        1px solid
+        var(--nexus-border);
+
+    background:
+        rgba(
+            18,
+            21,
+            28,
+            .7
+        );
+
+    backdrop-filter:
+        blur(25px);
+
+    border-radius:
+        19px;
+
+    box-shadow:
+        var(--nexus-shadow);
+}
+
+.search-icon {
+    width:
+        48px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    color:
+        var(--nexus-accent-2);
+
+    font-size:
+        18px;
+}
+
+.ai-search input {
+    flex:
+        1;
+
+    background:
+        none;
+
+    border:
+        0;
+
+    outline:
+        none;
+
+    padding:
+        17px 8px;
+
+    color:
+        white;
+
+    font-size:
+        15px;
+
+    user-select:
+        text;
+}
+
+.ai-search input::placeholder {
+    color:
+        #737c8c;
+}
+
+.ai-search button {
+    width:
+        48px;
+
+    height:
+        48px;
+
+    border-radius:
+        14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--nexus-accent),
+            #5a3fd4
+        );
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    font-size:
+        18px;
+}
+
+
+/* =========================================================
+   SUGGESTIONS
+========================================================= */
+
+.suggestions {
+    display:
+        flex;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        10px;
+
+    justify-content:
+        center;
+
+    margin-top:
+        22px;
+}
+
+.suggestion {
+    padding:
+        10px 18px;
+
+    border-radius:
+        999px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .05
+        );
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .08
+        );
+
+    color:
+        var(--nexus-muted);
+
+    font-size:
+        13px;
+}
+
+.suggestion:hover {
+    background:
+        rgba(
+            124,
+            92,
+            255,
+            .15
+        );
+
+    color:
+        white;
+}
+
+
+/* =========================================================
+   DOCK
+========================================================= */
+
+.dock {
+    position:
+        absolute;
+
+    bottom:
+        22px;
+
+    left:
+        50%;
+
+    transform:
+        translateX(-50%);
+
+    display:
+        flex;
+
+    gap:
+        8px;
+
+    padding:
+        10px 14px;
+
+    background:
+        rgba(
+            12,
+            14,
+            20,
+            .75
+        );
+
+    backdrop-filter:
+        blur(30px);
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .08
+        );
+
+    border-radius:
+        22px;
+
+    box-shadow:
+        0 20px 50px
+        rgba(
+            0,
+            0,
+            0,
+            .45
+        );
+
+    z-index:
+        8000;
+}
+
+.dock-item {
+    position:
+        relative;
+
+    width:
+        52px;
+
+    height:
+        52px;
+
+    border-radius:
+        16px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .04
+        );
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    font-size:
+        22px;
+
+    transition:
+        all
+        .2s
+        ease;
+}
+
+.dock-item:hover {
+    background:
+        rgba(
+            124,
+            92,
+            255,
+            .2
+        );
+
+    transform:
+        translateY(-6px)
+        scale(1.08);
+}
+
+.dock-item.dock-active {
+    background:
+        rgba(
+            124,
+            92,
+            255,
+            .28
+        );
+
+    box-shadow:
+        0 0 0 2px
+        rgba(
+            124,
+            92,
+            255,
+            .45
+        );
+}
+
+.dock-item.dock-active::after {
+    content:
+        "";
+
+    position:
+        absolute;
+
+    bottom:
+        -6px;
+
+    left:
+        50%;
+
+    transform:
+        translateX(-50%);
+
+    width:
+        6px;
+
+    height:
+        6px;
+
+    border-radius:
+        50%;
+
+    background:
+        var(--nexus-accent-2);
+}
+
+
+/* =========================================================
+   OKNA
+========================================================= */
+
+.window {
+    position:
+        absolute;
+
+    top:
+        100px;
+
+    left:
+        120px;
+
+    width:
+        720px;
+
+    height:
+        480px;
+
+    min-width:
+        320px;
+
+    min-height:
+        220px;
+
+    display:
+        none;
+
+    flex-direction:
+        column;
+
+    background:
+        var(--nexus-panel);
+
+    backdrop-filter:
+        blur(30px);
+
+    border:
+        1px solid
+        var(--nexus-border);
+
+    border-radius:
+        16px;
+
+    box-shadow:
+        var(--nexus-shadow);
+
+    overflow:
+        hidden;
+
+    z-index:
+        100;
+}
+
+.window-opening {
+    animation:
+        winOpen
+        .28s
+        cubic-bezier(
+            .16,
+            1,
+            .3,
+            1
+        )
+        forwards;
+}
+
+.window-closing {
+    animation:
+        winClose
+        .22s
+        ease
+        forwards;
+}
+
+@keyframes winOpen {
+
+    from {
+        opacity:
+            0;
+
+        transform:
+            scale(.92)
+            translateY(12px);
+    }
+
+    to {
+        opacity:
+            1;
+
+        transform:
+            scale(1)
+            translateY(0);
+    }
+}
+
+@keyframes winClose {
+
+    from {
+        opacity:
+            1;
+
+        transform:
+            scale(1);
+    }
+
+    to {
+        opacity:
+            0;
+
+        transform:
+            scale(.94)
+            translateY(8px);
+    }
+}
+
+.window-header {
+    height:
+        46px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    padding:
+        0 14px;
+
+    background:
+        rgba(
+            0,
+            0,
+            0,
+            .25
+        );
+
+    border-bottom:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .06
+        );
+
+    cursor:
+        grab;
+}
+
+.window-title {
+    font-size:
+        13px;
+
+    font-weight:
+        600;
+}
+
+.window-controls {
+    display:
+        flex;
+
+    gap:
+        6px;
+}
+
+.window-controls button {
+    width:
+        28px;
+
+    height:
+        28px;
+
+    border-radius:
+        8px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .06
+        );
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    font-size:
+        14px;
+}
+
+.window-controls button:hover {
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .12
+        );
+}
+
+.window-controls button.close:hover {
+    background:
+        var(--nexus-danger);
+}
+
+.window-body {
+    flex:
+        1;
+
+    overflow:
+        auto;
+
+    padding:
+        16px;
+}
+
+
+/* =========================================================
+   FILES
+========================================================= */
+
+.files-layout {
+    display:
+        flex;
+
+    height:
+        100%;
+
+    gap:
+        16px;
+}
+
+.sidebar {
+    width:
+        180px;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        4px;
+}
+
+.side-item {
+    padding:
+        10px 12px;
+
+    border-radius:
+        10px;
+
+    font-size:
+        13px;
+
+    color:
+        var(--nexus-muted);
+
+    cursor:
+        pointer;
+}
+
+.side-item:hover,
+.side-item.selected {
+    background:
+        rgba(
+            124,
+            92,
+            255,
+            .15
+        );
+
+    color:
+        white;
+}
+
+.file-area {
+    flex:
+        1;
+}
+
+.file-grid {
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fill,
+            minmax(
+                100px,
+                1fr
+            )
+        );
+
+    gap:
+        14px;
+}
+
+.file {
+    position:
+        relative;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    padding:
+        14px 8px;
+
+    border-radius:
+        12px;
+
+    cursor:
+        pointer;
+}
+
+.file:hover {
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .05
+        );
+}
+
+.file-icon {
+    font-size:
+        32px;
+}
+
+.file-name {
+    font-size:
+        12px;
+
+    text-align:
+        center;
+
+    color:
+        var(--nexus-muted);
+
+    word-break:
+        break-all;
+}
+
+.file-actions {
+    position:
+        absolute;
+
+    top:
+        4px;
+
+    right:
+        4px;
+
+    opacity:
+        0;
+
+    transition:
+        opacity
+        .15s;
+}
+
+.file:hover .file-actions {
+    opacity:
+        1;
+}
+
+.file-del {
+    width:
+        22px;
+
+    height:
+        22px;
+
+    border-radius:
+        6px;
+
+    background:
+        rgba(
+            255,
+            85,
+            119,
+            .35
+        );
+
+    font-size:
+        11px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    color:
+        #fff;
+}
+
+.file-del:hover {
+    background:
+        #ff5577;
+}
+
+.files-btn {
+    padding:
+        6px 12px;
+
+    border-radius:
+        8px;
+
+    background:
+        rgba(
+            124,
+            92,
+            255,
+            .25
+        );
+
+    font-size:
+        12px;
+}
+
+.files-btn-2 {
+    background:
+        rgba(
+            0,
+            217,
+            255,
+            .2
+        );
+}
+
+
+/* =========================================================
+   AI CHAT
+========================================================= */
+
+.ai-chat {
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    height:
+        100%;
+}
+
+.chat-messages {
+    flex:
+        1;
+
+    overflow-y:
+        auto;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        14px;
+
+    padding-bottom:
+        12px;
+}
+
+.message {
+    display:
+        flex;
+
+    gap:
+        10px;
+
+    max-width:
+        85%;
+}
+
+.message.user {
+    align-self:
+        flex-end;
+
+    flex-direction:
+        row-reverse;
+}
+
+.message-avatar {
+    width:
+        32px;
+
+    height:
+        32px;
+
+    border-radius:
+        10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--nexus-accent),
+            var(--nexus-accent-2)
+        );
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    font-size:
+        13px;
+
+    font-weight:
+        700;
+
+    flex-shrink:
+        0;
+}
+
+.message-bubble {
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .05
+        );
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .07
+        );
+
+    border-radius:
+        14px;
+
+    padding:
+        12px 14px;
+
+    font-size:
+        14px;
+
+    line-height:
+        1.45;
+}
+
+.message.user .message-bubble {
+    background:
+        rgba(
+            124,
+            92,
+            255,
+            .18
+        );
+
+    border-color:
+        rgba(
+            124,
+            92,
+            255,
+            .25
+        );
+}
+
+.message-bubble strong {
+    display:
+        block;
+
+    margin-bottom:
+        4px;
+
+    font-size:
+        12px;
+
+    opacity:
+        .7;
+}
+
+.chat-input {
+    display:
+        flex;
+
+    gap:
+        10px;
+
+    padding-top:
+        12px;
+
+    border-top:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .06
+        );
+}
+
+.chat-input input {
+    flex:
+        1;
+
+    background:
+        rgba(
+            0,
+            0,
+            0,
+            .25
+        );
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .08
+        );
+
+    border-radius:
+        12px;
+
+    padding:
+        12px 14px;
+
+    color:
+        white;
+
+    outline:
+        none;
+
+    user-select:
+        text;
+}
+
+.chat-input button {
+    width:
+        46px;
+
+    height:
+        46px;
+
+    border-radius:
+        12px;
+
+    background:
+        var(--nexus-accent);
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    font-size:
+        18px;
+}
+
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+.settings {
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        24px;
+}
+
+.setting-section h3 {
+    font-size:
+        13px;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        .6px;
+
+    color:
+        var(--nexus-muted);
+
+    margin-bottom:
+        12px;
+}
+
+.setting {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    padding:
+        14px 16px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .03
+        );
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .06
+        );
+
+    border-radius:
+        12px;
+
+    margin-bottom:
+        8px;
+}
+
+.setting-info strong {
+    display:
+        block;
+
+    font-size:
+        14px;
+
+    margin-bottom:
+        3px;
+}
+
+.setting-info small {
+    font-size:
+        12px;
+
+    color:
+        var(--nexus-muted);
+}
+
+.setting input[type="color"] {
+    width:
+        42px;
+
+    height:
+        32px;
+
+    border:
+        none;
+
+    border-radius:
+        8px;
+
+    background:
+        none;
+
+    cursor:
+        pointer;
+}
+
+
+/* =========================================================
+   BROWSER
+========================================================= */
+
+.browser-toolbar {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    margin-bottom:
+        12px;
+}
+
+.browser-toolbar button {
+    width:
+        36px;
+
+    height:
+        36px;
+
+    border-radius:
+        10px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .06
+        );
+
+    display:
+        grid;
+
+    place-items:
+        center;
+}
+
+.browser-toolbar input {
+    flex:
+        1;
+
+    background:
+        rgba(
+            0,
+            0,
+            0,
+            .3
+        );
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .08
+        );
+
+    border-radius:
+        10px;
+
+    padding:
+        10px 14px;
+
+    color:
+        white;
+
+    outline:
+        none;
+
+    user-select:
+        text;
+}
+
+.browser-content {
+    height:
+        calc(
+            100% -
+            50px
+        );
+
+    border-radius:
+        12px;
+
+    overflow:
+        hidden;
+
+    background:
+        rgba(
+            0,
+            0,
+            0,
+            .2
+        );
+}
+
+.browser-start {
+    height:
+        100%;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        12px;
+
+    color:
+        var(--nexus-muted);
+}
+
+.browser-logo {
+    width:
+        64px;
+
+    height:
+        64px;
+
+    border-radius:
+        18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--nexus-accent),
+            var(--nexus-accent-2)
+        );
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    font-size:
+        28px;
+
+    font-weight:
+        700;
+
+    color:
+        white;
+
+    margin-bottom:
+        8px;
+}
+
+
+/* =========================================================
+   TERMINAL
+========================================================= */
+
+.terminal {
+    height:
+        100%;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    font-family:
+        "Cascadia Code",
+        "Fira Code",
+        Consolas,
+        monospace;
+
+    font-size:
+        13px;
+}
+
+.terminal-output {
+    flex:
+        1;
+
+    overflow-y:
+        auto;
+
+    line-height:
+        1.6;
+
+    padding-bottom:
+        12px;
+
+    user-select:
+        text;
+}
+
+.terminal-input-line {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+}
+
+.terminal-input-line input {
+    flex:
+        1;
+
+    background:
+        none;
+
+    border:
+        none;
+
+    outline:
+        none;
+
+    color:
+        white;
+
+    font:
+        inherit;
+
+    user-select:
+        text;
+}
+
+
+/* =========================================================
+   NOTEPAD
+========================================================= */
+
+.notepad-area {
+    height:
+        100%;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+}
+
+.notepad-toolbar {
+    display:
+        flex;
+
+    gap:
+        8px;
+
+    margin-bottom:
+        10px;
+}
+
+.notepad-toolbar button {
+    padding:
+        8px 14px;
+
+    border-radius:
+        10px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .06
+        );
+
+    font-size:
+        12px;
+}
+
+.notepad-toolbar button:hover {
+    background:
+        rgba(
+            124,
+            92,
+            255,
+            .25
+        );
+}
+
+#notepadContent {
+    flex:
+        1;
+
+    width:
+        100%;
+
+    background:
+        rgba(
+            0,
+            0,
+            0,
+            .35
+        );
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .08
+        );
+
+    border-radius:
+        12px;
+
+    padding:
+        14px;
+
+    color:
+        white;
+
+    font-family:
+        "Cascadia Code",
+        Consolas,
+        monospace;
+
+    font-size:
+        14px;
+
+    line-height:
+        1.5;
+
+    resize:
+        none;
+
+    outline:
+        none;
+
+    user-select:
+        text;
+}
+
+
+/* =========================================================
+   LAUNCHER
+========================================================= */
+
+#launcher {
+    position:
+        absolute;
+
+    bottom:
+        100px;
+
+    left:
+        50%;
+
+    transform:
+        translateX(-50%);
+
+    width:
+        min(
+            520px,
+            92%
+        );
+
+    background:
+        rgba(
+            12,
+            14,
+            20,
+            .92
+        );
+
+    backdrop-filter:
+        blur(40px);
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .1
+        );
+
+    border-radius:
+        20px;
+
+    padding:
+        18px;
+
+    box-shadow:
+        0 30px 80px
+        rgba(
+            0,
+            0,
+            0,
+            .55
+        );
+
+    z-index:
+        9500;
+}
+
+.launcher-search {
+    width:
+        100%;
+
+    background:
+        rgba(
+            0,
+            0,
+            0,
+            .35
+        );
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .08
+        );
+
+    border-radius:
+        12px;
+
+    padding:
+        14px 16px;
+
+    color:
+        white;
+
+    outline:
+        none;
+
+    margin-bottom:
+        16px;
+
+    user-select:
+        text;
+}
+
+.apps {
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fill,
+            minmax(
+                100px,
+                1fr
+            )
+        );
+
+    gap:
+        10px;
+}
+
+.app {
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    padding:
+        16px 10px;
+
+    border-radius:
+        14px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .03
+        );
+
+    font-size:
+        12px;
+
+    color:
+        var(--nexus-muted);
+}
+
+.app:hover {
+    background:
+        rgba(
+            124,
+            92,
+            255,
+            .15
+        );
+
+    color:
+        white;
+}
+
+.app-icon {
+    font-size:
+        28px;
+}
+
+
+/* =========================================================
+   NOTIFICATIONS
+========================================================= */
+
+#notifications {
+    position:
+        absolute;
+
+    top:
+        70px;
+
+    right:
+        20px;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        10px;
+
+    z-index:
+        9999;
+
+    pointer-events:
+        none;
+}
+
+.notification {
+    background:
+        rgba(
+            18,
+            21,
+            28,
+            .95
+        );
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .1
+        );
+
+    border-radius:
+        14px;
+
+    padding:
+        14px 18px;
+
+    min-width:
+        260px;
+
+    box-shadow:
+        0 15px 40px
+        rgba(
+            0,
+            0,
+            0,
+            .4
+        );
+
+    animation:
+        notifIn
+        .35s
+        ease;
+}
+
+.notification strong {
+    display:
+        block;
+
+    margin-bottom:
+        4px;
+
+    font-size:
+        13px;
+}
+
+.notification span {
+    font-size:
+        13px;
+
+    color:
+        var(--nexus-muted);
+}
+
+@keyframes notifIn {
+
+    from {
+        opacity:
+            0;
+
+        transform:
+            translateX(30px);
+    }
+
+    to {
+        opacity:
+            1;
+
+        transform:
+            translateX(0);
+    }
+}
+
+
+/* =========================================================
+   PARTICLES — NAPRAWIONE
+========================================================= */
+
+.particle {
+    position:
+        absolute;
+
+    width:
+        3px;
+
+    height:
+        3px;
+
+    border-radius:
+        50%;
+
+    background:
+        var(--nexus-accent-2);
+
+    box-shadow:
+        0 0 12px
+        var(--nexus-accent-2);
+
+    opacity:
+        .45;
+
+    pointer-events:
+        none;
+
+    animation:
+        particleFloat
+        16s
+        ease-in-out
+        infinite;
+}
+
+@keyframes particleFloat {
+
+    0% {
+        transform:
+            translate3d(
+                0,
+                0,
+                0
+            )
+            scale(.8);
+
+        opacity:
+            .15;
+    }
+
+    50% {
+        transform:
+            translate3d(
+                25px,
+                -35px,
+                0
+            )
+            scale(1.25);
+
+        opacity:
+            .8;
+    }
+
+    100% {
+        transform:
+            translate3d(
+                -15px,
+                -70px,
+                0
+            )
+            scale(.7);
+
+        opacity:
+            .05;
+    }
+}
+
+
+/* =========================================================
+   NEXUS NEURAL PULSE
+========================================================= */
+
+#neuralPulse {
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    pointer-events:
+        none;
+
+    z-index:
+        0;
+
+    opacity:
+        .85;
+}
+
+
+/* =========================================================
+   NEXUS VOICE HUD
+========================================================= */
+
+#voiceHUD {
+    position:
+        absolute;
+
+    bottom:
+        100px;
+
+    right:
+        22px;
+
+    z-index:
+        8500;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+}
+
+#voiceBtn {
+    position:
+        relative;
+
+    width:
+        64px;
+
+    height:
+        64px;
+
+    border-radius:
+        50%;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(
+                124,
+                92,
+                255,
+                .35
+            ),
+            rgba(
+                0,
+                217,
+                255,
+                .2
+            )
+        );
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .12
+        );
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        2px;
+
+    box-shadow:
+        0 12px 40px
+        rgba(
+            0,
+            0,
+            0,
+            .45
+        );
+
+    transition:
+        transform
+        .2s,
+
+        box-shadow
+        .2s;
+}
+
+#voiceBtn:hover {
+    transform:
+        scale(1.06);
+}
+
+#voiceBtn.listening {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(
+                255,
+                85,
+                119,
+                .45
+            ),
+            rgba(
+                124,
+                92,
+                255,
+                .4
+            )
+        );
+
+    box-shadow:
+        0 0 0 3px
+        rgba(
+            255,
+            85,
+            119,
+            .35
+        ),
+
+        0 0 40px
+        rgba(
+            124,
+            92,
+            255,
+            .5
+        );
+
+    animation:
+        voicePulse
+        1.2s
+        ease-in-out
+        infinite;
+}
+
+@keyframes voicePulse {
+
+    0%,
+    100% {
+        transform:
+            scale(1);
+    }
+
+    50% {
+        transform:
+            scale(1.08);
+    }
+}
+
+#voiceBtn .mic-ico {
+    font-size:
+        22px;
+
+    line-height:
+        1;
+}
+
+#voiceBadge {
+    font-size:
+        9px;
+
+    letter-spacing:
+        1px;
+
+    font-weight:
+        700;
+
+    opacity:
+        .85;
+}
+
+#voiceRing {
+    position:
+        absolute;
+
+    width:
+        78px;
+
+    height:
+        78px;
+
+    border-radius:
+        50%;
+
+    border:
+        2px solid
+        transparent;
+
+    pointer-events:
+        none;
+
+    top:
+        50%;
+
+    left:
+        50%;
+
+    transform:
+        translate(
+            -50%,
+            -50%
+        );
+}
+
+#voiceRing.active {
+    border-color:
+        rgba(
+            0,
+            217,
+            255,
+            .55
+        );
+
+    animation:
+        ringExpand
+        1.4s
+        ease-out
+        infinite;
+}
+
+@keyframes ringExpand {
+
+    0% {
+        transform:
+            translate(
+                -50%,
+                -50%
+            )
+            scale(.9);
+
+        opacity:
+            .9;
+    }
+
+    100% {
+        transform:
+            translate(
+                -50%,
+                -50%
+            )
+            scale(1.45);
+
+        opacity:
+            0;
+    }
+}
+
+.voice-cont {
+    width:
+        36px;
+
+    height:
+        36px;
+
+    border-radius:
+        12px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .06
+        );
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .08
+        );
+
+    font-size:
+        16px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+}
+
+.voice-cont.active {
+    background:
+        rgba(
+            0,
+            217,
+            255,
+            .25
+        );
+
+    border-color:
+        rgba(
+            0,
+            217,
+            255,
+            .4
+        );
+
+    color:
+        #00d9ff;
+}
+
+#voiceLive {
+    max-width:
+        200px;
+
+    min-height:
+        18px;
+
+    font-size:
+        11px;
+
+    color:
+        var(--nexus-muted);
+
+    text-align:
+        center;
+
+    opacity:
+        .9;
+
+    user-select:
+        text;
+}
+
+
+/* =========================================================
+   NEXUS LAB
+========================================================= */
+
+.lab-body {
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    height:
+        100%;
+
+    padding:
+        12px !important;
+
+    gap:
+        10px;
+}
+
+.lab-toolbar {
+    display:
+        flex;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        8px;
+}
+
+.lab-mode,
+.lab-shock {
+    padding:
+        8px 14px;
+
+    border-radius:
+        10px;
+
+    font-size:
+        12px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .06
+        );
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .08
+        );
+}
+
+.lab-mode:hover,
+.lab-shock:hover {
+    background:
+        rgba(
+            124,
+            92,
+            255,
+            .2
+        );
+}
+
+.lab-mode.active {
+    background:
+        rgba(
+            124,
+            92,
+            255,
+            .3
+        );
+
+    border-color:
+        rgba(
+            124,
+            92,
+            255,
+            .5
+        );
+
+    color:
+        #fff;
+}
+
+.lab-shock {
+    background:
+        rgba(
+            0,
+            217,
+            255,
+            .12
+        );
+}
+
+.lab-canvas-wrap {
+    flex:
+        1;
+
+    min-height:
+        200px;
+
+    border-radius:
+        14px;
+
+    overflow:
+        hidden;
+
+    background:
+        rgba(
+            0,
+            0,
+            0,
+            .35
+        );
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .06
+        );
+
+    position:
+        relative;
+}
+
+#labCanvas {
+    display:
+        block;
+
+    width:
+        100%;
+
+    height:
+        100%;
+}
+
+.lab-hint {
+    font-size:
+        11px;
+
+    color:
+        var(--nexus-muted);
+
+    opacity:
+        .8;
+}
+
+
+/* =========================================================
+   BOOT — NEXUS OS
 ========================================================= */
 
 .boot-title {
@@ -281,51 +3194,169 @@
 
 
 /* =========================================================
-   LOGO "N"
+   DODATKOWE WŁAŚCIWOŚCI OKIEN
 ========================================================= */
 
-.nexus-logo {
-
-    font-family:
-        "Orbitron",
-        "Segoe UI",
-        Arial,
-        sans-serif;
-
-    font-weight:
-        800;
-
-    letter-spacing:
-        -1px;
-
-    transition:
-        transform .22s ease,
-        box-shadow .22s ease;
-}
-
-
-.brand:hover .nexus-logo {
-
-    transform:
-        scale(1.08)
-        rotate(-2deg);
-
+.window-focused {
     box-shadow:
-        0 0 18px
+        var(--nexus-shadow),
+        0 0 0 1px
         rgba(
             124,
             92,
             255,
-            .55
-        ),
-
-        0 0 35px
-        rgba(
-            0,
-            217,
-            255,
-            .18
+            .10
         );
+}
+
+.snap-left,
+.snap-right {
+    opacity:
+        .92;
+}
+
+.window .resize-handle {
+    position:
+        absolute;
+
+    z-index:
+        20;
+}
+
+.resize-handle.n {
+    top:
+        0;
+
+    left:
+        8px;
+
+    right:
+        8px;
+
+    height:
+        5px;
+
+    cursor:
+        ns-resize;
+}
+
+.resize-handle.s {
+    bottom:
+        0;
+
+    left:
+        8px;
+
+    right:
+        8px;
+
+    height:
+        5px;
+
+    cursor:
+        ns-resize;
+}
+
+.resize-handle.e {
+    right:
+        0;
+
+    top:
+        8px;
+
+    bottom:
+        8px;
+
+    width:
+        5px;
+
+    cursor:
+        ew-resize;
+}
+
+.resize-handle.w {
+    left:
+        0;
+
+    top:
+        8px;
+
+    bottom:
+        8px;
+
+    width:
+        5px;
+
+    cursor:
+        ew-resize;
+}
+
+.resize-handle.ne {
+    top:
+        0;
+
+    right:
+        0;
+
+    width:
+        12px;
+
+    height:
+        12px;
+
+    cursor:
+        nesw-resize;
+}
+
+.resize-handle.nw {
+    top:
+        0;
+
+    left:
+        0;
+
+    width:
+        12px;
+
+    height:
+        12px;
+
+    cursor:
+        nwse-resize;
+}
+
+.resize-handle.se {
+    right:
+        0;
+
+    bottom:
+        0;
+
+    width:
+        12px;
+
+    height:
+        12px;
+
+    cursor:
+        nwse-resize;
+}
+
+.resize-handle.sw {
+    left:
+        0;
+
+    bottom:
+        0;
+
+    width:
+        12px;
+
+    height:
+        12px;
+
+    cursor:
+        nesw-resize;
 }
 
 
@@ -336,7 +3367,6 @@
 @media (max-width: 700px) {
 
     .brand > span {
-
         font-size:
             10px;
 
@@ -345,7 +3375,6 @@
     }
 
     .center h1 {
-
         letter-spacing:
             4px;
 
@@ -354,8 +3383,84 @@
     }
 
     .boot-title {
-
         letter-spacing:
             5px !important;
     }
+
+    .dock {
+        max-width:
+            94vw;
+
+        overflow-x:
+            auto;
+    }
+
+    .dock-item {
+        min-width:
+            46px;
+
+        width:
+            46px;
+
+        height:
+            46px;
+    }
+
+    .sidebar {
+        width:
+            130px;
+    }
+
+    .window {
+        left:
+            10px !important;
+
+        top:
+            70px !important;
+
+        width:
+            calc(
+                100% -
+                20px
+            ) !important;
+
+        height:
+            calc(
+                100% -
+                145px
+            ) !important;
+    }
+
+    #voiceHUD {
+        right:
+            10px;
+
+        bottom:
+            165px;
+    }
+}
+
+
+/* =========================================================
+   Z-INDEX — PULSE / SYSTEM
+========================================================= */
+
+#neuralPulse {
+    z-index:
+        0;
+}
+
+.window {
+    z-index:
+        100;
+}
+
+.topbar {
+    z-index:
+        9000;
+}
+
+.dock {
+    z-index:
+        8000;
 }
